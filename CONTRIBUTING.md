@@ -1,0 +1,28 @@
+# Contributing
+
+Thanks for helping. The skills are prompts, so a small wording change can change behaviour; please keep changes
+focused and explain the failure they fix.
+
+## Before you open a pull request
+
+1. **Describe the run that went wrong**: which skill, which step, what the agent did, what it should have done.
+   A link to a plan folder or an excerpt of its "Execution" section helps most.
+2. **Keep the single sources of truth.** Layout, statuses, reading rules, model tiers, names, commands and Markdown
+   rules live in `skills/wave-plan/layout.md`; the difficulty scale lives in `skills/wave-triage/difficulty.md`;
+   templates live in `skills/wave-plan/templates.md`. Other files refer to them instead of repeating them.
+3. **Raise the version.** Every file of the set carries `Wave skill set version N` (the script:
+   `SKILL_SET_VERSION`). Any change raises N in all of them and adds one line to `skills/wave-plan/CHANGELOG.md`.
+4. **Write skill text in English**, in short imperative sentences, with a blank line before and after every table,
+   list and fenced block.
+5. **Run the checks**:
+
+   ```bash
+   python skills/wave-plan/scripts/test_status_check.py
+   python skills/wave-plan/scripts/status_check.py examples/01-greenfield-todo-cli
+   git diff --check
+   ```
+
+## Dogfooding
+
+The skill set is maintained with itself: larger changes are planned with `/wave-plan` and executed with
+`/wave-run`, and small, self-contained example plans live under `examples/`.
