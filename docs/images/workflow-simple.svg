@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 350" width="960" height="350" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>wave-method: simplified workflow</title>
+  <style>
+    svg { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --card:#f6f8fa; --line:#8c959f;
+          --plan:#8250df; --you:#bf8700; --run:#0969da; --main:#1a7f37; --warn:#cf222e; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --card:#161b22; --line:#6e7681;
+            --plan:#ab7df8; --you:#d29922; --run:#4493f8; --main:#3fb950; --warn:#f85149; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); stroke-width: 2; }
+    .t { fill: var(--fg); font-size: 18px; font-weight: 600; }
+    .d { fill: var(--muted); font-size: 13px; }
+    .m { fill: var(--fg); font-size: 13px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .n { fill: var(--bg); font-size: 14px; font-weight: 700; }
+    .arrow { stroke: var(--line); stroke-width: 2; fill: none; }
+    .head { fill: var(--line); }
+    .loop { stroke: var(--warn); stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+    .loophead { fill: var(--warn); }
+    .lt { fill: var(--warn); font-size: 13px; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="loophead" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <rect class="bg" width="960" height="350"/>
+
+  <!-- 1 Plan -->
+  <rect class="card" x="30" y="40" width="190" height="160" rx="12" style="stroke:var(--plan)"/>
+  <circle cx="58" cy="68" r="14" style="fill:var(--plan)"/><text class="n" x="58" y="73" text-anchor="middle">1</text>
+  <text class="t" x="82" y="74">Plan</text>
+  <text class="m" x="46" y="106">/wave-plan &lt;list&gt;</text>
+  <text class="d" x="46" y="132">designs every task,</text>
+  <text class="d" x="46" y="150">slices work into waves</text>
+  <text class="d" x="46" y="184" style="fill:var(--plan)">strong model (Opus)</text>
+
+  <!-- 2 Review -->
+  <rect class="card" x="270" y="40" width="190" height="160" rx="12" style="stroke:var(--you)"/>
+  <circle cx="298" cy="68" r="14" style="fill:var(--you)"/><text class="n" x="298" y="73" text-anchor="middle">2</text>
+  <text class="t" x="322" y="74">Review</text>
+  <text class="m" x="286" y="106">plans/&lt;date&gt;-&lt;slug&gt;/</text>
+  <text class="d" x="286" y="132">read and edit the plan:</text>
+  <text class="d" x="286" y="150">plain Markdown</text>
+  <text class="d" x="286" y="184" style="fill:var(--you)">you</text>
+
+  <!-- 3 Run -->
+  <rect class="card" x="510" y="40" width="190" height="160" rx="12" style="stroke:var(--run)"/>
+  <circle cx="538" cy="68" r="14" style="fill:var(--run)"/><text class="n" x="538" y="73" text-anchor="middle">3</text>
+  <text class="t" x="562" y="74">Run waves</text>
+  <text class="m" x="526" y="106">/wave-run &lt;plan&gt; N</text>
+  <text class="d" x="526" y="132">tasks run in parallel,</text>
+  <text class="d" x="526" y="150">each in a git worktree</text>
+  <text class="d" x="526" y="184" style="fill:var(--run)">cheaper models</text>
+
+  <!-- 4 Merge -->
+  <rect class="card" x="750" y="40" width="180" height="160" rx="12" style="stroke:var(--main)"/>
+  <circle cx="778" cy="68" r="14" style="fill:var(--main)"/><text class="n" x="778" y="73" text-anchor="middle">4</text>
+  <text class="t" x="802" y="74">Merged</text>
+  <text class="m" x="766" y="106">main</text>
+  <text class="d" x="766" y="132">only finished features</text>
+  <text class="d" x="766" y="150">with a green check</text>
+  <text class="d" x="766" y="184" style="fill:var(--main)">your branch stays clean</text>
+
+  <path class="arrow" d="M222,120 H266" marker-end="url(#a)"/>
+  <path class="arrow" d="M462,120 H506" marker-end="url(#a)"/>
+  <path class="arrow" d="M702,120 H746" marker-end="url(#a)"/>
+  <!-- next wave -->
+  <path class="arrow" d="M640,202 C640,232 680,232 680,202" marker-end="url(#a)"/>
+  <text class="d" x="690" y="228">next wave</text>
+
+  <!-- problems loop -->
+  <path class="loop" d="M570,202 C570,268 125,268 125,206" marker-end="url(#r)"/>
+  <text class="lt" x="348" y="282" text-anchor="middle">problems found → re-plan them with /wave-plan &lt;plan&gt;</text>
+
+  <text class="d" x="480" y="326" text-anchor="middle"><tspan class="m">/wave-status</tspan>  — read-only, any time: what is running, what is blocked, the next command</text>
+</svg>

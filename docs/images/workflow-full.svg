@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 720" width="1100" height="720" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>wave-method: full workflow</title>
+  <style>
+    svg { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --card:#f6f8fa; --line:#8c959f; --area:#f0f6ff;
+          --plan:#8250df; --you:#bf8700; --run:#0969da; --main:#1a7f37; --warn:#cf222e; --stat:#57606a; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --card:#161b22; --line:#6e7681; --area:#0f1d33;
+            --plan:#ab7df8; --you:#d29922; --run:#4493f8; --main:#3fb950; --warn:#f85149; --stat:#9198a1; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); stroke-width: 2; }
+    .area { fill: var(--area); stroke: var(--run); stroke-width: 2; stroke-dasharray: 8 5; }
+    .t { fill: var(--fg); font-size: 16px; font-weight: 600; }
+    .s { fill: var(--fg); font-size: 14px; font-weight: 600; }
+    .d { fill: var(--muted); font-size: 12.5px; }
+    .m { fill: var(--fg); font-size: 12.5px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .arrow { stroke: var(--line); stroke-width: 2; fill: none; }
+    .head { fill: var(--line); }
+    .loop { stroke: var(--warn); stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+    .loophead { fill: var(--warn); }
+    .dash { stroke: var(--stat); stroke-width: 1.5; fill: none; stroke-dasharray: 3 4; }
+    .lt { fill: var(--warn); font-size: 12.5px; font-weight: 600; }
+    .lbl { fill: var(--muted); font-size: 12.5px; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="loophead" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <rect class="bg" width="1100" height="720"/>
+
+  <!-- input -->
+  <rect class="card" x="30" y="50" width="140" height="60" rx="10" style="stroke:var(--line)"/>
+  <text class="t" x="100" y="77" text-anchor="middle">Problem list</text>
+  <text class="d" x="100" y="96" text-anchor="middle">bugs, features, issues</text>
+
+  <path class="card" d="M260,40 L320,80 L260,120 L200,80 z" style="stroke:var(--line)"/>
+  <text class="s" x="260" y="76" text-anchor="middle">more than</text>
+  <text class="s" x="260" y="93" text-anchor="middle">one plan?</text>
+  <path class="arrow" d="M172,80 H196" marker-end="url(#a)"/>
+
+  <!-- triage -->
+  <rect class="card" x="380" y="30" width="270" height="110" rx="10" style="stroke:var(--plan)"/>
+  <text class="t" x="396" y="56">/wave-triage</text>
+  <text class="d" x="634" y="56" text-anchor="end" style="fill:var(--plan)">high tier</text>
+  <text class="d" x="396" y="80">asks all questions once, locates each</text>
+  <text class="d" x="396" y="97">problem, judges difficulty, dependencies</text>
+  <text class="m" x="396" y="124">index.md → parts 1…K</text>
+  <path class="arrow" d="M322,80 H376" marker-end="url(#a)"/>
+  <text class="lbl" x="349" y="72" text-anchor="middle">yes</text>
+
+  <!-- status -->
+  <rect class="card" x="860" y="30" width="210" height="96" rx="10" style="stroke:var(--stat);stroke-dasharray:4 3"/>
+  <text class="t" x="876" y="56">/wave-status</text>
+  <text class="d" x="1054" y="56" text-anchor="end">low tier</text>
+  <text class="d" x="876" y="80">read-only, any time: running</text>
+  <text class="d" x="876" y="97">waves, blocked features, and</text>
+  <text class="d" x="876" y="114">the next command</text>
+
+  <!-- plan -->
+  <rect class="card" x="190" y="190" width="340" height="130" rx="10" style="stroke:var(--plan)"/>
+  <text class="t" x="206" y="216">/wave-plan</text>
+  <text class="d" x="300" y="216">(a list, or one part of an index)</text>
+  <text class="d" x="514" y="236" text-anchor="end" style="fill:var(--plan)">high tier</text>
+  <text class="d" x="206" y="256">design: API, algorithm, acceptance tests</text>
+  <text class="d" x="206" y="274">problems → features → tasks (low / medium / high)</text>
+  <text class="d" x="206" y="292">tasks → waves: no shared files inside a wave</text>
+  <text class="d" x="206" y="310">ready-to-paste prompt for every task</text>
+  <path class="arrow" d="M260,122 V186" marker-end="url(#a)"/>
+  <text class="lbl" x="268" y="160">no</text>
+  <path class="arrow" d="M500,142 V186" marker-end="url(#a)"/>
+  <text class="lbl" x="508" y="166">per part</text>
+
+  <!-- plan folder -->
+  <rect class="card" x="590" y="190" width="240" height="130" rx="10" style="stroke:var(--line)"/>
+  <text class="m" x="606" y="214" style="font-weight:600">plans/&lt;date&gt;-&lt;slug&gt;/</text>
+  <text class="m" x="618" y="236">README.md   statuses</text>
+  <text class="m" x="618" y="254">solutions/  designs</text>
+  <text class="m" x="618" y="272">waves/w01.md prompts</text>
+  <text class="m" x="618" y="290">problems.md open issues</text>
+  <text class="d" x="606" y="311">committed on branch plan/&lt;slug&gt;</text>
+  <path class="arrow" d="M532,255 H586" marker-end="url(#a)"/>
+  <path class="dash" d="M930,128 C930,160 800,160 790,186" marker-end="url(#a)"/>
+  <text class="d" x="890" y="166">reads</text>
+
+  <!-- review -->
+  <rect class="card" x="890" y="215" width="180" height="80" rx="10" style="stroke:var(--you)"/>
+  <text class="t" x="980" y="245" text-anchor="middle">You review</text>
+  <text class="d" x="980" y="266" text-anchor="middle">edit any file —</text>
+  <text class="d" x="980" y="283" text-anchor="middle">it is plain Markdown</text>
+  <path class="arrow" d="M832,255 H886" marker-end="url(#a)"/>
+
+  <!-- run area -->
+  <rect class="area" x="30" y="370" width="1040" height="240" rx="14"/>
+  <text class="t" x="50" y="398">/wave-run &lt;plan&gt; N</text>
+  <text class="d" x="220" y="398">one wave per session · medium-tier coordinator dispatches, merges, checks, records</text>
+  <path class="arrow" d="M980,297 V366" marker-end="url(#a)"/>
+
+  <text class="lbl" x="60" y="428">parallel subagents</text>
+  <rect class="card" x="60" y="438" width="220" height="44" rx="8" style="stroke:var(--run)"/>
+  <text class="s" x="76" y="465">Task A</text><text class="d" x="264" y="465" text-anchor="end">own worktree</text>
+  <rect class="card" x="60" y="492" width="220" height="44" rx="8" style="stroke:var(--run)"/>
+  <text class="s" x="76" y="519">Task B</text><text class="d" x="264" y="519" text-anchor="end">model ≥ its tier</text>
+  <rect class="card" x="60" y="546" width="220" height="44" rx="8" style="stroke:var(--run)"/>
+  <text class="s" x="76" y="573">Task C</text><text class="d" x="264" y="573" text-anchor="end">only its files</text>
+
+  <rect class="card" x="330" y="450" width="220" height="80" rx="10" style="stroke:var(--run)"/>
+  <text class="s" x="346" y="475">merge into feature branch</text>
+  <text class="m" x="346" y="497">feat/&lt;plan&gt;/&lt;feature&gt;</text>
+  <text class="d" x="346" y="517">conflicts resolved here</text>
+  <path class="arrow" d="M282,460 L326,478" marker-end="url(#a)"/>
+  <path class="arrow" d="M282,514 H326" marker-end="url(#a)"/>
+  <path class="arrow" d="M282,568 L326,512" marker-end="url(#a)"/>
+
+  <rect class="card" x="590" y="460" width="140" height="60" rx="10" style="stroke:var(--run)"/>
+  <text class="s" x="660" y="486" text-anchor="middle">check</text>
+  <text class="d" x="660" y="505" text-anchor="middle">build + tests</text>
+  <path class="arrow" d="M552,490 H586" marker-end="url(#a)"/>
+
+  <path class="card" d="M845,435 L915,490 L845,545 L775,490 z" style="stroke:var(--main)"/>
+  <text class="s" x="845" y="480" text-anchor="middle">all tasks of</text>
+  <text class="s" x="845" y="497" text-anchor="middle">the feature</text>
+  <text class="s" x="845" y="514" text-anchor="middle">done?</text>
+  <path class="arrow" d="M732,490 H771" marker-end="url(#a)"/>
+
+  <rect class="card" x="940" y="440" width="115" height="62" rx="10" style="stroke:var(--line)"/>
+  <text class="s" x="997" y="465" text-anchor="middle">no: waits</text>
+  <text class="d" x="997" y="485" text-anchor="middle">for its next wave</text>
+  <path class="arrow" d="M900,470 L936,466" marker-end="url(#a)"/>
+
+  <rect class="card" x="330" y="556" width="340" height="38" rx="8" style="stroke:var(--warn)"/>
+  <text class="s" x="346" y="580" style="fill:var(--warn)">problems.md</text>
+  <text class="d" x="446" y="580">what failed or could not be checked</text>
+  <path class="loop" d="M660,522 L640,552" marker-end="url(#r)"/>
+
+  <!-- re-plan loop -->
+  <path class="loop" d="M480,596 V630 H10 V255 H186" marker-end="url(#r)"/>
+  <text class="lt" x="25" y="440" transform="rotate(-90 25 440)" text-anchor="middle">re-plan open problems</text>
+
+  <!-- next wave -->
+  <text class="d" x="997" y="530" text-anchor="middle">next session:</text>
+  <text class="m" x="997" y="548" text-anchor="middle">/wave-run … N+1</text>
+
+  <!-- main -->
+  <path class="arrow" d="M845,547 V646" marker-end="url(#a)"/>
+  <text class="lbl" x="853" y="600">yes</text>
+  <rect x="30" y="650" width="1040" height="40" rx="10" style="fill:var(--main);opacity:0.15"/>
+  <rect x="30" y="650" width="1040" height="40" rx="10" style="fill:none;stroke:var(--main);stroke-width:2"/>
+  <text class="t" x="50" y="676" style="fill:var(--main)">main</text>
+  <text class="d" x="100" y="676">only finished, tested features land here · when the last wave is done the plan moves to plans/archive/</text>
+</svg>

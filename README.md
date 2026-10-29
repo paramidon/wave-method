@@ -9,6 +9,8 @@ one stopped.
 
 > Status: version 2, experimental. MIT licensed.
 
+![Plan with a strong model, review, run waves with cheaper models, merge finished features](docs/images/workflow-simple.svg)
+
 ## Contents
 
 - [Install](#install)
@@ -109,6 +111,8 @@ Wave 1 runs A, B and C at the same time, each in its own git worktree. When it e
 /wave-run plans/2026-11-02-csv-export 2
 ```
 
+![Wave 1 runs tasks A, B, C in parallel; F1 and F3 merge; F2 waits for task D in wave 2](docs/images/waves-example.svg)
+
 ### 4. Check progress, fix problems
 
 ```
@@ -174,17 +178,7 @@ What it adds compared with "agent, please do these ten things":
 
 ## How it works
 
-```mermaid
-flowchart LR
-    L[Problem list] --> T{More than one plan's worth?}
-    T -- yes --> TR["/wave-triage<br>index + parts"]
-    T -- no --> P
-    TR --> P["/wave-plan<br>design, features, tasks, waves"]
-    P --> R["/wave-run N<br>subagents in worktrees"]
-    R --> M[(main branch)]
-    R -- problems --> P
-    S["/wave-status<br>read-only"] -.-> R
-```
+![Full workflow: triage, plan, review, run waves in worktrees, feature gate, merge, re-plan loop](docs/images/workflow-full.svg)
 
 | Skill | Role | Recommended model |
 |---|---|---|
