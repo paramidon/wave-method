@@ -1,5 +1,6 @@
 {
   "name": "wave-method",
+  "version": "2.0.4",
   "description": "Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished: wave-triage, wave-plan, wave-run and wave-status skills.",
   "author": {
     "name": "paramidon",
@@ -8,5 +9,11 @@
   "homepage": "https://github.com/paramidon/wave-method",
   "repository": "https://github.com/paramidon/wave-method",
   "license": "MIT",
-  "keywords": ["planning", "parallel", "subagents", "worktrees", "skills"]
+  "keywords": [
+    "planning",
+    "parallel",
+    "subagents",
+    "worktrees",
+    "skills"
+  ]
 }
