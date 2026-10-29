@@ -1,6 +1,6 @@
 # wave-run — deferred merges
 
-Wave skill set version 1 (see `.claude/skills/wave-plan/layout.md`, "Version").
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 Read by the `wave-run` coordinator only when `SKILL.md` step 1 says so.
 
 A feature stays `✅ ready` with `Waiting for: main-dirty` when the main checkout was not ready for its merge

@@ -1,13 +1,13 @@
 # Plan templates
 
-Wave skill set version 1 (see `layout.md`, "Version").
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 
 ### `README.md`
 
 ````markdown
 # <Plan title>
 
-- Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · skills: v1
+- Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · skills: v2
 - Index: `plans/<date>-<topic>/index.md` part <K> (omit when planned from a raw list)
 - Re-plans: none (later one sub-item each: `<date> at <hash>: <what>`; details in `history.md`)
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
@@ -35,7 +35,7 @@ Merged: short hash of the merge commit into the main branch.
 | A | `periapsis-argument-math` | F1 | 1 | medium | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
-`.claude/skills/wave-plan/layout.md`. Marks are committed on the tracking branch `plan/<slug>` and reach the
+`wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/<slug>` and reach the
 main branch with each wave that merges a feature.
 
 ## User problems

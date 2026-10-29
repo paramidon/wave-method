@@ -1,6 +1,6 @@
 # A todo command-line tool in Python
 
-- Plan: `plans/2026-11-02-todo-cli/` · slug: `todo-cli` · tracking branch: `plan/todo-cli` · created 2026-11-02 · base: 3f1c2a0 · skills: v1
+- Plan: `plans/2026-11-02-todo-cli/` · slug: `todo-cli` · tracking branch: `plan/todo-cli` · created 2026-11-02 · base: 3f1c2a0 · skills: v2
 - Re-plans: none
 
 ## Features
@@ -31,7 +31,7 @@ Merged: short hash of the merge commit into the main branch.
 | D | `ci-workflow` | F3 | 2 | low | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
-`.claude/skills/wave-plan/layout.md`. Marks are committed on the tracking branch `plan/todo-cli` and reach the
+`wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/todo-cli` and reach the
 main branch with each wave that merges a feature.
 
 ## User problems

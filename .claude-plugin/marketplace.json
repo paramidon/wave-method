@@ -1,0 +1,14 @@
+{
+  "name": "wave-method",
+  "owner": {
+    "name": "paramidon",
+    "url": "https://github.com/paramidon"
+  },
+  "plugins": [
+    {
+      "name": "wave-method",
+      "source": "./",
+      "description": "Triage a list of problems, plan it into waves of parallel subagent tasks, run them in git worktrees and merge finished features."
+    }
+  ]
+}

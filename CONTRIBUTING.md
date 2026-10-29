@@ -12,6 +12,9 @@ focused and explain the failure they fix.
    templates live in `skills/wave-plan/templates.md`. Other files refer to them instead of repeating them.
 3. **Raise the version.** Every file of the set carries `Wave skill set version N` (the script:
    `SKILL_SET_VERSION`). Any change raises N in all of them and adds one line to `skills/wave-plan/CHANGELOG.md`.
+   Set `version` in `.claude-plugin/plugin.json` to `N.0.0` too, or plugin users will not get the update.
+   Refer to other skill files by paths relative to the skills folder (`wave-plan/layout.md`), never
+   `.claude/skills/...`.
 4. **Write skill text in English**, in short imperative sentences, with a blank line before and after every table,
    list and fenced block.
 5. **Run the checks**:

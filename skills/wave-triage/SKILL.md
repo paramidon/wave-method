@@ -5,10 +5,13 @@ description: First stage of the wave-triage → wave-plan → wave-run pipeline.
 
 # wave-triage — analyse a task list and split it into plannable parts
 
-Wave skill set version 1 (see `.claude/skills/wave-plan/layout.md`, "Version"). Folder layout and branch names
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version"). Folder layout and branch names
 also come from that file.
 
-Language: `.claude/skills/wave-plan/layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language".
+
+Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
+folder (`wave-plan/layout.md`, "Skill paths").
 
 ## Pipeline
 `wave-triage` → (user confirms) → `wave-plan` once per part, each in a fresh session → `wave-run` per wave.
@@ -32,7 +35,7 @@ including `plans/archive/`). There are two sizes:
   assigned records, so the index remains external memory without holding full records.
 
 The folder also receives the plans of the parts (`plan-1/`, `plan-2/`, …), see
-`.claude/skills/wave-plan/layout.md`. A part's command must work in an empty session with only the index and,
+`wave-plan/layout.md`. A part's command must work in an empty session with only the index and,
 for a large list, the `triage/P<n>.md` records of that part's problems, besides the code.
 Branch `triage/<topic>`, worktree `../<repo-folder>.worktrees/<topic>-triage`.
 
@@ -66,7 +69,7 @@ them as assumptions. Write the answers into the problem records (in `triage/P<n>
 or inline in the index for at most 8).
 
 ### 4. Pass 2 — shallow analysis per cluster
-Read `.claude/skills/wave-triage/difficulty.md` before judging the first problem. For each problem, record:
+Read `wave-triage/difficulty.md` before judging the first problem. For each problem, record:
 - **Where**: files/classes/functions involved (`file:line` when cheap to get), what already exists to reuse.
 - **Likely cause / gap**, one or two sentences, marked "unverified" when it is a guess.
 - **Difficulty**: `low` / `medium` / `high`, as defined in `difficulty.md`.
@@ -105,7 +108,7 @@ table.
 
 ### 5. Split into parts
 A part = one wave-plan run in a fresh session = one plan folder. Every part stays within the
-"Part budget" of `.claude/skills/wave-triage/difficulty.md` (points, `high` limits, expected features and tasks).
+"Part budget" of `wave-triage/difficulty.md` (points, `high` limits, expected features and tasks).
 
 Use this deterministic procedure:
 1. Dependency groups = connected components of confirmed dependencies.
@@ -129,7 +132,7 @@ For at most 8 problems, keep full problem records in the index:
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v1
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v2
 
 ## Problems
 ### P1. <one-line restatement>
@@ -164,7 +167,7 @@ has exactly one overview row. Reuse the Parts table and the Assumptions and Open
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v1
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v2
 
 ## Problems
 

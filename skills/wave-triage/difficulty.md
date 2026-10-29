@@ -1,7 +1,7 @@
 # Problem difficulty and part budget
 
 Single source of truth for the `wave-triage` and `wave-plan` skills. Change the numbers here only.
-Wave skill set version 1 (see `.claude/skills/wave-plan/layout.md`, "Version").
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 
 This is the difficulty of a **problem** (how unclear the way to solve it is), judged before any design.
 It is not the complexity of a **task** (which model executes it): tasks exist only after wave-plan has done

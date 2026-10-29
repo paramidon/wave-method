@@ -27,8 +27,11 @@ A wave file holds everything its wave needs. If something is missing, that is a 
   prompts, commit messages, branch names.
 - A subagent writes its report in the language that its header's `Report language:` line names.
 
+## Skill paths
+Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
+
 ## Version
-Wave skill set version 1. All files of the set (`wave-triage/SKILL.md`, `wave-triage/difficulty.md`, `wave-plan/SKILL.md`, `wave-plan/layout.md`, `wave-plan/templates.md`, `wave-plan/scripts/status_check.py` (constant `SKILL_SET_VERSION`), `wave-run/SKILL.md`, `wave-run/task-mode.md`, `wave-run/deferred-merges.md`, `wave-status/SKILL.md`) carry the same version. Any change to any of them raises it in all of them and adds a line to `wave-plan/CHANGELOG.md`, which agents do not read. A plan README records the version it was written with (`skills: v<N>`).
+Wave skill set version 2. All files of the set (`wave-triage/SKILL.md`, `wave-triage/difficulty.md`, `wave-plan/SKILL.md`, `wave-plan/layout.md`, `wave-plan/templates.md`, `wave-plan/scripts/status_check.py` (constant `SKILL_SET_VERSION`), `wave-run/SKILL.md`, `wave-run/task-mode.md`, `wave-run/deferred-merges.md`, `wave-status/SKILL.md`) carry the same version. Any change to any of them raises it in all of them and adds a line to `wave-plan/CHANGELOG.md`, which agents do not read. A plan README records the version it was written with (`skills: v<N>`).
 
 ## Folders
 
@@ -115,7 +118,7 @@ Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N
 - ⚠️ and ❌ mean "action needed now". Each ⚠️/❌ item names at least one open entry of `problems.md` (`⚠️ I4`), or, for a ❌ wave, says that it must be re-run.
 - When the last open entry concerning an item is closed, the item becomes ✅ with a short note: `✅ (fixed by AB, wave 6)`. A task that will never run because another replaces it is `➖ superseded by AA`; a wave whose tasks all moved elsewhere is `➖ dropped (tasks → wave 7)`. ➖ is final and is not a problem.
 - Whoever closes an entry updates the items it concerns in the same commit: `wave-run` (step 8 of the wave that fixed it, or when the user accepts it), `wave-plan` at a re-plan (an item superseded by new tasks becomes ➖ at once; an item waiting for fix tasks stays ⚠️ with `→ task Y`).
-- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌ item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it with `python .claude/skills/wave-plan/scripts/status_check.py <plan folder>` (in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
+- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌ item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it with `python <wave skills folder>/wave-plan/scripts/status_check.py <plan folder>` (absolute script path, see "Skill paths"; in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
 
 ## Running waves
 A wave is running while its status in README "Waves" is `🔄 since <YYYY-MM-DD HH:MM>` on the tracking branch (`git show plan/<plan>:<plan folder>/README.md`). This mark is the lock: `wave-run` commits it when the wave starts and removes it with the wave's "done" or "stopped" commit.

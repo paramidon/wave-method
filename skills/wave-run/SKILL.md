@@ -5,18 +5,21 @@ description: Third stage of the wave-triage → wave-plan → wave-run pipeline.
 
 # wave-run — execute one wave of a plan
 
-Wave skill set version 1 (see `layout.md`, "Version").
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 
-Language: `layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language".
+
+Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
+folder (`wave-plan/layout.md`, "Skill paths").
 
 ## Layout
 
-Read `.claude/skills/wave-plan/layout.md` first: plan folder layout, **what the coordinator reads**, model
+Read `wave-plan/layout.md` first: plan folder layout, **what the coordinator reads**, model
 tiers, branch and worktree names, status rules, "Running waves", the problem-log format and the Markdown
 rules, "Main readiness" and "Archive". It is the single source of truth; this skill does not repeat it.
 
 Arguments: the plan folder and the wave number. Without a number, take the first wave with status ⬜ or ❌; if
-there is none but a feature is `✅ ready`, run only the deferred merges (see `.claude/skills/wave-run/deferred-merges.md`).
+there is none but a feature is `✅ ready`, run only the deferred merges (see `wave-run/deferred-merges.md`).
 Without a folder, take the most recent plan folder in `plans/` (not under `archive/`) that has unfinished waves,
 and name it to the user. Task-mode forms:
 `/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`.
@@ -60,7 +63,7 @@ file's Execution (`Capabilities: …`).
 | built-in worktree isolation | optional | `git worktree add` as in step 4 (the default) |
 
 A task that cannot run as a subagent runs in **task mode** (one task in one fresh session):
-`.claude/skills/wave-run/task-mode.md`.
+`wave-run/task-mode.md`.
 
 ## Names
 
@@ -92,7 +95,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 
 In a wave, `main-dirty` is not a stop: the wave is done; the ready feature keeps `✅ ready` with
 `Waiting for: main-dirty`; the report gives the reason, and the next `/wave-run <plan folder>` ·
-`$wave-run <plan folder>` merges it (see `.claude/skills/wave-run/deferred-merges.md`).
+`$wave-run <plan folder>` merges it (see `wave-run/deferred-merges.md`).
 
 ## Fix loop
 
@@ -114,7 +117,7 @@ continue, stop `red-after-merge`.
   `deferred-merges.md` when the README has a feature `✅ ready` with `Waiting for: main-dirty`, or when no wave is
   ⬜ or ❌. Read nothing else of the `wave-run` folder.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
-  `Waiting: task mode …` (resume, see `.claude/skills/wave-run/task-mode.md`). A task-mode session uses the checks of
+  `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
 - Read `README.md`, `waves/w<NN>.md` of this wave and `problems.md` (if it exists). Nothing else of the plan:
   the wave file holds everything the wave needs. If something is missing (a prompt, a file list, a dependency),
@@ -144,7 +147,7 @@ continue, stop `red-after-merge`.
   features to 🔄 in "Features" (if ⬜), and apply the interrupted-run repair from step 1. The wave file's
   "Execution" gets `Started <YYYY-MM-DD HH:MM>.` and `Capabilities: …` in the same commit on the tracking
   branch: `Plan <plan>: wave <N> started`. A task-mode resume keeps the existing start record.
-- Then merge the deferred features (see `.claude/skills/wave-run/deferred-merges.md`).
+- Then merge the deferred features (see `wave-run/deferred-merges.md`).
 
 ### 3. Feature worktrees
 
@@ -237,7 +240,7 @@ For each feature that became ✅ ready, **merge one feature**:
 2. Check main readiness for `feat/<plan>/<feature>` (`layout.md`, "Main readiness"). Not ready → tell the user
    the reason (the staged files, the overlapping paths, or the branch) and ask them to clear it and answer
    when done; on the answer check again. Never stage, unstage, stash or reset anything yourself. If the user
-   leaves it for later, the feature keeps `✅ ready`, `Waiting for: main-dirty` (see `.claude/skills/wave-run/deferred-merges.md`).
+   leaves it for later, the feature keeps `✅ ready`, `Waiting for: main-dirty` (see `wave-run/deferred-merges.md`).
 3. `git -C <main checkout> merge --no-ff feat/<plan>/<feature> -m "Feature <feature-id> (<plan>): <title>"`,
    body: one line per task of the feature. Note the merge hash for step 8.
 

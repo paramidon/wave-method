@@ -5,12 +5,15 @@ description: Turn the user's list of problems/features into an implementation pl
 
 # wave-plan — design and slice tasks into waves
 
-Wave skill set version 1 (see `layout.md`, "Version").
+Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 
-Language: `layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language".
+
+Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
+folder (`wave-plan/layout.md`, "Skill paths").
 
 ## Layout
-Read `.claude/skills/wave-plan/layout.md` first: plan folder layout, which file holds what and when it is
+Read `wave-plan/layout.md` first: plan folder layout, which file holds what and when it is
 created, who reads what, model tiers, branch names, status rules, the problem-log format and the Markdown
 rules. It is the single source of truth; this skill does not repeat it.
 
@@ -24,7 +27,7 @@ Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) �
   "Parts" table; the plan folder is `plans/<date>-<topic>/plan-<K>/`. If the part is marked "plan after part J
   is merged" and part J's features are not all `✅ merged` on the main branch, stop and tell the user.
 - **A raw list** from the user — allowed without `wave-triage` when it fits one part. First read
-  `.claude/skills/wave-triage/difficulty.md` (difficulty scale and part budget; the single source of truth, do
+  `wave-triage/difficulty.md` (difficulty scale and part budget; the single source of truth, do
   not guess the numbers). Judge each problem's difficulty from a quick look at the code (find where it lives,
   no design). If the list exceeds the "Part budget", **stop** before the deep analysis: tell the user the
   list is too big for one plan and give both forms of the command:
@@ -199,4 +202,4 @@ Say which tasks may need task mode (`Needs`, or a tier the environment may lack)
 index, also list the index's other parts and their commands, saying which can be planned now and which
 wait for a merge.
 
-Templates: `.claude/skills/wave-plan/templates.md` — read it when writing the plan folder (step 9).
+Templates: `wave-plan/templates.md` — read it when writing the plan folder (step 9).

@@ -1,4 +1,4 @@
-"""Run with python .claude/skills/wave-plan/scripts/test_status_check.py."""
+"""Run with python <wave skills folder>/wave-plan/scripts/test_status_check.py."""
 import os
 from pathlib import Path
 import subprocess

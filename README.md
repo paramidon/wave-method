@@ -7,7 +7,7 @@ into merged commits: triage → design → waves of parallel subagent tasks in g
 All state lives as plain Markdown in your repository, so any session (or any person) can pick up where the last
 one stopped.
 
-> Status: version 1, experimental. MIT licensed.
+> Status: version 2, experimental. MIT licensed.
 
 ## Contents
 
@@ -25,8 +25,25 @@ one stopped.
 
 ## Install
 
-You need git, and Claude Code or Codex (see [Requirements](#requirements)). Clone this repository and run the
-installer against your project. It copies the skills into `<project>/.claude/skills/` and links them into
+You need git, and Claude Code or Codex (see [Requirements](#requirements)).
+
+### Claude Code plugin (recommended for Claude Code)
+
+In Claude Code, add this repository as a plugin marketplace and install the plugin:
+
+```
+/plugin marketplace add paramidon/wave-method
+/plugin install wave-method@wave-method
+```
+
+The skills are then available in every project; update them from `/plugin`. Plugin skills may also be called
+with the plugin prefix (`/wave-method:wave-plan`), which you need only if another skill has the same name. To
+share the plugin with your team, commit the marketplace and plugin to the project's `.claude/settings.json`
+(`extraKnownMarketplaces` and `enabledPlugins`).
+
+### Installer (Codex, or a copy inside the project)
+
+Clone this repository and run the installer against your project. It copies the skills into `<project>/.claude/skills/` and links them into
 `<project>/.agents/skills/` for Codex.
 
 Windows (PowerShell):
@@ -46,8 +63,9 @@ git clone https://github.com/paramidon/wave-method.git
 Options: `-Force` / `--force` replaces existing `wave-*` skill folders (use it to upgrade); `-NoCodex` /
 `--no-codex` skips the Codex links. Add `.agents/` to your project's `.gitignore` if you use the links.
 
-Manual install: copy the four folders of `skills/` into `<project>/.claude/skills/`. The skills refer to each other
-by the path `.claude/skills/...`, so that location is required even for Codex.
+Manual install: copy the four folders of `skills/` into one skills folder that your agent reads (for example
+`<project>/.claude/skills/` or `<project>/.agents/skills/`). Keep them side by side: the skills refer to each other
+by paths relative to that folder (`wave-plan/layout.md`).
 
 ## Quick start
 
@@ -202,7 +220,7 @@ Finished plans move to `plans/archive/`.
 ## Requirements
 
 - **Git** with `worktree` support, and a main branch called `main` or `master`.
-- **Claude Code** (skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
+- **Claude Code** (plugin, or skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
   Subagents with a choice of model work best; without them the skills degrade to "one task per fresh session"
   (task mode).
 - **Python 3.9+** (optional) for the status-check script `wave-plan/scripts/status_check.py`; without Python the
@@ -269,7 +287,8 @@ agents load them as usual, and the planner takes them into account when it write
 
 All files of the skill set carry one version number (`Wave skill set version N`); any change raises it in all of
 them and adds a line to [`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md). A plan records the
-version it was written with (`skills: vN`). This is version 1.
+version it was written with (`skills: vN`). This is version 2. The plugin version in
+[`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) is `N.minor.patch` and is raised with it.
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
