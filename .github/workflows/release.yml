@@ -1,8 +1,9 @@
 name: Release
 
-# Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.2.
-# The tag is the only place that holds the version; no file in the
-# repository carries one.
+# Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.4.
+# The tag is the only place where people write the version. This workflow
+# copies it into "version" of .claude-plugin/plugin.json on main (so Claude
+# Code shows it and offers the update) and into the release archives.
 on:
   push:
     tags:
@@ -16,12 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check the tag
         run: |
           tag="${GITHUB_REF_NAME}"
           if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::error::tag $tag is not vMAJOR.MINOR.PATCH"; exit 1
+          fi
+          if ! git merge-base --is-ancestor "$tag" origin/main; then
+            echo "::error::tag $tag is not on main"; exit 1
           fi
           echo "VERSION=${tag#v}" >> "$GITHUB_ENV"
 
@@ -37,12 +43,27 @@ jobs:
       - name: Build archives
         run: |
           name="wave-method-v${VERSION}"
-          mkdir dist
+          mkdir -p build dist
           paths="skills install.sh install.ps1 LICENSE README.md docs .claude-plugin"
-          git archive --format=zip    --prefix="$name/" -o "dist/$name.zip"    HEAD $paths
-          git archive --format=tar.gz --prefix="$name/" -o "dist/$name.tar.gz" HEAD $paths
+          git archive --prefix="$name/" "$GITHUB_REF_NAME" $paths | tar -x -C build
+          python .github/scripts/set_plugin_version.py "build/$name/.claude-plugin/plugin.json" "$VERSION"
+          (cd build && zip -qr "../dist/$name.zip" "$name" && tar -czf "../dist/$name.tar.gz" "$name")
           (cd dist && sha256sum * > SHA256SUMS)
           ls -l dist
+
+      - name: Write the version into plugin.json on main
+        run: |
+          git switch main
+          git pull --ff-only origin main
+          python .github/scripts/set_plugin_version.py .claude-plugin/plugin.json "$VERSION"
+          if git diff --quiet; then
+            echo "plugin.json already has version $VERSION"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -qam "Set plugin version to $VERSION for $GITHUB_REF_NAME"
+            git push origin main
+          fi
 
       - name: Create release
         env:

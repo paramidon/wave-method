@@ -279,10 +279,11 @@ agents load them as usual, and the planner takes them into account when it write
 
 ## Versioning and contributing
 
-The version lives only in git tags `vMAJOR.MINOR.PATCH`; no file carries it. Each tag gets a
-[GitHub release](https://github.com/paramidon/wave-method/releases) with archives, and
-[`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md) lists what each release changed. The plugin has no
-version field, so Claude Code treats every new commit on `main` as an update.
+The version is written only as a git tag `vMAJOR.MINOR.PATCH`. For each tag the release workflow publishes a
+[GitHub release](https://github.com/paramidon/wave-method/releases) with archives and copies the version into
+`version` of [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) on `main`; Claude Code offers plugin users an
+update when that field changes, so they get releases, not every commit.
+[`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md) lists what each release changed.
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
