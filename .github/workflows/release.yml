@@ -1,8 +1,8 @@
 name: Release
 
-# Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.0.
-# The tag must match "version" in .claude-plugin/plugin.json, and MAJOR must
-# match the skill set version (SKILL_SET_VERSION in status_check.py).
+# Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.2.
+# The tag is the only place that holds the version; no file in the
+# repository carries one.
 on:
   push:
     tags:
@@ -17,22 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check tag and versions
+      - name: Check the tag
         run: |
           tag="${GITHUB_REF_NAME}"
           if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::error::tag $tag is not vMAJOR.MINOR.PATCH"; exit 1
           fi
-          version="${tag#v}"
-          plugin=$(python3 -c 'import json; print(json.load(open(".claude-plugin/plugin.json"))["version"])')
-          skills=$(sed -n 's/^SKILL_SET_VERSION = \([0-9]*\)$/\1/p' skills/wave-plan/scripts/status_check.py)
-          if [ "$plugin" != "$version" ]; then
-            echo "::error::plugin.json version is $plugin, tag is $tag"; exit 1
-          fi
-          if [ "$skills" != "${version%%.*}" ]; then
-            echo "::error::skill set version is $skills, tag major is ${version%%.*}"; exit 1
-          fi
-          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "VERSION=${tag#v}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v5
         with:

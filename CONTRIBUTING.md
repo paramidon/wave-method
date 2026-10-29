@@ -10,9 +10,8 @@ focused and explain the failure they fix.
 2. **Keep the single sources of truth.** Layout, statuses, reading rules, model tiers, names, commands and Markdown
    rules live in `skills/wave-plan/layout.md`; the difficulty scale lives in `skills/wave-triage/difficulty.md`;
    templates live in `skills/wave-plan/templates.md`. Other files refer to them instead of repeating them.
-3. **Raise the version.** Every file of the set carries `Wave skill set version N` (the script:
-   `SKILL_SET_VERSION`). Any change raises N in all of them and adds one line to `skills/wave-plan/CHANGELOG.md`.
-   Set `version` in `.claude-plugin/plugin.json` to `N.0.0` too, or plugin users will not get the update.
+3. **Do not write version numbers into files.** The version lives only in the release tag. Add one line about your
+   change to the `- Unreleased` line at the top of `skills/wave-plan/CHANGELOG.md`.
    Refer to other skill files by paths relative to the skills folder (`wave-plan/layout.md`), never
    `.claude/skills/...`.
 4. **Write skill text in English**, in short imperative sentences, with a blank line before and after every table,
@@ -27,18 +26,17 @@ focused and explain the failure they fix.
 
 ## Releasing
 
-1. Make sure `version` in `.claude-plugin/plugin.json` is the release version and its major number equals the skill
-   set version.
+1. In `skills/wave-plan/CHANGELOG.md`, rename "Unreleased" to the new tag and date, and commit.
 2. Tag the commit on `main` and push the tag:
 
    ```bash
-   git tag v2.0.0
-   git push origin v2.0.0
+   git tag v2.0.3
+   git push origin v2.0.3
    ```
 
-The `Release` workflow runs only for tags `vMAJOR.MINOR.PATCH`. It checks the versions, runs the checks, and
-publishes a GitHub release with `.zip` and `.tar.gz` archives and `SHA256SUMS`. Plugin users get the update from the
-default branch whatever the tag; the tag and archives are for pinned and manual installs.
+The `Release` workflow runs only for tags `vMAJOR.MINOR.PATCH`. It runs the checks and publishes a GitHub release
+with `.zip` and `.tar.gz` archives and `SHA256SUMS`. Plugin users get updates from every commit on `main`, whatever
+the tag; the tag and archives are for pinned and manual installs.
 
 ## Dogfooding
 

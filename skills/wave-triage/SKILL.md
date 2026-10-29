@@ -5,8 +5,7 @@ description: First stage of the wave-triage → wave-plan → wave-run pipeline.
 
 # wave-triage — analyse a task list and split it into plannable parts
 
-Wave skill set version 2 (see `wave-plan/layout.md`, "Version"). Folder layout and branch names
-also come from that file.
+Folder layout and branch names come from `wave-plan/layout.md`.
 
 Language: `wave-plan/layout.md`, "Language".
 
@@ -132,7 +131,7 @@ For at most 8 problems, keep full problem records in the index:
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v2
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash>
 
 ## Problems
 ### P1. <one-line restatement>
@@ -167,7 +166,7 @@ has exactly one overview row. Reuse the Parts table and the Assumptions and Open
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · skills: v2
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash>
 
 ## Problems
 

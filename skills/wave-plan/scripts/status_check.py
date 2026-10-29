@@ -3,7 +3,6 @@ import re
 import sys
 from pathlib import Path
 
-SKILL_SET_VERSION = 2
 MARK = re.compile(r"⬜|🔄|✅|⚠️|❌|➖")
 ENTRY = re.compile(r"^- \*\*\[(I\d+) · ([^\]]*)\]")
 COLUMNS = {

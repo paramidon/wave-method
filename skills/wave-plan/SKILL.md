@@ -5,8 +5,6 @@ description: Turn the user's list of problems/features into an implementation pl
 
 # wave-plan — design and slice tasks into waves
 
-Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
-
 Language: `wave-plan/layout.md`, "Language".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's

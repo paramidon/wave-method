@@ -31,7 +31,7 @@ A wave file holds everything its wave needs. If something is missing, that is a 
 Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
 
 ## Version
-Wave skill set version 2. All files of the set (`wave-triage/SKILL.md`, `wave-triage/difficulty.md`, `wave-plan/SKILL.md`, `wave-plan/layout.md`, `wave-plan/templates.md`, `wave-plan/scripts/status_check.py` (constant `SKILL_SET_VERSION`), `wave-run/SKILL.md`, `wave-run/task-mode.md`, `wave-run/deferred-merges.md`, `wave-status/SKILL.md`) carry the same version. Any change to any of them raises it in all of them and adds a line to `wave-plan/CHANGELOG.md`, which agents do not read. A plan README records the version it was written with (`skills: v<N>`).
+The skill files carry no version number. A release is a git tag `vMAJOR.MINOR.PATCH` of the wave-method repository; `wave-plan/CHANGELOG.md` (agents do not read it) lists what each release changed.
 
 ## Folders
 

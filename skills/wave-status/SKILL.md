@@ -5,8 +5,6 @@ description: Read-only status of the wave-triage → wave-plan → wave-run pipe
 
 # wave-status — read-only pipeline status
 
-Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
-
 Language: `wave-plan/layout.md`, "Language".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's

@@ -1,6 +1,5 @@
 # wave-run — task mode
 
-Wave skill set version 2 (see `wave-plan/layout.md`, "Version").
 Read by the `wave-run` coordinator only when `SKILL.md` step 1 says so.
 
 One task in one fresh session, whose model is of the task's tier or higher and which has the task's `Needs`.

@@ -7,7 +7,7 @@ into merged commits: triage → design → waves of parallel subagent tasks in g
 All state lives as plain Markdown in your repository, so any session (or any person) can pick up where the last
 one stopped.
 
-> Status: version 2, experimental. MIT licensed.
+> Status: experimental (see [releases](https://github.com/paramidon/wave-method/releases)). MIT licensed.
 
 ![Plan with a strong model, review, run waves with cheaper models, merge finished features](docs/images/workflow-simple.svg)
 
@@ -279,10 +279,10 @@ agents load them as usual, and the planner takes them into account when it write
 
 ## Versioning and contributing
 
-All files of the skill set carry one version number (`Wave skill set version N`); any change raises it in all of
-them and adds a line to [`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md). A plan records the
-version it was written with (`skills: vN`). This is version 2. The plugin version in
-[`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) is `N.minor.patch` and is raised with it.
+The version lives only in git tags `vMAJOR.MINOR.PATCH`; no file carries it. Each tag gets a
+[GitHub release](https://github.com/paramidon/wave-method/releases) with archives, and
+[`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md) lists what each release changed. The plugin has no
+version field, so Claude Code treats every new commit on `main` as an update.
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 

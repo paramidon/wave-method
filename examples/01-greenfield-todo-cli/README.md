@@ -1,6 +1,6 @@
 # A todo command-line tool in Python
 
-- Plan: `plans/2026-11-02-todo-cli/` · slug: `todo-cli` · tracking branch: `plan/todo-cli` · created 2026-11-02 · base: 3f1c2a0 · skills: v2
+- Plan: `plans/2026-11-02-todo-cli/` · slug: `todo-cli` · tracking branch: `plan/todo-cli` · created 2026-11-02 · base: 3f1c2a0
 - Re-plans: none
 
 ## Features
