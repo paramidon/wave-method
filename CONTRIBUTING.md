@@ -44,3 +44,4 @@ default branch whatever the tag; the tag and archives are for pinned and manual 
 
 The skill set is maintained with itself: larger changes are planned with `/wave-plan` and executed with
 `/wave-run`, and small, self-contained example plans live under `examples/`.
+
