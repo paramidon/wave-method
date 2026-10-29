@@ -25,6 +25,21 @@ focused and explain the failure they fix.
    git diff --check
    ```
 
+## Releasing
+
+1. Make sure `version` in `.claude-plugin/plugin.json` is the release version and its major number equals the skill
+   set version.
+2. Tag the commit on `main` and push the tag:
+
+   ```bash
+   git tag v2.0.0
+   git push origin v2.0.0
+   ```
+
+The `Release` workflow runs only for tags `vMAJOR.MINOR.PATCH`. It checks the versions, runs the checks, and
+publishes a GitHub release with `.zip` and `.tar.gz` archives and `SHA256SUMS`. Plugin users get the update from the
+default branch whatever the tag; the tag and archives are for pinned and manual installs.
+
 ## Dogfooding
 
 The skill set is maintained with itself: larger changes are planned with `/wave-plan` and executed with

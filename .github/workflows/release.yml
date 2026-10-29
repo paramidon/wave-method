@@ -1,0 +1,62 @@
+name: Release
+
+# Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.0.
+# The tag must match "version" in .claude-plugin/plugin.json, and MAJOR must
+# match the skill set version (SKILL_SET_VERSION in status_check.py).
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag and versions
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::tag $tag is not vMAJOR.MINOR.PATCH"; exit 1
+          fi
+          version="${tag#v}"
+          plugin=$(python3 -c 'import json; print(json.load(open(".claude-plugin/plugin.json"))["version"])')
+          skills=$(sed -n 's/^SKILL_SET_VERSION = \([0-9]*\)$/\1/p' skills/wave-plan/scripts/status_check.py)
+          if [ "$plugin" != "$version" ]; then
+            echo "::error::plugin.json version is $plugin, tag is $tag"; exit 1
+          fi
+          if [ "$skills" != "${version%%.*}" ]; then
+            echo "::error::skill set version is $skills, tag major is ${version%%.*}"; exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run checks
+        run: |
+          python skills/wave-plan/scripts/test_status_check.py
+          for plan in examples/*/; do python skills/wave-plan/scripts/status_check.py "${plan%/}"; done
+
+      - name: Build archives
+        run: |
+          name="wave-method-v${VERSION}"
+          mkdir dist
+          paths="skills install.sh install.ps1 LICENSE README.md docs .claude-plugin"
+          git archive --format=zip    --prefix="$name/" -o "dist/$name.zip"    HEAD $paths
+          git archive --format=tar.gz --prefix="$name/" -o "dist/$name.tar.gz" HEAD $paths
+          (cd dist && sha256sum * > SHA256SUMS)
+          ls -l dist
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "wave-method $GITHUB_REF_NAME" \
+            --generate-notes
