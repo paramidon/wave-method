@@ -11,7 +11,7 @@
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
 
 ## Features
-A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖.
+A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
@@ -34,7 +34,7 @@ Merged: short hash of the merge commit into the main branch.
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/<slug>` and reach the
-main branch with each wave that merges a feature.
+main branch with each feature merge.
 
 ## User problems
 
@@ -86,7 +86,8 @@ Status: see README "Waves"
 |---|---|---|---|---|---|---|---|
 | A | `periapsis-argument-math` | F1 | medium | P1 | — | — | `src/…` |
 
-Depends on: <what this wave needs from earlier waves, or "nothing">. Disjoint files: <why>.
+Depends on: <`F<k> merged` for every other feature whose code this wave's tasks need; what this wave needs from
+earlier waves; or "nothing">. Disjoint files: <why>.
 
 ## Task A · periapsis-argument-math · F1 · medium
 

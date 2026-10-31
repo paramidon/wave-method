@@ -55,10 +55,10 @@
   <path class="mrg" d="M437,120 C490,120 490,300 495,352" style="stroke:var(--f1)"/>
   <path class="mrg" d="M437,260 C480,260 490,320 495,352" style="stroke:var(--f3)"/>
   <circle cx="495" cy="360" r="8" style="fill:var(--main)"/>
-  <text class="d" x="495" y="388" text-anchor="middle">F1 + F3 merged</text>
+  <text class="d" x="495" y="388" text-anchor="middle">F1 + F3 merged after review</text>
   <path class="mrg" d="M747,190 C800,190 805,300 810,352" style="stroke:var(--f2)"/>
   <circle cx="810" cy="360" r="8" style="fill:var(--main)"/>
-  <text class="d" x="810" y="388" text-anchor="middle">F2 merged</text>
+  <text class="d" x="810" y="388" text-anchor="middle">F2 merged after review</text>
 
-  <text class="d" x="480" y="430" text-anchor="middle">Tasks of one wave share no files, so they run at once · a feature reaches main only when all its tasks are done</text>
+  <text class="d" x="480" y="430" text-anchor="middle">Tasks of one wave share no files, so they run at once · a finished feature reaches main only after your review</text>
 </svg>

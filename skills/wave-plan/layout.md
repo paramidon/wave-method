@@ -7,7 +7,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 
 | Reader | Reads |
 |---|---|
-| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/deferred-merges.md` only when its step 1 says so |
+| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so |
 | task subagent | its prompt, the solution files (and sections) the prompt names |
 | task-mode session | `README.md`, its wave file, the solution files its prompt names; `wave-run/task-mode.md` |
 | `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files |
@@ -111,7 +111,9 @@ are identical; only the first character differs.
 | Wave | ⬜ not started · 🔄 since <date time> · ✅ done · ⚠️ done, open problems · ❌ stopped · ➖ dropped (never ran) |
 | Feature | ⬜ not started · 🔄 in progress · ✅ ready · ✅ merged · ⚠️ blocked · ➖ dropped |
 
-Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `main-dirty` (ready, the main checkout was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
+A feature is `✅ ready` when all its tasks are ✅ or ➖ and its full check is green; it is merged only after the user's review ("Feature review").
+
+Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, the main checkout was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
 
 **A status shows the current outcome, not the history.**
 
@@ -163,11 +165,37 @@ Untracked files never matter. Not ready → `main-dirty`, with the reason (`not 
 the overlapping paths). Never stage, unstage, stash, reset or check out anything in the main checkout to make it
 ready.
 
+## Feature review
+
+A feature branch `feat/<plan>/<feature>` holds only its own feature: its tasks run on it or on task branches merged
+back into it, every other feature has its own branch, and `<main>` (merged in before each wave and before review)
+brings in only merged features. So the feature branch is the branch the user reviews; each ready feature is offered
+on its own and can be merged alone, in any order.
+
+Review commands (`<branch>` = `feat/<plan>/<feature>`; the worktree is the feature worktree of "Names"):
+
+```bash
+git log --oneline --no-merges <main>..<branch>
+git diff --stat <main>...<branch>
+git diff <main>...<branch>
+```
+
+Run the project and check by hand in the feature worktree.
+
+- **Approval** is one of: an answer in the `wave-run` session that names the feature (`merge F1`); the command
+  `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`; the user's own `git merge` of
+  the branch into `<main>` (a merge commit or a fast-forward; a squash merge is not detected). Silence, `later`
+  or a general "ok" for several features is not an approval. No skill merges a feature on its own.
+- **Merge hash** of a branch the user merged: the last line of
+  `git log --merges --ancestry-path --format=%h <branch>..<main>`; none → the branch head (a fast-forward).
+- **Rejection**: the user's findings become open entries `[I<n> · review / feature F<k>]`, and the feature becomes
+  ⚠️ blocked; a re-plan adds fix tasks to the same feature.
+
 ## Archive
 
 When every feature of a plan is `✅ merged` (or ➖), and the status check passes:
 
-- a plan without an index: `git mv plans/<date>-<slug> plans/archive/<date>-<slug>` on its tracking branch (by `wave-run` step 8);
+- a plan without an index: `git mv plans/<date>-<slug> plans/archive/<date>-<slug>` on its tracking branch (by `wave-run` when it records the last merge);
 - a plan of an index part: archive the whole index folder only when every part in the index's "Parts" table has
   a plan folder whose features are all merged; otherwise leave it in place.
 

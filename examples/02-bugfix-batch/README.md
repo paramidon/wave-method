@@ -4,7 +4,7 @@
 - Re-plans: none
 
 ## Features
-A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖.
+A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
@@ -30,7 +30,7 @@ Merged: short hash of the merge commit into the main branch.
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/shop-fixes` and reach the
-main branch with each wave that merges a feature.
+main branch with each feature merge.
 
 ## User problems
 

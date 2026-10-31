@@ -4,6 +4,11 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- Unreleased — `wave-run` no longer merges features on its own: a finished feature becomes `✅ ready`
+  (`Waiting for: review`) and is offered on its own branch with review commands; it is merged only when the user
+  approves it (`merge F1` in the session, `/wave-run <plan> merge <F-IDs>`, or their own `git merge`); review
+  findings become problem entries. `deferred-merges.md` is replaced by `merge.md`; a wave that needs another
+  feature names `F<k> merged` in `Depends on:` and stops `feature-unmerged` until it is merged.
 - v2.0.5 (2026-10-31) — `wave-status` leads with feature status (a count per status, a table with task progress and
   merge hash) before the wave line.
 - v2.0.4 (2026-10-29) — the release workflow writes the tag's version into `version` of `.claude-plugin/plugin.json`

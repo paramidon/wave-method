@@ -49,7 +49,8 @@ a given solution well and design poorly. So every design decision is made here a
 If a task prompt says "figure out how", the design is not finished.
 
 Delivery unit: a **feature** reaches the main branch only as a whole, when all its tasks are done, even if its
-tasks are spread over several waves. A wave is only a scheduling unit.
+tasks are spread over several waves, and only after the user reviewed and approved it (`layout.md`, "Feature
+review"). A wave is only a scheduling unit.
 
 **Re-planning.** If the input is a plan folder with open entries in `problems.md`, do not create a new plan.
 Before writing, check the lock: if a wave of the plan is 🔄 on the tracking branch (`layout.md`, "Running
@@ -59,8 +60,8 @@ without writing. Read only what `layout.md` allows for a re-plan. In its trackin
 last one; add them to the README tables and add one line to the README header (`re-planned <date> at <hash>:
 <what>`); put the longer re-plan notes into `history.md` (create it at the first re-plan). Mark the entries `→
 task Y (wave M)`; apply the status rules of `layout.md` (superseded tasks and dropped waves become ➖ now). Fix
-tasks for a blocked feature belong to that same feature. Fixes for a feature that is already merged go into a new
-feature. Run the status check (script, `layout.md`, "Statuses") before committing.
+tasks for a blocked feature (also one the user rejected in review) belong to that same feature. Fixes for a
+feature that is already merged go into a new feature. Run the status check (script, `layout.md`, "Statuses") before committing.
 
 ## Steps
 
@@ -100,8 +101,10 @@ edit and one acceptance check is enough. Every `low` problem is a section `## P<
 - Each feature has an ID unique in the plan, a slug of 2–4 kebab-case words, a title and its acceptance
   criterion (which acceptance tests prove the whole feature works).
 - **No hidden dependencies between features.** If a task of F2 needs code of F1, then either all tasks of F1
-  are in waves before that task (F1 reaches the main branch first and `wave-run` merges the main branch into
-  F2's branch before the wave), or F1 and F2 are one feature.
+  are in waves before that task and the wave file of that task names `F1 merged` in its `Depends on:` line, or
+  F1 and F2 are one feature. F1 reaches the main branch only after the user's review, so `wave-run` stops that
+  wave (`feature-unmerged`) until F1 is merged, then merges the main branch into F2's branch. Never let F2's
+  branch take F1's code any other way: each feature branch holds only its own feature.
 
 ### 5. Slice into tasks
 Task = one prompt for one subagent; every task belongs to exactly one feature.
@@ -139,8 +142,9 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
   for GUI checks) gets it in the `Needs` column; `wave-run` handles it (see "Environment capabilities").
 - Order: hard first, easy at the tail — `high` work in the earliest waves (its risk surfaces early),
   `low` tasks last, where they also fill waves. Dependencies win over this: contracts and pure functions
-  before wiring, wiring before UI. Prefer orders that finish a feature early, so it reaches the main branch
-  without waiting for the whole plan.
+  before wiring, wiring before UI. Prefer orders that finish a feature early, so it is ready for review
+  without waiting for the whole plan. Put a wave that needs `F<k> merged` as late as the order allows: the
+  user reviews F<k> in between.
 - Each wave gets its file `waves/w<NN>.md` with its task table (including `After`, `Needs` and files), the
   dependencies on earlier waves, why its files are disjoint, and the full prompts of its tasks.
 
@@ -166,7 +170,8 @@ Write prompts without tying them to a specific vendor's model or tools.
 - Every P is covered by a feature and a solution (`low` → a section of `lite.md`, others → own file); every
   feature by tasks and an acceptance criterion; every task has an acceptance test.
 - No empty files: `problems.md` and `history.md` exist only when they have content.
-- No file overlaps inside a wave; dependencies cross waves or use `After`; no hidden cross-feature dependency.
+- No file overlaps inside a wave; dependencies cross waves or use `After`; no hidden cross-feature dependency:
+  every one is `F<k> merged` in the `Depends on:` line of the wave that needs it.
 - No single-task waves except an unpairable `high` task; no solo `low`/`medium` task anywhere.
 - Every high task is justified.
 - `After` names only tasks of the same wave, without cycles; every `Needs` is explained in its prompt.
@@ -193,8 +198,9 @@ Write prompts without tying them to a specific vendor's model or tools.
    every feature is merged. Never push.
 
 Answer the user briefly: feature table, wave table, how many tasks of each complexity (and which
-waves need a high-tier model for their tasks), when each feature can reach the main branch (after which
-wave), assumptions, remaining questions, and **the next command**, in both forms (`layout.md`, "Commands"):
+waves need a high-tier model for their tasks), after which wave each feature is ready for review (and which
+waves wait for a merge, `Depends on: F<k> merged`), assumptions, remaining questions, and **the next command**,
+in both forms (`layout.md`, "Commands"):
 `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`, in a fresh session. The coordinator is always medium.
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which

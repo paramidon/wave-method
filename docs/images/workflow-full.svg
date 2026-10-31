@@ -142,9 +142,9 @@
 
   <!-- main -->
   <path class="arrow" d="M845,547 V646" marker-end="url(#a)"/>
-  <text class="lbl" x="853" y="600">yes</text>
+  <text class="lbl" x="853" y="600">yes: you review, approve</text>
   <rect x="30" y="650" width="1040" height="40" rx="10" style="fill:var(--main);opacity:0.15"/>
   <rect x="30" y="650" width="1040" height="40" rx="10" style="fill:none;stroke:var(--main);stroke-width:2"/>
   <text class="t" x="50" y="676" style="fill:var(--main)">main</text>
-  <text class="d" x="100" y="676">only finished, tested features land here · when the last wave is done the plan moves to plans/archive/</text>
+  <text class="d" x="100" y="676">only finished, tested features you approved land here · when the last one is merged the plan moves to plans/archive/</text>
 </svg>

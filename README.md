@@ -1,15 +1,16 @@
 # wave-method
 
-**Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished.**
+**Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished and reviewed.**
 
 wave-method is a set of four agent skills for **Claude Code** and **OpenAI Codex** that turn a list of problems
-into merged commits: triage → design → waves of parallel subagent tasks in git worktrees → feature-gated merges.
+into merged commits: triage → design → waves of parallel subagent tasks in git worktrees → one review branch per
+finished feature → merges you approve.
 All state lives as plain Markdown in your repository, so any session (or any person) can pick up where the last
 one stopped.
 
 > Status: experimental (see [releases](https://github.com/paramidon/wave-method/releases)). MIT licensed.
 
-![Plan with a strong model, review, run waves with cheaper models, merge finished features](docs/images/workflow-simple.svg)
+![Plan with a strong model, review, run waves with cheaper models, review and merge finished features](docs/images/workflow-simple.svg)
 
 ## Contents
 
@@ -104,14 +105,23 @@ A medium-tier model is enough for running:
 /wave-run plans/2026-11-02-csv-export 1
 ```
 
-Wave 1 runs A, B and C at the same time, each in its own git worktree. When it ends, F1 and F3 are merged into
-`main`; F2 waits for its task D. Then:
+Wave 1 runs A, B and C at the same time, each in its own git worktree. When it ends, F1 and F3 are ready; F2 waits
+for its task D. Nothing is merged yet: `wave-run` shows each ready feature on its own branch
+(`feat/csv-export/F1-login-test-stability`, `feat/csv-export/F3-cache-ttl-unit`) with the commands to review it,
+and asks about each one. Answer `merge F1`, `later`, or `problems F1: …` (which go to the next re-plan). A feature
+you leave for later is merged with:
+
+```
+/wave-run plans/2026-11-02-csv-export merge F3
+```
+
+A feature branch holds only its own feature, so each one can be reviewed and merged alone, in any order. Then:
 
 ```
 /wave-run plans/2026-11-02-csv-export 2
 ```
 
-![Wave 1 runs tasks A, B, C in parallel; F1 and F3 merge; F2 waits for task D in wave 2](docs/images/waves-example.svg)
+![Wave 1 runs tasks A, B, C in parallel; F1 and F3 are ready for review; F2 waits for task D in wave 2](docs/images/waves-example.svg)
 
 ### 4. Check progress, fix problems
 
@@ -119,7 +129,8 @@ Wave 1 runs A, B and C at the same time, each in its own git worktree. When it e
 /wave-status
 ```
 
-shows running waves, what each feature is waiting for, and the next command. If a wave reports problems, re-plan
+shows what each feature is waiting for (features waiting for your review come with their branches), running
+waves, and the next command. If a wave reports problems, re-plan
 them with `/wave-plan plans/2026-11-02-csv-export`.
 
 ### A long backlog
@@ -168,8 +179,9 @@ What it adds compared with "agent, please do these ten things":
   with numbers) into the plan, so tasks are sized for medium-tier models that implement well but design poorly.
 - **File-disjoint waves.** Tasks of one wave touch no common file, so they run in parallel in separate git
   worktrees and merge without conflicts.
-- **Feature-gated merges.** A feature reaches the main branch only when all of its tasks — possibly across
-  several waves — are done and its full check is green. Nothing half-wired lands on `main`.
+- **Feature-gated, reviewed merges.** A feature is offered for review only when all of its tasks — possibly
+  across several waves — are done and its full check is green, on its own branch that holds no other feature. It
+  reaches `main` only when you approve it. Nothing half-wired or unreviewed lands on `main`.
 - **Durable, readable state.** Statuses, a problem log and an execution log per wave live in Markdown on a
   tracking branch. A fresh session reads only what it needs; finished waves are never re-read.
 - **Model-tier routing.** Every task is `low`, `medium` or `high`; it never runs below its tier.
@@ -178,13 +190,13 @@ What it adds compared with "agent, please do these ten things":
 
 ## How it works
 
-![Full workflow: triage, plan, review, run waves in worktrees, feature gate, merge, re-plan loop](docs/images/workflow-full.svg)
+![Full workflow: triage, plan, review, run waves in worktrees, feature gate, your review, merge, re-plan loop](docs/images/workflow-full.svg)
 
 | Skill | Role | Recommended model |
 |---|---|---|
 | `wave-triage` | Splits a long list (up to 40–80 problems) into parts that fit one plan each: clarifies once, locates each problem in the code, judges difficulty, finds dependencies. Clusters large lists and runs one read-only subagent per cluster. | high (Opus-class) |
 | `wave-plan` | Designs the solutions and slices them into features, tasks and waves with ready-to-paste task prompts. Also re-plans open problems of an existing plan. | high (Opus-class) |
-| `wave-run` | Executes one wave: worktrees, subagents, merges, checks, statuses, feature merges into `main`, archive. | medium |
+| `wave-run` | Executes one wave: worktrees, subagents, merges, checks, statuses; offers each finished feature for review and merges the ones you approve into `main`; archive. | medium |
 | `wave-status` | Read-only report: status and task progress of every feature first, then running waves, blocked features and why, leftovers, the next command. | low |
 
 Key terms:
@@ -192,7 +204,7 @@ Key terms:
 | Term | Meaning |
 |---|---|
 | problem `P<n>` | one item of your list |
-| feature `F<n>` | the smallest set of changes that makes sense on `main` on its own; the unit that gets merged |
+| feature `F<n>` | the smallest set of changes that makes sense on `main` on its own; the unit that gets reviewed and merged, on its own branch `feat/<plan>/<feature>` |
 | task `A`, `B`, … | one prompt for one subagent, with an exact list of files it may change |
 | wave | tasks that can run at the same time (no shared files); only a scheduling unit |
 | tiers | `low` (Haiku-class), `medium` (Sonnet-class / GPT / Gemini), `high` (Opus-class) |
@@ -244,11 +256,13 @@ Finished plans move to `plans/archive/`.
 
 The skills follow these rules on every run:
 
-- Nothing is ever committed directly on `main`; it only receives `merge --no-ff` of complete features and of the
-  plan's tracking branch.
+- Nothing is ever committed directly on `main`; it only receives `merge --no-ff` of complete features you
+  approved and of the plan's tracking branch.
+- A feature is never merged without your approval of that feature: an answer in the `wave-run` session
+  (`merge F1`), `/wave-run <plan> merge F1`, or your own `git merge` of its branch.
 - Your uncommitted work in the main checkout is never staged, unstaged, stashed or reset. If it blocks a merge (a
   staged change, or an edit to a file the feature also changes), the skill tells you why and waits, or leaves the
-  feature for the next run.
+  feature for a later `/wave-run <plan> merge <F-ID>`.
 - Nothing is ever pushed.
 - A task never runs on a model below its tier.
 - A wave in progress is a lock: no re-plan or second wave of the same plan starts until it finishes.

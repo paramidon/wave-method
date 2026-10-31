@@ -1,6 +1,6 @@
 ---
 name: wave-status
-description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — lead with each feature's status, task progress and what it waits for, then show which wave is running, why the last wave stopped, ready features that are not merged and why, leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 or any stronger model).
+description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — lead with each feature's status, task progress and what it waits for, then show which wave is running, why the last wave stopped, ready features waiting for the user's review (branch, review commands, merge command), leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 or any stronger model).
 ---
 
 # wave-status — read-only pipeline status
@@ -54,12 +54,15 @@ comes first: the user reads it before anything about waves.
   (`2/4 · ⚠️ B`).
 - `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
   `none running` when no wave is 🔄.
-- `Ready, not merged:` features `✅ ready` and the reason. Use `main-dirty` with its reason (`not on <main>`,
-  `staged changes`, or the overlapping paths) when the main checkout is not ready for the feature's merge; the
-  three read-only commands of `layout.md`, "Main readiness", may be run to find it.
+- `Ready for review:` one line per `✅ ready` feature: its branch `feat/<plan>/<feature>`, its `Waiting for`, and
+  the merge command (see "Suggested commands"). For `main-dirty` add its reason (`not on <main>`,
+  `staged changes`, or the overlapping paths); the three read-only commands of `layout.md`, "Main readiness", may
+  be run to find it. Below the lines, the review commands of `layout.md`, "Feature review", once, with `<branch>`.
+- `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
+  the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.
-- `Inconsistencies:` a feature branch merged into `<main>` whose row is not `✅ merged`; a ⚠️/❌ item that
-  names no open entry; an open entry whose items are all ✅ or ➖ (the status check of `layout.md`, "Statuses").
+- `Inconsistencies:` a ⚠️/❌ item that names no open entry; an open entry whose items are all ✅ or ➖ (the
+  status check of `layout.md`, "Statuses").
   May run the script read-only on a plan folder of the tracking branch's worktree; otherwise check by reading.
 - `Leftovers:` task branches or worktrees of waves that are not 🔄; feature worktrees of merged features; a
   tracking branch of an archived plan. Give a suggested cleanup command for each, as described below.
@@ -80,9 +83,8 @@ The commands in this subsection are suggestions for the user's report only. Do n
 - Leftover worktree: `git worktree remove <absolute worktree path>`.
 - Leftover task, feature or tracking branch: `git branch -d <branch>`; suggest removing an attached worktree
   first. Do not suggest forced deletion.
-- A ready feature blocked by `main-dirty`: show the command
-  `/wave-run <plan folder>` · `$wave-run <plan folder>` (it merges deferred features first), for use once the main checkout is ready
-  (`layout.md`, "Main readiness").
+- A ready feature: `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>`, for use after
+  the user has reviewed it; for `main-dirty`, once the main checkout is ready (`layout.md`, "Main readiness").
 - A finished plan that has not been archived: suggest the applicable `git mv` command from
   `layout.md`, "Archive". For an index part, the whole index folder is eligible only when every part is merged.
 
@@ -95,9 +97,11 @@ Use the first rule that applies:
    Otherwise a 🔄 wave means `wait: wave N is running`.
 2. The last wave is ❌: use the `next:` command of its stop line.
 3. Open entries not marked `→ task …`: `/wave-plan <plan folder>` · `$wave-plan <plan folder>`.
-4. The first ⬜ wave whose earlier waves are ✅, ⚠️ or ➖:
+4. A feature `✅ ready`: "review `<branch>`, then" and its merge command (see "Suggested commands"). If rule 5 also
+   applies, give its command on a second line: a wave waits for a review only when its `Depends on:` names the
+   feature (`wave-run` then stops `feature-unmerged`).
+5. The first ⬜ wave whose earlier waves are ✅, ⚠️ or ➖:
    `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>`.
-5. A ready feature with `main-dirty`: `/wave-run <plan folder>` · `$wave-run <plan folder>`.
 6. Every feature merged: `finished; archived by the last wave-run`, or the suggested archive command if the
    plan is not archived.
 

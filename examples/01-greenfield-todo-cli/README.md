@@ -4,7 +4,7 @@
 - Re-plans: none
 
 ## Features
-A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖.
+A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
@@ -32,7 +32,7 @@ Merged: short hash of the merge commit into the main branch.
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/todo-cli` and reach the
-main branch with each wave that merges a feature.
+main branch with each feature merge.
 
 ## User problems
 
@@ -50,4 +50,4 @@ main branch with each wave that merges a feature.
 - Python 3.10+, standard library only at run time; `pytest` for tests.
 - The data file is `todo.json` in the current working folder; a missing file means an empty list.
 - P1 and P2 are one feature: a store without commands, or commands without a store, is useless on `main`.
-- B needs A's API, so it runs in wave 2; F2 can merge after wave 1, F1 and F3 after wave 2.
+- B needs A's API, so it runs in wave 2; F2 is ready for review after wave 1, F1 and F3 after wave 2.

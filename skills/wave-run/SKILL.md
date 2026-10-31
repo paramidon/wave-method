@@ -1,6 +1,6 @@
 ---
 name: wave-run
-description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, merge a feature into the main branch only when all of its tasks (possibly spread over several waves) are done, and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. A ready feature that the user's changes in the main checkout keep from merging is merged in the same session once the user clears them, or by the next `/wave-run <plan>`. Use when the user says "/wave-run <plan> <N>", "запусти волну N", or asks to run the next wave of a plan in plans/. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.1 SOL / Gemini 4 Argon) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
+description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, offer each feature whose tasks (possibly spread over several waves) are all done for the user's review on its own branch, merge it into the main branch only when the user approves that feature (in the same session, or later with "/wave-run <plan> merge <F-ID>"), and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. Use when the user says "/wave-run <plan> <N>", "запусти волну N", "/wave-run <plan> merge F1", "смержи фичу", or asks to run the next wave of a plan in plans/ or to merge a reviewed feature. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.1 SOL / Gemini 4 Argon) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
 ---
 
 # wave-run — execute one wave of a plan
@@ -14,13 +14,16 @@ folder (`wave-plan/layout.md`, "Skill paths").
 
 Read `wave-plan/layout.md` first: plan folder layout, **what the coordinator reads**, model
 tiers, branch and worktree names, status rules, "Running waves", the problem-log format and the Markdown
-rules, "Main readiness" and "Archive". It is the single source of truth; this skill does not repeat it.
+rules, "Main readiness", "Feature review" and "Archive". It is the single source of truth; this skill does not
+repeat it.
 
 Arguments: the plan folder and the wave number. Without a number, take the first wave with status ⬜ or ❌; if
-there is none but a feature is `✅ ready`, run only the deferred merges (see `wave-run/deferred-merges.md`).
-Without a folder, take the most recent plan folder in `plans/` (not under `archive/`) that has unfinished waves,
-and name it to the user. Task-mode forms:
-`/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`.
+there is none but a feature is `✅ ready`, offer the ready features for review (see `wave-run/merge.md`).
+Without a folder, take the most recent plan folder in `plans/` (not under `archive/`) that has unfinished waves
+or a `✅ ready` feature, and name it to the user. Task-mode forms:
+`/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`. Merge form (the user approves
+the named features after review): `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`
+(see `wave-run/merge.md`).
 
 The coordinator does not write task code itself (except merge-conflict resolution) and does not change the
 plan's solutions.
@@ -28,19 +31,23 @@ plan's solutions.
 ## Model of work
 
 - A **feature** is one deliverable; its tasks may span waves. A **wave** only schedules tasks that can run together.
-- Tasks run on the **feature branch** (direct) or on task branches merged back into it (step 4). The feature branch
-  reaches `<main>` only when all its tasks are ✅ or ➖.
+- Tasks run on the **feature branch** (direct) or on task branches merged back into it (step 4). A feature branch
+  holds only its own feature, so it is the branch the user reviews (`layout.md`, "Feature review").
+- A feature whose tasks are all ✅ or ➖ and whose full check is green becomes `✅ ready` and waits for the user's
+  review. It reaches `<main>` only when the user approves that feature (step 10, `wave-run/merge.md`).
 - Statuses and problem entries live on the **tracking branch** `plan/<plan>`; task and feature branches never edit
   `plans/`. The tracking branch is merged into `<main>` once per run that merges a feature.
 
 ## Hard rules
 
 - **Nothing is ever committed directly on the main branch** (`master`/`main`). It only receives
-  `merge --no-ff` of a complete feature branch and of the tracking branch (steps 7–8).
+  `merge --no-ff` of an approved feature branch and of the tracking branch (`wave-run/merge.md`).
 - **The coordinator never works in the main checkout.** All edits, git commands and builds run in the
   worktrees below (use `git -C <path>` or set the working folder there). The main checkout is touched only
   for reading and for the final merges.
 - **A feature is never merged into the main branch partially**: not while any of its tasks is ⬜, 🔄, ⚠️ or ❌.
+- **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"). A
+  wave only makes it `✅ ready`; there is no "merge all" default.
 - **A task is never run on a model below its tier** (see "Environment capabilities").
 - Never push.
 
@@ -81,6 +88,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 |---|---|---|
 | `wave-running` | a wave of this plan is 🔄, unless it is this wave waiting for task mode | wait for it, or the user releases the lock |
 | `earlier-wave-open` | an earlier wave is ⬜, 🔄 or ❌ | run or re-plan that wave |
+| `feature-unmerged` | the wave file's `Depends on:` names `F<k> merged` and F<k> is not `✅ merged` | review F<k> (`layout.md`, "Feature review"), then `/wave-run <plan folder> merge F<k>`<br>`$wave-run <plan folder> merge F<k>` |
 | `leftover-branches` | task branches or worktrees of this wave exist | the user: continue from them, delete them, or stop |
 | `open-problems` | open entries concern this wave and the user said stop | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` |
 | `plan-defect` | the wave file lacks something the wave needs | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` |
@@ -89,11 +97,12 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `red-before-wave` | a feature check is red after merging `<main>` in, before the wave | the user decides: fix or re-plan |
 | `red-after-merge` | a task stays red after 2 attempts | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` (the task is ⚠️) |
 | `design-conflict` | a merge conflict would change a plan solution | the user decides |
+| `not-ready` | the merge form names a feature that is not `✅ ready` and not merged by the user | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
 | `nothing-to-run` | no wave is ⬜ or ❌ and no feature is `✅ ready` | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
 
-In a wave, `main-dirty` is not a stop: the wave is done; the ready feature keeps `✅ ready` with
-`Waiting for: main-dirty`; the report gives the reason, and the next `/wave-run <plan folder>` ·
-`$wave-run <plan folder>` merges it (see `wave-run/deferred-merges.md`).
+`main-dirty` is not a stop: the approved feature keeps `✅ ready` with `Waiting for: main-dirty`; the report gives
+the reason, and `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>` merges it once the
+main checkout is ready (see `wave-run/merge.md`).
 
 ## Fix loop
 
@@ -111,9 +120,9 @@ continue, stop `red-after-merge`.
 - Find the tracking worktree: `git worktree list`. If `plan/<plan>` exists, read the plan folder there;
   otherwise read it from `<main>`.
 - **Extra files.** Read `task-mode.md` when the arguments are `… task <ID>`, when this wave's Execution ends with
-  `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read
-  `deferred-merges.md` when the README has a feature `✅ ready` with `Waiting for: main-dirty`, or when no wave is
-  ⬜ or ❌. Read nothing else of the `wave-run` folder.
+  `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read `merge.md` when the
+  arguments are `merge <F-IDs>`, when no wave is ⬜ or ❌, or in step 10 when the user approves a feature. Read
+  nothing else of the `wave-run` folder.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
   `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
@@ -132,9 +141,10 @@ continue, stop `red-after-merge`.
 - Open entries in `problems.md` (if any) that concern this wave's tasks or their features (and are not `→` a task
   of this wave): show them and ask whether to proceed. If the user declines, stop `open-problems`.
 - A feature branch merged into `<main>` (`git branch --merged <main> "feat/<plan>/*"`) whose README row is not
-  `✅ merged`: write `✅ merged` and the hash of its merge commit
-  (`git log <main> --merges --format=%h -1 --grep "Feature <feature-id> (<plan>)"`) into the README in the
-  "wave N started" commit.
+  `✅ merged` (the user merged it, or a run was interrupted): write `✅ merged`, an empty `Waiting for` and the hash
+  of the merge (`layout.md`, "Feature review") into the README in the "wave N started" commit.
+- Every feature that the wave file's `Depends on:` line names as `F<k> merged` is `✅ merged` (counting the repair
+  above). Otherwise stop `feature-unmerged`, name the feature and its branch, and give its merge command.
 - Uncommitted changes in the main checkout do not matter at this step; do not touch them.
 
 ### 2. Tracking worktree
@@ -145,7 +155,7 @@ continue, stop `red-after-merge`.
   features to 🔄 in "Features" (if ⬜), and apply the interrupted-run repair from step 1. The wave file's
   "Execution" gets `Started <YYYY-MM-DD HH:MM>.` and `Capabilities: …` in the same commit on the tracking
   branch: `Plan <plan>: wave <N> started`. A task-mode resume keeps the existing start record.
-- Then merge the deferred features (see `wave-run/deferred-merges.md`).
+- Do not merge features that are `✅ ready` from earlier runs: they wait for the user (step 9 offers them again).
 
 ### 3. Feature worktrees
 
@@ -226,21 +236,19 @@ git merge --no-ff <task branch> -m "Merge <plan> <feature-id> / <task-id>"
 - After a task branch is merged and green: `git worktree remove` its worktree and `git branch -d` its branch.
   Keep the worktree and branch of a ⚠️ or ❌ task.
 
-### 7. Merge ready features into the main branch
+### 7. Prepare ready features for review
 
-Determine each feature's current outcome before merging: all its tasks in all waves must be ✅ or ➖ and its
-feature check must be green. Otherwise it remains 🔄 in progress, or ⚠️ blocked if a task is ⚠️ or ❌.
-For each feature that became ✅ ready, **merge one feature**:
+Determine each feature's current outcome: all its tasks in all waves must be ✅ or ➖ and its feature check must
+be green. Otherwise it remains 🔄 in progress, or ⚠️ blocked if a task is ⚠️ or ❌. For each feature whose tasks
+are now all ✅ or ➖:
 
 1. In its feature worktree (if it is gone: `git worktree add <feature worktree path> feat/<plan>/<feature>`, path
    from `layout.md`, "Names"): `git merge <main>` if `<main>` moved, resolve conflicts as in step 6, run the
-   **full** check command. Red → the feature becomes ⚠️ blocked with a new problem entry; do not merge.
-2. Check main readiness for `feat/<plan>/<feature>` (`layout.md`, "Main readiness"). Not ready → tell the user
-   the reason (the staged files, the overlapping paths, or the branch) and ask them to clear it and answer
-   when done; on the answer check again. Never stage, unstage, stash or reset anything yourself. If the user
-   leaves it for later, the feature keeps `✅ ready`, `Waiting for: main-dirty` (see `wave-run/deferred-merges.md`).
-3. `git -C <main checkout> merge --no-ff feat/<plan>/<feature> -m "Feature <feature-id> (<plan>): <title>"`,
-   body: one line per task of the feature. Note the merge hash for step 8.
+   **full** check command. With `<main>` merged in, the review diff shows only this feature.
+2. Green → the feature becomes `✅ ready` with `Waiting for: review`. Red → it becomes ⚠️ blocked with a new
+   problem entry.
+
+Merge nothing into `<main>` in this step: a ready feature waits for the user's approval (step 10).
 
 ### 8. Record and commit on the tracking branch
 
@@ -251,13 +259,14 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   ❌ — a check red or a task not done (the wave must be re-run or re-planned).
 - README "Features":
   - 🔄 in progress — some of its tasks are not ✅/➖ yet (later waves, or ⚠️/❌ now);
-  - ✅ ready — all its tasks in all waves are ✅ or ➖ and the feature check is green, but it was not merged;
-  - ✅ merged — merged in step 7 or as a deferred merge (or repaired in step 1); write the short merge hash
-    into "Merged";
-  - ⚠️ blocked — one of its tasks is ⚠️ or ❌: it is not merged until the problem is fixed (re-plan adds fix
-    tasks to the same feature) or the user explicitly says to merge it as is.
+  - ✅ ready — all its tasks in all waves are ✅ or ➖ and the feature check is green (step 7); it waits for the
+    user's review;
+  - ✅ merged — merged by `wave-run/merge.md`, or merged by the user and recorded in step 1; write the short
+    merge hash into "Merged";
+  - ⚠️ blocked — one of its tasks is ⚠️ or ❌, or the user rejected it in review: it is not merged until the
+    problem is fixed (re-plan adds fix tasks to the same feature) or the user explicitly says to merge it as is.
 - Update `Waiting for` of every feature with a task in this wave: `wave <N>` (its next tasks), `I<n>` (an open
-  entry), `main-dirty` (ready, the main checkout was not ready), or `user: <question>`. Empty once merged.
+  entry), `review` (ready, waits for the user's review and approval), or `user: <question>`. Empty once merged.
 - New problems: append entries to `problems.md` with the next IDs (update `Next ID`), in the format of
   `layout.md`; create the file with the first entry.
 - Closed problems: every open entry this wave fixed or verified (its `→ task Y` tasks are now ✅, or a check of
@@ -268,12 +277,14 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   they were resolved, anything a later reader needs. Keep it factual and short. A stopped wave ends with its
   `Stop <code>: … — next: …` line as specified in "Stops".
 - Run the **status check** (script, `layout.md`, "Statuses") over the README; fix what it finds. Archive if eligible (`layout.md`, "Archive").
-- Make **one** commit: `Plan <plan>: wave <N> done`, adding `; <feature IDs> merged` when any, and `; archived`
-  when archived. A stopped wave uses `Plan <plan>: wave <N> stopped`.
-- Only if a feature was merged in this run (step 7 or a deferred merge), make **one**
+- Make **one** commit: `Plan <plan>: wave <N> done`, adding `; <feature IDs> ready` when any became ready,
+  `; <feature IDs> merged` when step 1 recorded a merge by the user, and `; archived` when archived. A stopped wave
+  uses `Plan <plan>: wave <N> stopped`.
+- Only if step 1 recorded a merge, make **one**
   `git -C <main checkout> merge --no-ff plan/<plan> -m "Plan <plan>: status after wave <N>"`.
   The tracking branch only changes `plans/`, so this merge has no code conflicts.
-- Remove merged feature worktrees and `git branch -d feat/<plan>/<feature>`.
+- Remove the worktrees of features recorded as merged and `git branch -d feat/<plan>/<feature>`. Keep the worktree
+  and branch of a ready feature: the user reviews and checks it there.
 - When the plan is archived: remove the tracking worktree and `git branch -d plan/<plan>`. A plan whose features are
   all merged but which has open entries keeps its tracking branch and worktree (it waits for a re-plan).
 
@@ -281,21 +292,48 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 
 - First line if the wave stopped: `Stop <code>: <one line> — next: <command or action>`.
 - Task table: status, what was done in one line, feature.
-- Feature table: status, branch, which tasks are still missing, merged or not (and why not), its `Waiting for`.
-- Merge result: conflicts and how they were resolved.
+- Feature table: status, branch, which tasks are still missing, its `Waiting for`.
+- Task merges: conflicts and how they were resolved.
 - Check result (what passed, what failed).
 - New problem-log entries — the essence of each; entries closed by this wave and the statuses that changed.
-- What to check by hand (UI and anything tests do not cover) — in the feature worktree for features that are
-  not merged yet.
+- What to check by hand (UI and anything tests do not cover) for features that are not ready yet, in their
+  feature worktree.
+- **Ready for review**: one block per `✅ ready` feature, both those this wave made ready and those still waiting
+  from earlier runs. A feature branch holds only its own feature (`layout.md`, "Feature review"), so every block
+  stands alone. Each block gives:
+  - the feature ID, title and "Done when";
+  - its branch `feat/<plan>/<feature>` and its worktree path;
+  - the number of its commits and the `git diff --stat <main>...feat/<plan>/<feature>` summary;
+  - the review commands of `layout.md`, "Feature review", filled in;
+  - what to check by hand in its worktree;
+  - for `main-dirty`, the reason.
+- When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), name the
+  paths and say that the second merge brings the first one in from `<main>` and may need conflict resolution.
+- End the report with the questions of step 10.
 
 **The next command**, always for a fresh session, in both forms (`layout.md`, "Commands"):
 
 | Situation | Next command |
 |---|---|
-| a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>` |
+| a feature is `✅ ready` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
+| a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>`; it waits for a review only if its `Depends on:` names the feature |
 | waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, `<tier>` model, needs `<tool>` |
-| a feature waits for `main-dirty` | the reason, then `/wave-run <plan folder>`<br>`$wave-run <plan folder>` (it merges first) |
 | open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them |
 | last wave done, plan from an index | the index parts plannable now: `/wave-plan <index> part <K>`<br>`$wave-plan <index> part <K>` |
+
+### 10. Ask about each ready feature
+
+Ask once per `✅ ready` feature, at the end of the report:
+`Merge F<k> "<title>" (feat/<plan>/<feature>) into <main>? Answer: merge F<k> · later · problems F<k>: <what is wrong>`.
+Then wait for the answer. Read `wave-run/merge.md` before acting on it.
+
+| Answer | What happens |
+|---|---|
+| approves the merge of named features (`merge F1`, `merge F1 F3`; "yes" when one feature was offered) | "Merge one feature" of `wave-run/merge.md` for each, in "Features" order, then its "Record" |
+| `problems F<k>: …` | "Rejection" of `wave-run/merge.md`, then its "Record" |
+| `later`, no answer, or an answer about something else | nothing changes: the feature keeps `✅ ready`, `Waiting for: review` |
+| "yes" or "ok" when several features were offered | ask which features |
+
+Never treat silence or a general approval of the wave as approval of a merge.
 
 The coordinator is always medium.

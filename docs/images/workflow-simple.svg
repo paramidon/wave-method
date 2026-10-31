@@ -55,10 +55,10 @@
   <!-- 4 Merge -->
   <rect class="card" x="750" y="40" width="180" height="160" rx="12" style="stroke:var(--main)"/>
   <circle cx="778" cy="68" r="14" style="fill:var(--main)"/><text class="n" x="778" y="73" text-anchor="middle">4</text>
-  <text class="t" x="802" y="74">Merged</text>
+  <text class="t" x="802" y="74">Review, merge</text>
   <text class="m" x="766" y="106">main</text>
   <text class="d" x="766" y="132">only finished features</text>
-  <text class="d" x="766" y="150">with a green check</text>
+  <text class="d" x="766" y="150">that you approved</text>
   <text class="d" x="766" y="184" style="fill:var(--main)">your branch stays clean</text>
 
   <path class="arrow" d="M222,120 H266" marker-end="url(#a)"/>

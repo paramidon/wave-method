@@ -32,8 +32,10 @@ Then, each in a fresh session:
 /wave-run plans/2026-11-02-todo-cli 2
 ```
 
-Wave 1 runs A (store) and C (README) in parallel. After it, F2 (README) is merged into `main`; F1 waits, because its
-task B is in wave 2. Wave 2 runs B (commands, built on A's API) and D (CI) in parallel; then F1 and F3 are merged.
+Wave 1 runs A (store) and C (README) in parallel. After it, F2 (README) is ready: `wave-run` names its branch
+`feat/todo-cli/F2-usage-readme` and asks whether to merge it; F1 waits, because its task B is in wave 2. Wave 2 runs
+B (commands, built on A's API) and D (CI) in parallel; then F1 and F3 are offered for review, each on its own branch,
+and merged when you approve them.
 
 ## 02 — a batch of bug fixes
 
@@ -48,8 +50,9 @@ All three problems are `low`, so they get one-line solutions in `solutions/lite.
 /wave-run plans/2026-11-03-shop-fixes 1
 ```
 
-All three tasks run at once; each feature is merged as soon as its own check is green. A known failing test that
-needs network access is listed in the README and does not block the merges.
+All three tasks run at once; each feature is offered for review on its own branch as soon as its own check is
+green, and merged when you approve it. A known failing test that needs network access is listed in the README and
+does not block the features.
 
 ## Checking an example
 
