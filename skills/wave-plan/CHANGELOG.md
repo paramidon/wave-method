@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — a feature waiting for the user's review is `👀 review` instead of the green `✅ ready`, so it no
+- v2.2.0 (2026-10-31) — a feature waiting for the user's review is `👀 review` instead of the green `✅ ready`, so it no
   longer looks like a merged one (an old `✅ ready` reads as `👀 review`); the `wave-status` feature table gains a
   `Branch` column, and the `wave-run` report shows the branch in its feature table and a `Review branch:` line
   per feature under review.
