@@ -3,7 +3,7 @@ import re
 import sys
 from pathlib import Path
 
-MARK = re.compile(r"⬜|🔄|✅|⚠️|❌|➖")
+MARK = re.compile(r"⬜|🔄|👀|✅|⚠️|❌|➖")
 ENTRY = re.compile(r"^- \*\*\[(I\d+) · ([^\]]*)\]")
 COLUMNS = {
     "Features": ("ID", "Status", "Merged"),
@@ -117,7 +117,7 @@ def check(folder):
                 if not merged and status != "➖" and "Waiting for" in row and not waiting:
                     report(readme, line, "waiting-missing", item + " has empty Waiting for")
     for entry, (line, opened, concerned) in entries.items():
-        if opened and concerned and all(items.get(item) in ("✅", "➖") for item in concerned):
+        if opened and concerned and all(items.get(item) in ("✅", "👀", "➖") for item in concerned):
             report(problem_file, line, "entry-all-done", entry + " concerns only completed items")
     next_ids = [(i + 1, int(match[1])) for i, line in enumerate(lines)
                 if (match := re.search(r"Next ID:\s*I(\d+)", line))]

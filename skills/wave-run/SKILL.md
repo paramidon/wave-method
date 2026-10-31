@@ -18,9 +18,9 @@ rules, "Main readiness", "Feature review" and "Archive". It is the single source
 repeat it.
 
 Arguments: the plan folder and the wave number. Without a number, take the first wave with status ⬜ or ❌; if
-there is none but a feature is `✅ ready`, offer the ready features for review (see `wave-run/merge.md`).
+there is none but a feature is `👀 review`, offer the ready features for review (see `wave-run/merge.md`).
 Without a folder, take the most recent plan folder in `plans/` (not under `archive/`) that has unfinished waves
-or a `✅ ready` feature, and name it to the user. Task-mode forms:
+or a `👀 review` feature, and name it to the user. Task-mode forms:
 `/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`. Merge form (the user approves
 the named features after review): `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`
 (see `wave-run/merge.md`).
@@ -33,7 +33,7 @@ plan's solutions.
 - A **feature** is one deliverable; its tasks may span waves. A **wave** only schedules tasks that can run together.
 - Tasks run on the **feature branch** (direct) or on task branches merged back into it (step 4). A feature branch
   holds only its own feature, so it is the branch the user reviews (`layout.md`, "Feature review").
-- A feature whose tasks are all ✅ or ➖ and whose full check is green becomes `✅ ready` and waits for the user's
+- A feature whose tasks are all ✅ or ➖ and whose full check is green becomes `👀 review` and waits for the user's
   review. It reaches `<main>` only when the user approves that feature (step 10, `wave-run/merge.md`).
 - Statuses and problem entries live on the **tracking branch** `plan/<plan>`; task and feature branches never edit
   `plans/`. The tracking branch is merged into `<main>` once per run that merges a feature.
@@ -47,7 +47,7 @@ plan's solutions.
   for reading and for the final merges.
 - **A feature is never merged into the main branch partially**: not while any of its tasks is ⬜, 🔄, ⚠️ or ❌.
 - **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"). A
-  wave only makes it `✅ ready`; there is no "merge all" default.
+  wave only makes it `👀 review`; there is no "merge all" default.
 - **A task is never run on a model below its tier** (see "Environment capabilities").
 - Never push.
 
@@ -97,10 +97,10 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `red-before-wave` | a feature check is red after merging `<main>` in, before the wave | the user decides: fix or re-plan |
 | `red-after-merge` | a task stays red after 2 attempts | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` (the task is ⚠️) |
 | `design-conflict` | a merge conflict would change a plan solution | the user decides |
-| `not-ready` | the merge form names a feature that is not `✅ ready` and not merged by the user | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
-| `nothing-to-run` | no wave is ⬜ or ❌ and no feature is `✅ ready` | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
+| `not-ready` | the merge form names a feature that is not `👀 review` and not merged by the user | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
+| `nothing-to-run` | no wave is ⬜ or ❌ and no feature is `👀 review` | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
 
-`main-dirty` is not a stop: the approved feature keeps `✅ ready` with `Waiting for: main-dirty`; the report gives
+`main-dirty` is not a stop: the approved feature keeps `👀 review` with `Waiting for: main-dirty`; the report gives
 the reason, and `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>` merges it once the
 main checkout is ready (see `wave-run/merge.md`).
 
@@ -155,7 +155,7 @@ continue, stop `red-after-merge`.
   features to 🔄 in "Features" (if ⬜), and apply the interrupted-run repair from step 1. The wave file's
   "Execution" gets `Started <YYYY-MM-DD HH:MM>.` and `Capabilities: …` in the same commit on the tracking
   branch: `Plan <plan>: wave <N> started`. A task-mode resume keeps the existing start record.
-- Do not merge features that are `✅ ready` from earlier runs: they wait for the user (step 9 offers them again).
+- Do not merge features that are `👀 review` from earlier runs: they wait for the user (step 9 offers them again).
 
 ### 3. Feature worktrees
 
@@ -245,7 +245,7 @@ are now all ✅ or ➖:
 1. In its feature worktree (if it is gone: `git worktree add <feature worktree path> feat/<plan>/<feature>`, path
    from `layout.md`, "Names"): `git merge <main>` if `<main>` moved, resolve conflicts as in step 6, run the
    **full** check command. With `<main>` merged in, the review diff shows only this feature.
-2. Green → the feature becomes `✅ ready` with `Waiting for: review`. Red → it becomes ⚠️ blocked with a new
+2. Green → the feature becomes `👀 review` with `Waiting for: review`. Red → it becomes ⚠️ blocked with a new
    problem entry.
 
 Merge nothing into `<main>` in this step: a ready feature waits for the user's approval (step 10).
@@ -259,7 +259,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   ❌ — a check red or a task not done (the wave must be re-run or re-planned).
 - README "Features":
   - 🔄 in progress — some of its tasks are not ✅/➖ yet (later waves, or ⚠️/❌ now);
-  - ✅ ready — all its tasks in all waves are ✅ or ➖ and the feature check is green (step 7); it waits for the
+  - 👀 review — all its tasks in all waves are ✅ or ➖ and the feature check is green (step 7); it waits for the
     user's review;
   - ✅ merged — merged by `wave-run/merge.md`, or merged by the user and recorded in step 1; write the short
     merge hash into "Merged";
@@ -292,17 +292,19 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 
 - First line if the wave stopped: `Stop <code>: <one line> — next: <command or action>`.
 - Task table: status, what was done in one line, feature.
-- Feature table: status, branch, which tasks are still missing, its `Waiting for`.
+- Feature table, one row per feature of the plan: `| Feature | Status | Tasks | Waiting for | Branch |`; `Tasks` is
+  `<done>/<total>` followed by the IDs of the tasks still missing. `Branch` is `feat/<plan>/<feature>`; for a `👀 review` feature it is the
+  branch to review, so the user sees it without reading the blocks below.
 - Task merges: conflicts and how they were resolved.
 - Check result (what passed, what failed).
 - New problem-log entries — the essence of each; entries closed by this wave and the statuses that changed.
 - What to check by hand (UI and anything tests do not cover) for features that are not ready yet, in their
   feature worktree.
-- **Ready for review**: one block per `✅ ready` feature, both those this wave made ready and those still waiting
+- **Ready for review**: one block per `👀 review` feature, both those this wave made ready and those still waiting
   from earlier runs. A feature branch holds only its own feature (`layout.md`, "Feature review"), so every block
   stands alone. Each block gives:
   - the feature ID, title and "Done when";
-  - its branch `feat/<plan>/<feature>` and its worktree path;
+  - `Review branch: feat/<plan>/<feature>` on its own line, and its worktree path;
   - the number of its commits and the `git diff --stat <main>...feat/<plan>/<feature>` summary;
   - the review commands of `layout.md`, "Feature review", filled in;
   - what to check by hand in its worktree;
@@ -315,7 +317,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 
 | Situation | Next command |
 |---|---|
-| a feature is `✅ ready` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
+| a feature is `👀 review` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
 | a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>`; it waits for a review only if its `Depends on:` names the feature |
 | waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, `<tier>` model, needs `<tool>` |
 | open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them |
@@ -323,7 +325,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 
 ### 10. Ask about each ready feature
 
-Ask once per `✅ ready` feature, at the end of the report:
+Ask once per `👀 review` feature, at the end of the report:
 `Merge F<k> "<title>" (feat/<plan>/<feature>) into <main>? Answer: merge F<k> · later · problems F<k>: <what is wrong>`.
 Then wait for the answer. Read `wave-run/merge.md` before acting on it.
 
@@ -331,7 +333,7 @@ Then wait for the answer. Read `wave-run/merge.md` before acting on it.
 |---|---|
 | approves the merge of named features (`merge F1`, `merge F1 F3`; "yes" when one feature was offered) | "Merge one feature" of `wave-run/merge.md` for each, in "Features" order, then its "Record" |
 | `problems F<k>: …` | "Rejection" of `wave-run/merge.md`, then its "Record" |
-| `later`, no answer, or an answer about something else | nothing changes: the feature keeps `✅ ready`, `Waiting for: review` |
+| `later`, no answer, or an answer about something else | nothing changes: the feature keeps `👀 review`, `Waiting for: review` |
 | "yes" or "ok" when several features were offered | ask which features |
 
 Never treat silence or a general approval of the wave as approval of a merge.

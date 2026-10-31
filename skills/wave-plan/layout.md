@@ -109,9 +109,9 @@ are identical; only the first character differs.
 |---|---|
 | Task | ⬜ not started · 🔄 in progress · ✅ done · ⚠️ open problem · ❌ not done · ➖ superseded by X / dropped |
 | Wave | ⬜ not started · 🔄 since <date time> · ✅ done · ⚠️ done, open problems · ❌ stopped · ➖ dropped (never ran) |
-| Feature | ⬜ not started · 🔄 in progress · ✅ ready · ✅ merged · ⚠️ blocked · ➖ dropped |
+| Feature | ⬜ not started · 🔄 in progress · 👀 review · ✅ merged · ⚠️ blocked · ➖ dropped |
 
-A feature is `✅ ready` when all its tasks are ✅ or ➖ and its full check is green; it is merged only after the user's review ("Feature review").
+A feature is `👀 review` when all its tasks are ✅ or ➖ and its full check is green; it is merged only after the user's review ("Feature review"). 👀 is not ✅: the feature is finished but not in `<main>` yet. A README written by v2.1.0 may still say `✅ ready`; read it as `👀 review`, and the next commit that touches the row writes `👀 review`.
 
 Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, the main checkout was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
 

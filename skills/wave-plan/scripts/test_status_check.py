@@ -76,6 +76,12 @@ class StatusCheckTest(unittest.TestCase):
     def test_waiting_missing(self):
         self.assert_rule("waiting-missing", README.replace("✅ merged", "⬜"))
 
+    def test_review_feature(self):
+        readme = README.replace("| F1 | ✅ merged | | abc123 |", "| F1 | 👀 review | review | |")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+        self.assert_rule("waiting-missing", readme.replace("| review | |", "| | |"))
+
     def test_next_id(self):
         self.assert_rule("next-id", problems=PROBLEMS + (
             "- **[I3 · task A]** status: closed\n"))

@@ -46,15 +46,17 @@ For each plan, report the following in order. Keep a blank line before and after
 comes first: the user reads it before anything about waves.
 
 - Header: plan folder, slug, tracking branch present or absent.
-- `Features:` one line with the count per status, for example `5 — 2 ✅ merged · 1 ✅ ready · 1 🔄 · 1 ⚠️`
+- `Features:` one line with the count per status, for example `5 — 2 ✅ merged · 1 👀 review · 1 🔄 · 1 ⚠️`
   (omit statuses with a count of 0).
 - The feature table below, one row per feature of the README's Features table, in its order, using the README's
-  `Status`, `Waiting for` and `Merged` values. `Tasks` is `<done>/<total>`: tasks of the feature with status ✅,
-  over its tasks that are not ➖ (`—` when none). Add the failing task IDs after it for ⚠️ and ❌ tasks
+  `Status`, `Waiting for`, `Branch` and `Merged` values. `Branch` is the feature branch `feat/<plan>/<feature>`
+  (`—` when it does not exist yet); for a `👀 review` feature it is the branch the user reviews. Show an old
+  `✅ ready` as `👀 review` (`layout.md`, "Statuses"). `Tasks` is `<done>/<total>`: tasks of the feature with
+  status ✅, over its tasks that are not ➖ (`—` when none). Add the failing task IDs after it for ⚠️ and ❌ tasks
   (`2/4 · ⚠️ B`).
 - `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
   `none running` when no wave is 🔄.
-- `Ready for review:` one line per `✅ ready` feature: its branch `feat/<plan>/<feature>`, its `Waiting for`, and
+- `Ready for review:` one line per `👀 review` feature: its branch `feat/<plan>/<feature>`, its `Waiting for`, and
   the merge command (see "Suggested commands"). For `main-dirty` add its reason (`not on <main>`,
   `staged changes`, or the overlapping paths); the three read-only commands of `layout.md`, "Main readiness", may
   be run to find it. Below the lines, the review commands of `layout.md`, "Feature review", once, with `<branch>`.
@@ -69,9 +71,9 @@ comes first: the user reads it before anything about waves.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
-| Feature | Status | Tasks | Waiting for | Merged |
-|---|---|---|---|---|
-| F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <README Merged> |
+| Feature | Status | Tasks | Waiting for | Branch | Merged |
+|---|---|---|---|---|---|
+| F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <feature branch> | <README Merged> |
 
 Then report each index's parts without a plan folder, whether their "Plan when" condition is met, and their
 `/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands.
@@ -97,7 +99,7 @@ Use the first rule that applies:
    Otherwise a 🔄 wave means `wait: wave N is running`.
 2. The last wave is ❌: use the `next:` command of its stop line.
 3. Open entries not marked `→ task …`: `/wave-plan <plan folder>` · `$wave-plan <plan folder>`.
-4. A feature `✅ ready`: "review `<branch>`, then" and its merge command (see "Suggested commands"). If rule 5 also
+4. A feature `👀 review`: "review `<branch>`, then" and its merge command (see "Suggested commands"). If rule 5 also
    applies, give its command on a second line: a wave waits for a review only when its `Depends on:` names the
    feature (`wave-run` then stops `feature-unmerged`).
 5. The first ⬜ wave whose earlier waves are ✅, ⚠️ or ➖:
