@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — the skills also run in Google Antigravity and Gemini CLI: the repository installs as an
+- v2.4.0 (2026-11-01) — the skills also run in Google Antigravity and Gemini CLI: the repository installs as an
   Antigravity plugin (`plugin.json`) and a Gemini CLI extension (`gemini-extension.json`, `/wave-*` commands in
   `commands/`), the installers' `.agents/skills/` links serve Codex, Antigravity and Gemini CLI (`--no-agents` /
   `-NoAgents`, the old `--no-codex` still works), and the model tiers name Gemini models for every tier.
