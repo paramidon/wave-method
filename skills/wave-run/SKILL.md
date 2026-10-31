@@ -302,8 +302,18 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   feature worktree.
 - **Ready for review**: one block per `👀 review` feature, both those this wave made ready and those still waiting
   from earlier runs. A feature branch holds only its own feature (`layout.md`, "Feature review"), so every block
-  stands alone. Each block gives:
-  - the feature ID, title and "Done when";
+  stands alone. The user may not remember the plan, so the block first says what the feature is, in the user's
+  language and plain words, without making them open the README. Each block gives:
+  - the feature ID and title;
+  - **What and why**: the user problems it solves (its `P` lines of README "User problems", in their words) and
+    what changes for the user or the project once it is merged, before → after, in one to three sentences;
+  - **What was done**: one line per task of the feature (ID, what it did), from this run's task reports, or from
+    the task commit subjects (`git log --oneline --no-merges <main>..feat/<plan>/<feature>`) for tasks of earlier
+    waves; ➖ tasks with the reason they were dropped;
+  - **How it was checked**: "Done when", the full check result, and the tests the feature added or changed (test
+    files in its diff);
+  - **Worth a look**: decisions the user may not expect — problem entries of the feature closed on the way,
+    assumptions it relies on, conflict resolutions that changed its code; "nothing" when there are none;
   - `Review branch: feat/<plan>/<feature>` on its own line, and its worktree path;
   - the number of its commits and the `git diff --stat <main>...feat/<plan>/<feature>` summary;
   - the review commands of `layout.md`, "Feature review", filled in;
@@ -326,8 +336,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 ### 10. Ask about each ready feature
 
 Ask once per `👀 review` feature, at the end of the report:
-`Merge F<k> "<title>" (feat/<plan>/<feature>) into <main>? Answer: merge F<k> · later · problems F<k>: <what is wrong>`.
-Then wait for the answer. Read `wave-run/merge.md` before acting on it.
+`Merge F<k> "<title>" — <what it changes, one line> (feat/<plan>/<feature>) into <main>? Answer: merge F<k> · later · problems F<k>: <what is wrong>`.Then wait for the answer. Read `wave-run/merge.md` before acting on it.
 
 | Answer | What happens |
 |---|---|

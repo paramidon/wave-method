@@ -170,7 +170,9 @@ ready.
 A feature branch `feat/<plan>/<feature>` holds only its own feature: its tasks run on it or on task branches merged
 back into it, every other feature has its own branch, and `<main>` (merged in before each wave and before review)
 brings in only merged features. So the feature branch is the branch the user reviews; each ready feature is offered
-on its own and can be merged alone, in any order.
+on its own and can be merged alone, in any order. It is offered with a review brief — what the feature is and
+why, what each task did, how it was checked, what is worth a look (`wave-run/SKILL.md` step 9) — so the user
+can review it without reading the plan.
 
 Review commands (`<branch>` = `feat/<plan>/<feature>`; the worktree is the feature worktree of "Names"):
 

@@ -107,8 +107,9 @@ A medium-tier model is enough for running:
 
 Wave 1 runs A, B and C at the same time, each in its own git worktree. When it ends, F1 and F3 are ready; F2 waits
 for its task D. Nothing is merged yet: `wave-run` shows each ready feature on its own branch
-(`feat/csv-export/F1-login-test-stability`, `feat/csv-export/F3-cache-ttl-unit`) with the commands to review it,
-and asks about each one. Answer `merge F1`, `later`, or `problems F1: …` (which go to the next re-plan). A feature
+(`feat/csv-export/F1-login-test-stability`, `feat/csv-export/F3-cache-ttl-unit`) with a review brief — what the
+feature is and which problems it solves, what each task did, how it was checked, what is worth a look — and the
+commands to review it, and asks about each one. Answer `merge F1`, `later`, or `problems F1: …` (which go to the next re-plan). A feature
 you leave for later is merged with:
 
 ```
