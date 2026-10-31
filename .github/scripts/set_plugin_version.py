@@ -1,4 +1,4 @@
-"""Set "version" in a plugin.json: python set_plugin_version.py <plugin.json> <version>.
+"""Set "version" in a manifest: python set_plugin_version.py <plugin.json | gemini-extension.json> <version>.
 
 Used only by the release workflow; the version comes from the release tag.
 """

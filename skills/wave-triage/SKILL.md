@@ -1,6 +1,6 @@
 ---
 name: wave-triage
-description: First stage of the wave-triage → wave-plan → wave-run pipeline. Take the user's whole list of problems/features, ask all clarifying questions once, look into the code just deep enough to locate each problem and judge its difficulty, find dependencies, and split the work into parts small enough for one wave-plan run each. It clusters large lists and runs one read-only subagent per cluster. Writes an index and, for more than 8 problems, separate problem records in its own folder under plans/ and prints a short wave-plan command per part. Use when the user brings a list of tasks to analyse ("/wave-triage", "$wave-triage", "разбери задачи", "проанализируй список"), especially a long or hard one. Recommended model: high complexity (Opus-class) — misjudged difficulty or dependencies break every later stage; the session itself stays short because it does not design.
+description: First stage of the wave-triage → wave-plan → wave-run pipeline. Take the user's whole list of problems/features, ask all clarifying questions once, look into the code just deep enough to locate each problem and judge its difficulty, find dependencies, and split the work into parts small enough for one wave-plan run each. It clusters large lists and runs one read-only subagent per cluster. Writes an index and, for more than 8 problems, separate problem records in its own folder under plans/ and prints a short wave-plan command per part. Use when the user brings a list of tasks to analyse ("/wave-triage", "$wave-triage", "разбери задачи", "проанализируй список"), especially a long or hard one. Recommended model: high complexity (Opus 5.5 / Gemini 4 Argon) — misjudged difficulty or dependencies break every later stage; the session itself stays short because it does not design.
 ---
 
 # wave-triage — analyse a task list and split it into plannable parts
@@ -15,8 +15,8 @@ folder (`wave-plan/layout.md`, "Skill paths").
 ## Pipeline
 `wave-triage` → (user confirms) → `wave-plan` once per part, each in a fresh session → `wave-run` per wave.
 Each skill ends by telling the user the exact next command(s).
-Command form: `/wave-triage`, `/wave-plan`, `/wave-run` in Claude Code; `$wave-triage`, `$wave-plan`, `$wave-run`
-in Codex. Print every command in both forms (`layout.md`, "Commands").
+Command form: `/wave-triage`, `/wave-plan`, `/wave-run` in Claude Code, Antigravity and Gemini CLI;
+`$wave-triage`, `$wave-plan`, `$wave-run` in Codex. Print every command in both forms (`layout.md`, "Commands").
 
 ## What triage does and does not do
 - Does: restate, clarify, locate, judge difficulty, find dependencies, split into parts, write the index.

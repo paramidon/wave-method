@@ -11,8 +11,8 @@ focused and explain the failure they fix.
    rules live in `skills/wave-plan/layout.md`; the difficulty scale lives in `skills/wave-triage/difficulty.md`;
    templates live in `skills/wave-plan/templates.md`. Other files refer to them instead of repeating them.
 3. **Do not write version numbers into files.** The version lives only in the release tag; the release workflow
-   copies it into `version` of `.claude-plugin/plugin.json` on `main` — never edit that field by hand. Add one line about your
-   change to the `- Unreleased` line at the top of `skills/wave-plan/CHANGELOG.md`.
+   copies it into `version` of `.claude-plugin/plugin.json` and `gemini-extension.json` on `main` — never edit
+   that field by hand. Add one line about your change to the `- Unreleased` line at the top of `skills/wave-plan/CHANGELOG.md`.
    Refer to other skill files by paths relative to the skills folder (`wave-plan/layout.md`), never
    `.claude/skills/...`.
 4. **Write skill text in English**, in short imperative sentences, with a blank line before and after every table,
@@ -36,9 +36,9 @@ focused and explain the failure they fix.
    ```
 
 The `Release` workflow runs only for tags `vMAJOR.MINOR.PATCH`. It runs the checks, publishes a GitHub release
-with `.zip` and `.tar.gz` archives and `SHA256SUMS`, and commits the version into `.claude-plugin/plugin.json` on
-`main` (run `git pull` afterwards). Plugin users are offered the update once that commit is on `main`. The tagged
-commit must be on `main`.
+with `.zip` and `.tar.gz` archives and `SHA256SUMS`, and commits the version into `.claude-plugin/plugin.json` and
+`gemini-extension.json` on `main` (run `git pull` afterwards). Plugin and extension users are offered the update
+once that commit is on `main`. The tagged commit must be on `main`.
 
 ## Dogfooding
 

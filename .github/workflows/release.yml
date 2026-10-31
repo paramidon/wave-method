@@ -2,8 +2,9 @@ name: Release
 
 # Runs only for version tags vMAJOR.MINOR.PATCH, for example v2.0.4.
 # The tag is the only place where people write the version. This workflow
-# copies it into "version" of .claude-plugin/plugin.json on main (so Claude
-# Code shows it and offers the update) and into the release archives.
+# copies it into "version" of .claude-plugin/plugin.json and gemini-extension.json
+# on main (so Claude Code and Gemini CLI show it and offer the update) and into
+# the release archives.
 on:
   push:
     tags:
@@ -44,20 +45,23 @@ jobs:
         run: |
           name="wave-method-v${VERSION}"
           mkdir -p build dist
-          paths="skills install.sh install.ps1 LICENSE README.md docs .claude-plugin"
+          paths="skills commands install.sh install.ps1 LICENSE README.md docs .claude-plugin plugin.json gemini-extension.json"
           git archive --prefix="$name/" "$GITHUB_REF_NAME" $paths | tar -x -C build
-          python .github/scripts/set_plugin_version.py "build/$name/.claude-plugin/plugin.json" "$VERSION"
+          for manifest in .claude-plugin/plugin.json gemini-extension.json; do
+            python .github/scripts/set_plugin_version.py "build/$name/$manifest" "$VERSION"
+          done
           (cd build && zip -qr "../dist/$name.zip" "$name" && tar -czf "../dist/$name.tar.gz" "$name")
           (cd dist && sha256sum * > SHA256SUMS)
           ls -l dist
 
-      - name: Write the version into plugin.json on main
+      - name: Write the version into the manifests on main
         run: |
           git switch main
           git pull --ff-only origin main
           python .github/scripts/set_plugin_version.py .claude-plugin/plugin.json "$VERSION"
+          python .github/scripts/set_plugin_version.py gemini-extension.json "$VERSION"
           if git diff --quiet; then
-            echo "plugin.json already has version $VERSION"
+            echo "the manifests already have version $VERSION"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

@@ -1,0 +1,4 @@
+{
+  "name": "wave-method",
+  "description": "Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished: wave-triage, wave-plan, wave-run and wave-status skills."
+}

@@ -2,7 +2,8 @@
 
 **Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished and reviewed.**
 
-wave-method is a set of four agent skills for **Claude Code** and **OpenAI Codex** that turn a list of problems
+wave-method is a set of four agent skills for **Claude Code**, **OpenAI Codex**, **Google Antigravity** and
+**Gemini CLI** that turn a list of problems
 into merged commits: triage → design → waves of parallel subagent tasks in git worktrees → one review branch per
 finished feature → merges you approve.
 All state lives as plain Markdown in your repository, so any session (or any person) can pick up where the last
@@ -28,7 +29,7 @@ one stopped.
 
 ## Install
 
-You need git, and Claude Code or Codex (see [Requirements](#requirements)).
+You need git, and Claude Code, Codex, Antigravity or Gemini CLI (see [Requirements](#requirements)).
 
 ### Claude Code plugin (recommended for Claude Code)
 
@@ -44,10 +45,31 @@ with the plugin prefix (`/wave-method:wave-plan`), which you need only if anothe
 share the plugin with your team, commit the marketplace and plugin to the project's `.claude/settings.json`
 (`extraKnownMarketplaces` and `enabledPlugins`).
 
-### Installer (Codex, or a copy inside the project)
+### Antigravity plugin
+
+In the Antigravity CLI, install this repository as a plugin:
+
+```
+agy plugin install https://github.com/paramidon/wave-method
+```
+
+The plugin's skills become slash commands (`/wave-plan`; `/wave-method:wave-plan` if the name is taken) in the
+Antigravity app and CLI. For one project only, use the installer below instead: Antigravity reads the
+skills from `<project>/.agents/skills/`.
+
+### Gemini CLI extension
+
+```
+gemini extensions install https://github.com/paramidon/wave-method
+```
+
+The extension brings the four skills and the commands `/wave-triage`, `/wave-plan`, `/wave-run` and
+`/wave-status`, which activate them. Gemini CLI asks once to activate a skill; allow it.
+
+### Installer (Codex, Antigravity, Gemini CLI, or a copy inside the project)
 
 Clone this repository and run the installer against your project. It copies the skills into `<project>/.claude/skills/` and links them into
-`<project>/.agents/skills/` for Codex.
+`<project>/.agents/skills/`, which Codex, Antigravity and Gemini CLI read.
 
 Windows (PowerShell):
 
@@ -63,8 +85,9 @@ git clone https://github.com/paramidon/wave-method.git
 ./wave-method/install.sh /path/to/your-project
 ```
 
-Options: `-Force` / `--force` replaces existing `wave-*` skill folders (use it to upgrade); `-NoCodex` /
-`--no-codex` skips the Codex links. Add `.agents/` to your project's `.gitignore` if you use the links.
+Options: `-Force` / `--force` replaces existing `wave-*` skill folders (use it to upgrade); `-NoAgents` /
+`--no-agents` skips the `.agents/skills/` links (the old names `-NoCodex` / `--no-codex` still work). Add
+`.agents/` to your project's `.gitignore` if you use the links.
 
 Manual install: copy the four folders of `skills/` into one skills folder that your agent reads (for example
 `<project>/.claude/skills/` or `<project>/.agents/skills/`). Keep them side by side: the skills refer to each other
@@ -72,7 +95,9 @@ by paths relative to that folder (`wave-plan/layout.md`).
 
 ## Quick start
 
-Commands are shown for Claude Code (`/…`); in Codex type the same command with `$` (`$wave-plan …`). Every skill
+Commands are shown in the slash form (`/…`) of Claude Code, Antigravity and Gemini CLI; in Codex type the same
+command with `$` (`$wave-plan …`). In Gemini CLI without the extension, ask for the skill by name
+(`use the wave-plan skill: …`). Every skill
 ends by printing the next command in both forms. Start each step in a **fresh session**.
 
 ### 1. Plan
@@ -195,8 +220,8 @@ What it adds compared with "agent, please do these ten things":
 
 | Skill | Role | Recommended model |
 |---|---|---|
-| `wave-triage` | Splits a long list (up to 40–80 problems) into parts that fit one plan each: clarifies once, locates each problem in the code, judges difficulty, finds dependencies. Clusters large lists and runs one read-only subagent per cluster. | high (Opus-class) |
-| `wave-plan` | Designs the solutions and slices them into features, tasks and waves with ready-to-paste task prompts. Also re-plans open problems of an existing plan. | high (Opus-class) |
+| `wave-triage` | Splits a long list (up to 40–80 problems) into parts that fit one plan each: clarifies once, locates each problem in the code, judges difficulty, finds dependencies. Clusters large lists and runs one read-only subagent per cluster. | high (Opus / Gemini Argon class) |
+| `wave-plan` | Designs the solutions and slices them into features, tasks and waves with ready-to-paste task prompts. Also re-plans open problems of an existing plan. | high (Opus / Gemini Argon class) |
 | `wave-run` | Executes one wave: worktrees, subagents, merges, checks, statuses; offers each finished feature for review and merges the ones you approve into `main`; archive. | medium |
 | `wave-status` | Read-only report: status and task progress of every feature first, then running waves, blocked features and why, leftovers, the next command. | low |
 
@@ -208,7 +233,7 @@ Key terms:
 | feature `F<n>` | the smallest set of changes that makes sense on `main` on its own; the unit that gets reviewed and merged, on its own branch `feat/<plan>/<feature>` |
 | task `A`, `B`, … | one prompt for one subagent, with an exact list of files it may change |
 | wave | tasks that can run at the same time (no shared files); only a scheduling unit |
-| tiers | `low` (Haiku-class), `medium` (Sonnet-class / GPT / Gemini), `high` (Opus-class) |
+| tiers | `low` (Haiku / Gemini Flash-Lite class), `medium` (Sonnet / GPT / Gemini Flash class), `high` (Opus / Gemini Argon class) |
 | tracking branch | `plan/<slug>`: the only place where plan status is committed |
 
 A plan folder looks like this:
@@ -227,7 +252,8 @@ Finished plans move to `plans/archive/`.
 ## Requirements
 
 - **Git** with `worktree` support, and a main branch called `main` or `master`.
-- **Claude Code** (plugin, or skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
+- **Claude Code** (plugin, or skills in `.claude/skills/`), **OpenAI Codex**, **Google Antigravity** or
+  **Gemini CLI** (plugin or extension, or skills discovered in `.agents/skills/`).
   Subagents with a choice of model work best; without them the skills degrade to "one task per fresh session"
   (task mode).
 - **Python 3.9+** (optional) for the status-check script `wave-plan/scripts/status_check.py`; without Python the
@@ -279,14 +305,15 @@ The skills follow these rules on every run:
 | File templates | `wave-plan/templates.md` |
 | Language | the skills talk in the language you write in; everything written to the repository is English |
 
-Your project's own rules (for example an `AGENTS.md` or `CLAUDE.md` with coding conventions) keep working: the
+Your project's own rules (for example an `AGENTS.md`, `CLAUDE.md` or `GEMINI.md` with coding conventions) keep working: the
 agents load them as usual, and the planner takes them into account when it writes the task prompts.
 
 ## Limitations
 
-- **Experimental.** Tested so far on one Java project with Claude Code and Codex on Windows.
+- **Experimental.** Tested so far on one Java project with Claude Code and Codex on Windows; Antigravity and
+  Gemini CLI support follows their documented skill locations and is not field-tested yet.
 - **Model names** in the tier table are examples; adjust them to the models you have.
-- **Codex links** on Windows are junctions (`.agents/skills/`); git does not keep them, so run the installer again
+- **`.agents/skills/` links** on Windows are junctions; git does not keep them, so run the installer again
   after a fresh clone.
 - **Cost.** Planning uses a high-tier model and reads code; it pays off for batches, not single edits.
 - **Checks are only as good as your tests.** Acceptance criteria in plans are concrete, but the gate is the check
@@ -296,8 +323,9 @@ agents load them as usual, and the planner takes them into account when it write
 
 The version is written only as a git tag `vMAJOR.MINOR.PATCH`. For each tag the release workflow publishes a
 [GitHub release](https://github.com/paramidon/wave-method/releases) with archives and copies the version into
-`version` of [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) on `main`; Claude Code offers plugin users an
-update when that field changes, so they get releases, not every commit.
+`version` of [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) and
+[`gemini-extension.json`](gemini-extension.json) on `main`; Claude Code and Gemini CLI offer an update when that
+field changes, so they get releases, not every commit. Antigravity installs the plugin from `main`.
 [`skills/wave-plan/CHANGELOG.md`](skills/wave-plan/CHANGELOG.md) lists what each release changed.
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).

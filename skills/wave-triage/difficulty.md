@@ -9,7 +9,7 @@ the architecture, whose job is to turn hard problems into medium tasks.
 - `low` — the change is obvious and local.
 - `medium` — the approach is clear, the work spans several files or needs its own tests.
 - `high` — the approach itself is unclear: needs design, research, numeric experiments, or touches core
-  invariants (see the project's AGENTS.md / CLAUDE.md for which invariants are core).
+  invariants (see the project's AGENTS.md / CLAUDE.md / GEMINI.md for which invariants are core).
 
 Judge it from a quick look at the code: find where the problem lives (search, open the relevant
 class/function), not from the statement alone. Do not design a solution while judging.

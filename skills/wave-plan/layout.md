@@ -28,7 +28,7 @@ A wave file holds everything its wave needs. If something is missing, that is a 
 - A subagent writes its report in the language that its header's `Report language:` line names.
 
 ## Skill paths
-Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
+Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` or `.agents/skills/` for a project install, the plugin's or extension's `skills/` for a Claude Code plugin, an Antigravity plugin or a Gemini CLI extension). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
 
 ## Version
 The skill files carry no version number. A release is a git tag `vMAJOR.MINOR.PATCH` of the wave-method repository; `wave-plan/CHANGELOG.md` (agents do not read it) lists what each release changed.
@@ -68,9 +68,9 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 
 | Complexity | Meaning | Model tier |
 |---|---|---|
-| `low` | mechanical edit from an exact description | Haiku 5.5 (or any stronger model) |
-| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 / GPT-6.1 SOL / Gemini 4 Argon (or stronger) |
-| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 |
+| `low` | mechanical edit from an exact description | Haiku 5.5 / Gemini 3.5 Flash-Lite (or any stronger model) |
+| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 / GPT-6.1 SOL / Gemini 3.8 Flash (or stronger) |
+| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 / Gemini 4 Argon |
 
 A task never runs below its tier; a `high` task never runs on a medium model. A plan README may add a line `Models: <complexity> = <model>, …` naming concrete models of the same or a higher tier; it never lowers one.
 
@@ -99,9 +99,10 @@ Example: plan `interbody-periapsis`, feature F1, wave 2, task D → `feat/interb
 
 ## Commands
 
-Every command a skill gives the user is printed in both forms, Claude Code first:
-`/wave-run <args>` · `$wave-run <args>`. In a table cell both forms are separated by `<br>`. The arguments
-are identical; only the first character differs.
+Every command a skill gives the user is printed in both forms, slash form first:
+`/wave-run <args>` · `$wave-run <args>`. The slash form is for Claude Code, Antigravity and Gemini CLI; the
+`$` form is for Codex. In a table cell both forms are separated by `<br>`. The arguments are identical; only
+the first character differs.
 
 ## Statuses
 

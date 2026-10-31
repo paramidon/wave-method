@@ -1,17 +1,18 @@
 <#
 Installs the wave skill set into a project:
   <Target>\.claude\skills\wave-*         copies of skills\wave-*
-  <Target>\.agents\skills\wave-*         junctions to them, for Codex (skip with -NoCodex)
+  <Target>\.agents\skills\wave-*         junctions to them, for Codex, Antigravity and Gemini CLI
+                                         (skip with -NoAgents; -NoCodex is the old name)
 
 Usage:
   .\install.ps1 -Target D:\work\my-project
   .\install.ps1 -Target D:\work\my-project -Force      # replace existing wave-* skill folders
-  .\install.ps1 -Target D:\work\my-project -NoCodex
+  .\install.ps1 -Target D:\work\my-project -NoAgents
 #>
 param(
     [Parameter(Mandatory = $true)][string]$Target,
     [switch]$Force,
-    [switch]$NoCodex
+    [Alias('NoCodex')][switch]$NoAgents
 )
 
 $ErrorActionPreference = 'Stop'
@@ -34,7 +35,7 @@ foreach ($name in $skills) {
     Write-Host "installed $to"
 }
 
-if (-not $NoCodex) {
+if (-not $NoAgents) {
     New-Item -ItemType Directory -Path $agentSkills -Force | Out-Null
     foreach ($name in $skills) {
         $link = Join-Path $agentSkills $name

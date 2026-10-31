@@ -4,6 +4,10 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- Unreleased — the skills also run in Google Antigravity and Gemini CLI: the repository installs as an
+  Antigravity plugin (`plugin.json`) and a Gemini CLI extension (`gemini-extension.json`, `/wave-*` commands in
+  `commands/`), the installers' `.agents/skills/` links serve Codex, Antigravity and Gemini CLI (`--no-agents` /
+  `-NoAgents`, the old `--no-codex` still works), and the model tiers name Gemini models for every tier.
 - v2.3.0 (2026-10-31) — `wave-run` offers each feature under review with a review brief: what the feature is and
   which user problems it solves (before → after), what each task did, how it was checked, and what is worth a look;
   the merge question names what the feature changes in one line.

@@ -1,27 +1,28 @@
 #!/usr/bin/env sh
 # Installs the wave skill set into a project:
 #   <target>/.claude/skills/wave-*   copies of skills/wave-*
-#   <target>/.agents/skills/wave-*   symlinks to them, for Codex (skip with --no-codex)
+#   <target>/.agents/skills/wave-*   symlinks to them, for Codex, Antigravity and Gemini CLI
+#                                    (skip with --no-agents; --no-codex is the old name)
 #
 # Usage:
 #   ./install.sh /path/to/project
 #   ./install.sh /path/to/project --force      # replace existing wave-* skill folders
-#   ./install.sh /path/to/project --no-codex
+#   ./install.sh /path/to/project --no-agents
 set -eu
 
 if [ $# -lt 1 ]; then
-    echo "usage: $0 <target project> [--force] [--no-codex]" >&2
+    echo "usage: $0 <target project> [--force] [--no-agents]" >&2
     exit 2
 fi
 
 target=$(cd "$1" && pwd)
 shift
 force=0
-codex=1
+agents=1
 for arg in "$@"; do
     case "$arg" in
         --force) force=1 ;;
-        --no-codex) codex=0 ;;
+        --no-agents|--no-codex) agents=0 ;;
         *) echo "unknown option: $arg" >&2; exit 2 ;;
     esac
 done
@@ -46,7 +47,7 @@ for name in $skills; do
     echo "installed $to"
 done
 
-if [ "$codex" -eq 1 ]; then
+if [ "$agents" -eq 1 ]; then
     mkdir -p "$agent_skills"
     for name in $skills; do
         link="$agent_skills/$name"

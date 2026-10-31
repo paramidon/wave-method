@@ -1,0 +1,4 @@
+description = "Run the wave-run skill of wave-method."
+prompt = """
+Activate the `wave-run` skill and follow it exactly. Its arguments are: {{args}}
+"""

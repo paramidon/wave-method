@@ -1,6 +1,6 @@
 ---
 name: wave-plan
-description: Turn the user's list of problems/features into an implementation plan for parallel subagents — code analysis, architecture, grouping into features, slicing into low/medium/high complexity tasks, waves with disjoint files, and ready-to-paste task prompts, all in one plan folder (README, solution files, one file per wave, problem log) on its own tracking branch. Second stage of the wave-triage → wave-plan → wave-run pipeline. Use when the user runs "/wave-plan <index> part <K>" for a part of a triage index, brings a short list of tasks and wants them split into waves for subagents ("нарежь на волны", "/wave-plan"), or wants open problems from a plan's problem log re-planned. Recommended model: high complexity (Opus-class), because this skill does the design work so the executors don't have to.
+description: Turn the user's list of problems/features into an implementation plan for parallel subagents — code analysis, architecture, grouping into features, slicing into low/medium/high complexity tasks, waves with disjoint files, and ready-to-paste task prompts, all in one plan folder (README, solution files, one file per wave, problem log) on its own tracking branch. Second stage of the wave-triage → wave-plan → wave-run pipeline. Use when the user runs "/wave-plan <index> part <K>" for a part of a triage index, brings a short list of tasks and wants them split into waves for subagents ("нарежь на волны", "/wave-plan"), or wants open problems from a plan's problem log re-planned. Recommended model: high complexity (Opus 5.5 / Gemini 4 Argon), because this skill does the design work so the executors don't have to.
 ---
 
 # wave-plan — design and slice tasks into waves
@@ -44,7 +44,7 @@ The plan slug (`<slug>`, 2–4 kebab-case words) must differ from every other pl
 branch `plan/<slug>`, which lives as long as the plan; it reaches the main branch only by merges (step 9).
 Do not edit files in the main checkout.
 
-Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL, Gemini 4 Argon). They implement
+Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL, Gemini 3.8 Flash). They implement
 a given solution well and design poorly. So every design decision is made here and written into the plan.
 If a task prompt says "figure out how", the design is not finished.
 

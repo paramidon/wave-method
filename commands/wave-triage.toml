@@ -1,0 +1,4 @@
+description = "Run the wave-triage skill of wave-method."
+prompt = """
+Activate the `wave-triage` skill and follow it exactly. Its arguments are: {{args}}
+"""
