@@ -1,6 +1,6 @@
 ---
 name: wave-status
-description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — show which wave is running, each feature's status and what it waits for, why the last wave stopped, ready features that are not merged and why, leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 or any stronger model).
+description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — lead with each feature's status, task progress and what it waits for, then show which wave is running, why the last wave stopped, ready features that are not merged and why, leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 or any stronger model).
 ---
 
 # wave-status — read-only pipeline status
@@ -27,7 +27,7 @@ Read only the following, according to `layout.md`, "Who reads what":
 - Each plan's `README.md` from the tracking branch when `plan/<plan>` exists
   (`git show plan/<plan>:<plan folder>/README.md`), otherwise from the main checkout. Use its Features columns
   `| ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |` and Waves
-  columns `| Wave | File | Tasks | Status |`.
+  columns `| Wave | File | Tasks | Status |`, and its Tasks columns `| ID | Slug | Feature | Wave | Complexity | Status |`.
 - Each plan's `problems.md`: entry headers only (`**[I<n> · …] essence**`).
 - The wave file of a wave that is 🔄, ❌ or ⚠️: only its "Execution" section, for the last
   `Stop <code>: … — next: …` or `Waiting: task mode <IDs> — next: …` line.
@@ -42,11 +42,18 @@ it exists. Use `git show plan/<plan>:<plan folder>/<file>` and retain only the a
 
 ## Report
 
-For each plan, report the following in order. Keep a blank line before and after every table.
+For each plan, report the following in order. Keep a blank line before and after every table. Feature status
+comes first: the user reads it before anything about waves.
 
 - Header: plan folder, slug, tracking branch present or absent.
-- `Running:` the 🔄 wave with its `since` time (`🔄 since <date time>`), or `none`.
-- The feature table below, using the README's `Status` and `Waiting for` values.
+- `Features:` one line with the count per status, for example `5 — 2 ✅ merged · 1 ✅ ready · 1 🔄 · 1 ⚠️`
+  (omit statuses with a count of 0).
+- The feature table below, one row per feature of the README's Features table, in its order, using the README's
+  `Status`, `Waiting for` and `Merged` values. `Tasks` is `<done>/<total>`: tasks of the feature with status ✅,
+  over its tasks that are not ➖ (`—` when none). Add the failing task IDs after it for ⚠️ and ❌ tasks
+  (`2/4 · ⚠️ B`).
+- `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
+  `none running` when no wave is 🔄.
 - `Ready, not merged:` features `✅ ready` and the reason. Use `main-dirty` with its reason (`not on <main>`,
   `staged changes`, or the overlapping paths) when the main checkout is not ready for the feature's merge; the
   three read-only commands of `layout.md`, "Main readiness", may be run to find it.
@@ -59,9 +66,9 @@ For each plan, report the following in order. Keep a blank line before and after
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
-| Feature | Status | Waiting for |
-|---|---|---|
-| F1 | <README status> | <README Waiting for> |
+| Feature | Status | Tasks | Waiting for | Merged |
+|---|---|---|---|---|
+| F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <README Merged> |
 
 Then report each index's parts without a plan folder, whether their "Plan when" condition is met, and their
 `/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands.

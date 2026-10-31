@@ -185,7 +185,7 @@ What it adds compared with "agent, please do these ten things":
 | `wave-triage` | Splits a long list (up to 40–80 problems) into parts that fit one plan each: clarifies once, locates each problem in the code, judges difficulty, finds dependencies. Clusters large lists and runs one read-only subagent per cluster. | high (Opus-class) |
 | `wave-plan` | Designs the solutions and slices them into features, tasks and waves with ready-to-paste task prompts. Also re-plans open problems of an existing plan. | high (Opus-class) |
 | `wave-run` | Executes one wave: worktrees, subagents, merges, checks, statuses, feature merges into `main`, archive. | medium |
-| `wave-status` | Read-only report: running waves, blocked features and why, leftovers, the next command. | low |
+| `wave-status` | Read-only report: status and task progress of every feature first, then running waves, blocked features and why, leftovers, the next command. | low |
 
 Key terms:
 
