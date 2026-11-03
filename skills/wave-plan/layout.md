@@ -11,7 +11,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 | task subagent | its prompt, the solution files (and sections) the prompt names |
 | task-mode session | `README.md`, its wave file, the solution files its prompt names; `wave-run/task-mode.md` |
 | `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files |
-| `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found |
+| `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
 | `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, index "Parts") |
@@ -61,7 +61,8 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 | `history.md` | re-plan and migration notes, audits, anything kept only as history | at the first re-plan |
 
 - Which solution file a problem gets depends only on its difficulty: `low` → a section of `lite.md`, always; `medium`/`high` → its own file, always. A re-plan appends new sections to `lite.md` and new files for the rest.
-- A re-plan adds new wave files (new numbers after the last one). It never rewrites a wave file of a wave that ran, except its statuses, "Execution" and "Closed problems".
+- A re-plan adds new wave files (new numbers after the last one). It never rewrites a wave file of a wave that ran, except its statuses, "Execution" and "Closed problems". It updates a wave file not run yet when the re-plan changes what that wave's tasks start from (known failures, a check).
+- Known failures are written per branch, by exact test name, in README "Known test failures before start" and in every wave file and task prompt that starts from that branch: `<test> — <branch>, until task <ID>`. A check is green when exactly the listed tests fail; one more failure is a problem.
 - Design facts belong in solution files, not in `history.md`: a measurement that a solution relies on goes into that solution.
 
 ## Model tiers

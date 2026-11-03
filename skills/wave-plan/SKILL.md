@@ -63,6 +63,12 @@ task Y (wave M)`; apply the status rules of `layout.md` (superseded tasks and dr
 tasks for a blocked feature (also one the user rejected in review) belong to that same feature. Fixes for a
 feature that is already merged go into a new feature. Run the status check (script, `layout.md`, "Statuses") before committing.
 
+**Red feature branch at a re-plan.** When an open entry leaves tests red on a feature branch, every task of that
+feature that runs before the fix starts from a red branch. Prefer placing the fix tasks before them. Otherwise list
+the red tests (`layout.md`, "Files of a plan folder", known failures) in the README, in every wave file not run yet
+with a task of that feature before the fix, and in each such task's acceptance ("green except exactly these N").
+Never leave `Known failures: none` in a task that starts from a red branch.
+
 ## Steps
 
 ### 1. Read the list
@@ -75,7 +81,9 @@ feature that is already merged go into a new feature. Run the status check (scri
 - Find where the behaviour lives and the cause of the problem. Cite `file:line`.
 - Find what already exists and can be reused (functions, classes, utilities, test examples).
   Verify every function you cite in a prompt: it exists and its signature is what you write.
-- Run the tests once and record which ones already fail (known failures).
+- Run the tests once and record which ones already fail (known failures). At a re-plan, also run them on the
+  branch of every affected feature that exists, and record its failures by test name: tasks of that feature start
+  from that branch, not from `<main>`.
 
 ### 3. Architecture (the most important step)
 For each `medium` or `high` problem write its solution file `solutions/P<n>-<slug>.md`:
@@ -160,7 +168,10 @@ Each prompt is self-contained (the subagent starts with an empty context) and co
   the plan folder (`solutions/P3-atmospheric-flight.md`, "Algorithm D"). Name only the files the task needs:
   the subagent reads nothing else in the plan folder.
 - Key solution details right in the prompt: signatures, formulas, which functions to reuse (`file:line`).
-- Acceptance tests with numbers, the check command, known failures.
+- Acceptance tests with numbers, the check command, known failures of the branch the task starts from (exact test
+  names, or "none" only when that branch is green).
+- Every search in a check (`git grep`, `rg`, `grep -r`) names the paths it searches (`src tests docs`), never the
+  whole repository: the plan folder is committed on every branch and quotes old and new names.
 - "If the plan's solution does not work (contradicts the code, does not converge), do not invent another one:
   stop and describe the problem in the report: what was expected, what you saw, where."
 - The report format comes from the `wave-run` header; do not repeat it in the prompt.
@@ -178,6 +189,9 @@ Write prompts without tying them to a specific vendor's model or tools.
 - Feature IDs and task IDs are unique in the plan; slugs are distinct; the plan slug is unique in `plans/`.
 - Every prompt names solution files that exist, and sections that exist in them.
 - README stays within its size goal; long text moved to solution files or `history.md`.
+- Known failures of every task match the branch it starts from; at a re-plan, every wave file not run yet of an
+  affected feature is checked against the feature branch.
+- No check searches the whole repository (the plan folder would match).
 - Re-plan: the status check (script, `layout.md`, "Statuses") passes.
 
 ### 9. Write, commit on the tracking branch, merge

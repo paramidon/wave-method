@@ -164,8 +164,10 @@ For each feature that has a task in this wave:
 - No feature branch yet: `git worktree add -b feat/<plan>/<feature> ../<repo-folder>.worktrees/<plan>-<feature-id> <main>`.
 - Branch exists without a worktree: `git worktree add <path> feat/<plan>/<feature>`.
 - Bring it up to date: in the feature worktree `git merge <main>` (this brings in features merged since,
-  which later tasks may rely on), resolve conflicts as in step 6, run the check command. A red check here is
-  a problem of the feature before the wave: record it and stop `red-before-wave` for the user's decision.
+  which later tasks may rely on), resolve conflicts as in step 6, run the check command. Known failures listed for
+  this branch in the README or the wave file do not count. Any other red test here is a problem of the feature
+  before the wave: record it and stop `red-before-wave` for the user's decision. A red test the plan does not list
+  while an open entry names it is a plan defect: stop `plan-defect`.
 - Write the feature branch into the "Branch" column of "Features".
 
 ### 4. Launch groups and placement
@@ -230,7 +232,7 @@ git merge --no-ff <task branch> -m "Merge <plan> <feature-id> / <task-id>"
 
 - Conflicts: resolve them yourself when the resolution is mechanical (both sides added independent lines, imports, list entries). When it needs understanding of either task's logic, use the fix loop for the later task with the conflict description (it merges the feature branch into its branch and resolves), then merge again. A conflict that changes a plan solution → stop `design-conflict` and ask the user.
 - Run the check command from the prompts (build + tests) in every feature worktree touched. Known failures
-  from the README do not count.
+  from the README and the wave file do not count.
 - A new failure: find by files whose task it is and use the fix loop, passing the error text.
 - A failure that appears only after merging (each task branch is green alone) is an integration problem: fix it yourself on the feature branch if it is small and mechanical; otherwise use the fix loop for the task whose files are involved; record it in the log either way.
 - After a task branch is merged and green: `git worktree remove` its worktree and `git branch -d` its branch.

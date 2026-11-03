@@ -4,6 +4,12 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- v2.5.0 (2026-11-03) — a re-plan that leaves a feature branch red no longer leaves earlier tasks of that feature
+  with `Known failures: none`: it reads every wave file not run yet of the affected features, runs the tests on
+  their branches, prefers fixing first, otherwise lists the red tests per branch in the README, the wave files and
+  the prompts; `wave-run` does not count known failures from the wave file either, and stops `plan-defect` on an
+  unlisted red test that an open entry names. Every search in a check names its paths, because the plan folder is
+  on every branch.
 - v2.4.0 (2026-11-01) — the skills also run in Google Antigravity and Gemini CLI: the repository installs as an
   Antigravity plugin (`plugin.json`) and a Gemini CLI extension (`gemini-extension.json`, `/wave-*` commands in
   `commands/`), the installers' `.agents/skills/` links serve Codex, Antigravity and Gemini CLI (`--no-agents` /

@@ -43,7 +43,7 @@ main branch with each feature merge.
 
 ## Known test failures before start
 
-- <test> — <cause, if known>
+- <test> — <branch, until task <ID>>; <cause, if known>
 
 ## Assumptions
 
