@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — support for Google Antigravity and Gemini CLI is removed: no Antigravity plugin manifest, Gemini
+- v2.8.0 (2026-11-04) — support for Google Antigravity and Gemini CLI is removed: no Antigravity plugin manifest, Gemini
   CLI extension or `commands/`; Gemini models are gone from the model tiers; the installers' Codex links option is
   `--no-codex` / `-NoCodex` again (`--no-agents` / `-NoAgents` no longer exist). A feature waiting for review is
   shown in a short review block (`layout.md`, "Feature review"), in `wave-run` and `/wave-status` alike: its
