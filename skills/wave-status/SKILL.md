@@ -1,6 +1,6 @@
 ---
 name: wave-status
-description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — lead with each feature's status, task progress and what it waits for, then show which wave is running, why the last wave stopped, ready features waiting for the user's review (branch, review commands, merge command), leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 / Gemini 3.5 Flash-Lite or any stronger model).
+description: Read-only status of the wave-triage → wave-plan → wave-run pipeline. For every plan in plans/ (not archived) — or one given plan folder — lead with each feature's status, task progress and what it waits for, then show which wave is running, why the last wave stopped, ready features waiting for the user's review (what was done, how to test it, branch, review commands, merge command), leftover worktrees and branches, unplanned index parts, and the next command. Never writes, commits or deletes anything. Use when the user runs "/wave-status [<plan folder>]", asks "что с планами", "почему волна встала", "почему фича не смержилась", or before starting a wave. Recommended model: low complexity (Haiku 5.5 / Gemini 3.5 Flash-Lite or any stronger model).
 ---
 
 # wave-status — read-only pipeline status
@@ -31,6 +31,7 @@ Read only the following, according to `layout.md`, "Who reads what":
 - Each plan's `problems.md`: entry headers only (`**[I<n> · …] essence**`).
 - The wave file of a wave that is 🔄, ❌ or ⚠️: only its "Execution" section, for the last
   `Stop <code>: … — next: …` or `Waiting: task mode <IDs> — next: …` line.
+- The review brief `reviews/<feature>.md` of each `👀 review` feature, and the README's "How to try" section.
 - Each index's "Parts" table.
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
@@ -56,10 +57,15 @@ comes first: the user reads it before anything about waves.
   (`2/4 · ⚠️ B`).
 - `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
   `none running` when no wave is 🔄.
-- `Ready for review:` one line per `👀 review` feature: its branch `feat/<plan>/<feature>`, its `Waiting for`, and
-  the merge command (see "Suggested commands"). For `main-dirty` add its reason (`not on <main>`,
-  `staged changes`, or the overlapping paths); the three read-only commands of `layout.md`, "Main readiness", may
-  be run to find it. Below the lines, the review commands of `layout.md`, "Feature review", once, with `<branch>`.
+- `Ready for review:` one block per `👀 review` feature: its ID and title, then from its review brief, in the
+  user's language: "What and why" in one or two sentences, every "What was done" line, and the numbered "How to
+  test" steps with their commands and expected results, in full; then its branch `feat/<plan>/<feature>`, its
+  worktree, its `Waiting for`, and the merge command (see "Suggested commands"). A feature without a brief (a plan
+  run by an older `wave-run`): say so, give its README "How to try" line instead, and suggest
+  `/wave-run <plan folder>` · `$wave-run <plan folder>`, which writes the brief. For `main-dirty` add its reason
+  (`not on <main>`, `staged changes`, or the overlapping paths); the three read-only commands of `layout.md`,
+  "Main readiness", may be run to find it. Below the blocks, the review commands of `layout.md`, "Feature review",
+  once, with `<branch>`.
 - `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
   the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.

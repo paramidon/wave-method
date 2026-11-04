@@ -7,14 +7,14 @@ Read only what the table lists. A file that does not exist means there is nothin
 
 | Reader | Reads |
 |---|---|
-| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so |
+| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`, `reviews/<feature>.md` of the features with a task in its wave or `👀 review`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so |
 | task subagent | its prompt, the solution files (and sections) the prompt names |
 | task-mode session | `README.md`, its wave file, the solution files its prompt names; `wave-run/task-mode.md` |
 | `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files |
 | `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
-| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, index "Parts") |
+| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features, index "Parts") |
 | nobody | `CHANGELOG.md`; `wave-plan/scripts/` (skills run the script, they do not read it) |
 
 A wave file holds everything its wave needs. If something is missing, that is a defect of the plan: record it in `problems.md` and do not look for it in other waves, `history.md` or `archive/`.
@@ -53,10 +53,11 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 
 | File | Holds | Created |
 |---|---|---|
-| `README.md` | header, Features / Waves / Tasks tables, one line per user problem, known failures, assumptions; ≤ 150 lines | always |
+| `README.md` | header, Features / Waves / Tasks tables, one line per user problem, how to try each feature, known failures, assumptions; ≤ 150 lines | always |
 | `waves/w<NN>.md` | one wave (`w01`, `w02`, …): its task table, dependencies, full task prompts; after it ran: its execution log and the closed problems found in it | one per wave |
 | `solutions/P<n>-<slug>.md` | the design of one `medium` or `high` user problem (Cause, Approach, API, Algorithm, Limits, Acceptance tests) | one per such problem |
 | `solutions/lite.md` | every `low` problem of the plan, one section `## P<n>. <short>` each: the exact edit and one acceptance check | with the first `low` problem |
+| `reviews/<feature>.md` | the review brief of one feature (`wave-plan/templates.md`): what each of its tasks did and how to see it, added wave by wave; the full brief once the feature is `👀 review` (`wave-run` step 7) | by `wave-run`, with the feature's first ✅ task |
 | `problems.md` | **open** problem-log entries only | with the first entry |
 | `history.md` | re-plan and migration notes, audits, anything kept only as history | at the first re-plan |
 
@@ -173,8 +174,11 @@ A feature branch `feat/<plan>/<feature>` holds only its own feature: its tasks r
 back into it, every other feature has its own branch, and `<main>` (merged in before each wave and before review)
 brings in only merged features. So the feature branch is the branch the user reviews; each ready feature is offered
 on its own and can be merged alone, in any order. It is offered with a review brief — what the feature is and
-why, what each task did, how it was checked, what is worth a look (`wave-run/SKILL.md` step 9) — so the user
-can review it without reading the plan.
+why, what each task did, how it was checked, how to test it by hand, what is worth a look (`wave-run/SKILL.md`
+steps 7 and 9) — so the user can review it without reading the plan. The brief is kept in `reviews/<feature>.md`
+on the tracking branch, so a later session (`wave-status`, the `merge` form of `wave-run`) shows the same brief.
+Its "How to test" starts from the README's "How to try" line of the feature, written by `wave-plan`, and the
+`Try:` lines of the task reports.
 
 Review commands (`<branch>` = `feat/<plan>/<feature>`; the worktree is the feature worktree of "Names"):
 
@@ -184,7 +188,7 @@ git diff --stat <main>...<branch>
 git diff <main>...<branch>
 ```
 
-Run the project and check by hand in the feature worktree.
+Then follow the brief's "How to test" in the feature worktree.
 
 - **Approval** is one of: an answer in the `wave-run` session that names the feature (`merge F1`); the command
   `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`; the user's own `git merge` of

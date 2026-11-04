@@ -198,6 +198,8 @@ Work only in the working folder. Do not edit anything under plans/. When done, c
 this branch with the message "<plan> <feature-id> / <task-id>: <short>". Do not switch branches, do not
 merge, do not push, do not touch other worktrees or the main checkout.
 End your report with exactly this block (one item per line, "none" when empty):
+Done: <what changed for the user or the project, in one or two plain sentences, not file names>
+Try: <how a person sees it work by hand: exact command or steps → what they should see; "none" when nothing is visible>
 Changed: <files>
 Checked: <command> → <result>
 Not checked: <what, and why>
@@ -220,7 +222,8 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
   `git revert --no-edit H..HEAD`.
 - Read the report's final block, ignoring `none` values. Every `Not checked:` line not covered by a later task, and
   every `Problems:` line, becomes one entry of `problems.md` (add the ID, `status: open`). A report without the
-  block: ask the same subagent for it once (fix loop); still missing → one entry `report block missing`.
+  block, or with an empty `Done:`: ask the same subagent for it once (fix loop); still missing → one entry
+  `report block missing`. Keep `Done:` and `Try:` for the feature's review brief (step 8).
 
 ### 6. Merge task branches and check features
 
@@ -249,6 +252,12 @@ are now all ✅ or ➖:
    **full** check command. With `<main>` merged in, the review diff shows only this feature.
 2. Green → the feature becomes `👀 review` with `Waiting for: review`. Red → it becomes ⚠️ blocked with a new
    problem entry.
+3. Green → write its full review brief into `reviews/<feature>.md` in the tracking worktree, from the template of
+   `wave-plan/templates.md`: keep "What was done" (step 8 adds this wave's lines), fill the other sections as step 9
+   says. "How to test" is a numbered list the user can follow without the plan: `cd` into the feature worktree,
+   then the README "How to try" line of the feature and the `Try:` lines of its tasks (kept in the brief by earlier
+   waves, and from this wave's reports), each step with the exact
+   command or action and what the user should see; drop duplicates and steps that need a later feature.
 
 Merge nothing into `<main>` in this step: a ready feature waits for the user's approval (step 10).
 
@@ -257,6 +266,10 @@ Merge nothing into `<main>` in this step: a ready feature waits for the user's a
 After a task-mode wait, reach this step on resume once the waiting tasks are checked and merged.
 
 - README "Tasks": ✅, or ⚠️ with its entry IDs (open problem), or ❌ (not done).
+- Review briefs: for each ✅ task of this wave, add one line to "What was done" of `reviews/<feature>.md`
+  (`<task-id> (wave <N>) — <Done:> · files: <Changed:>`), and keep its `Try:` line under "How to test" as
+  `- <task-id>: <Try:>` until step 7 writes the full brief; create the file from the template with the feature's
+  first ✅ task. A ➖ task gets `<task-id> — ➖ <reason>`.
 - README "Waves": ✅ — all tasks ✅ and checks green; ⚠️ — done but with open problems (name them);
   ❌ — a check red or a task not done (the wave must be re-run or re-planned).
 - README "Features":
@@ -303,24 +316,30 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 - What to check by hand (UI and anything tests do not cover) for features that are not ready yet, in their
   feature worktree.
 - **Ready for review**: one block per `👀 review` feature, both those this wave made ready and those still waiting
-  from earlier runs. A feature branch holds only its own feature (`layout.md`, "Feature review"), so every block
-  stands alone. The user may not remember the plan, so the block first says what the feature is, in the user's
-  language and plain words, without making them open the README. Each block gives:
+  from earlier runs, built from its `reviews/<feature>.md` (step 7) and translated into the user's language. A
+  feature branch holds only its own feature (`layout.md`, "Feature review"), so every block stands alone. The user
+  may not remember the plan, so the block first says what the feature is, in plain words, without making them open
+  the README. Each block gives:
   - the feature ID and title;
   - **What and why**: the user problems it solves (its `P` lines of README "User problems", in their words) and
     what changes for the user or the project once it is merged, before → after, in one to three sentences;
-  - **What was done**: one line per task of the feature (ID, what it did), from this run's task reports, or from
-    the task commit subjects (`git log --oneline --no-merges <main>..feat/<plan>/<feature>`) for tasks of earlier
-    waves; ➖ tasks with the reason they were dropped;
+  - **What was done**: one line per task of the feature (ID, what it did in plain words), from "What was done" of
+    the brief; for a task the brief lacks (a plan run by an older `wave-run`), from its commit subject
+    (`git log --oneline --no-merges <main>..feat/<plan>/<feature>`); ➖ tasks with the reason they were dropped;
   - **How it was checked**: "Done when", the full check result, and the tests the feature added or changed (test
     files in its diff);
+  - **How to test**: the numbered steps of the brief, with the worktree path, exact commands and the expected
+    result of each step, and what tests do not cover;
   - **Worth a look**: decisions the user may not expect — problem entries of the feature closed on the way,
     assumptions it relies on, conflict resolutions that changed its code; "nothing" when there are none;
-  - `Review branch: feat/<plan>/<feature>` on its own line, and its worktree path;
+  - `Review branch: feat/<plan>/<feature>` on its own line, its worktree path, and the brief file
+    `<plan folder>/reviews/<feature>.md` (on `plan/<plan>`);
   - the number of its commits and the `git diff --stat <main>...feat/<plan>/<feature>` summary;
   - the review commands of `layout.md`, "Feature review", filled in;
-  - what to check by hand in its worktree;
   - for `main-dirty`, the reason.
+- Print every block in full, in the message that ends the run. Never shorten a block to the feature's title and
+  branch, also when the report is long or several features are ready: the block is what the user reviews. A short
+  summary the environment shows at the end of a turn names the ready features and their brief files.
 - When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), name the
   paths and say that the second merge brings the first one in from `<main>` and may need conflict resolution.
 - End the report with the questions of step 10.

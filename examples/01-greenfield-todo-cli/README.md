@@ -41,6 +41,14 @@ main branch with each feature merge.
 - P3 — A README that explains how to install and use the tool. → F2 · `solutions/lite.md` (low)
 - P4 — Run the tests on every push. → F3 · `solutions/lite.md` (low)
 
+## How to try
+
+- F1 — `pip install -e .`, then `todo add "buy milk"` → `added 1: buy milk`; `todo list` → `[ ] 1 buy milk`;
+  `todo done 1` → `done 1: buy milk`, and `todo.json` in the folder holds the task; before: no `todo` command
+- F2 — open `README.md` → install steps, the three commands and an example session; before: only `LICENSE`
+- F3 — `python -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" .github/workflows/test.yml` → no error, and
+  the file names Python 3.10 and 3.12; after the merge and a push, the Actions tab shows the run; before: no CI
+
 ## Known test failures before start
 
 - None: the repository is empty except for `LICENSE`.

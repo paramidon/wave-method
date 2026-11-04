@@ -23,6 +23,8 @@ One task in one fresh session, whose model is of the task's tier or higher and w
   reported again with its command; the wave keeps waiting.
 
 End your report with exactly this block (one item per line, "none" when empty):
+Done: <what changed for the user or the project, in one or two plain sentences, not file names>
+Try: <how a person sees it work by hand: exact command or steps → what they should see; "none" when nothing is visible>
 Changed: <files>
 Checked: <command> → <result>
 Not checked: <what, and why>

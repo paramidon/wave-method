@@ -38,6 +38,14 @@ main branch with each feature merge.
 - P2 — Order dates are shown in UTC; customers expect the shop's time zone. → F2 · `solutions/lite.md` (low)
 - P3 — The sign-up form accepts `jane doe@example.com`. → F3 · `solutions/lite.md` (low)
 
+## How to try
+
+- F1 — `flask --app shop run`, open a product list with 41 products and 20 per page → pages 1, 2 and 3, page 3
+  shows one product; before: page 3 was missing
+- F2 — same server with `SHOP_TIMEZONE="Europe/Berlin"`, open an order placed on 01.03.2026 at 22:30 UTC →
+  `01.03.2026 23:30`; before: `22:30`
+- F3 — same server, sign up with `jane doe@example.com` → the form shows an e-mail error; before: it was accepted
+
 ## Known test failures before start
 
 - `tests/test_payment.py::test_sandbox_refund` — needs network access to the payment sandbox; fails offline.
