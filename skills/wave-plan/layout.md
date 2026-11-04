@@ -14,7 +14,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 | `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
-| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features, index "Parts") |
+| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs and branch logs of `👀 review` features, index "Parts") |
 | nobody | `CHANGELOG.md`; `wave-plan/scripts/` (skills run the script, they do not read it) |
 
 A wave file holds everything its wave needs. If something is missing, that is a defect of the plan: record it in `problems.md` and do not look for it in other waves, `history.md` or `archive/`.
