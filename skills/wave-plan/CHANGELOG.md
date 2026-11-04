@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — a finished feature is reported with what was done and how to test it, not only its title and
+- v2.6.0 (2026-11-04) — a finished feature is reported with what was done and how to test it, not only its title and
   branch: `wave-plan` writes a "How to try" line per feature (commands, actions, expected result); task reports add
   `Done:` and `Try:`; `wave-run` keeps each feature's review brief in `reviews/<feature>.md` on the tracking branch,
   wave by wave, adds numbered "How to test" steps, and prints the brief in full; `wave-status` and the `merge` form
