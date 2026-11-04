@@ -1,4 +1,0 @@
-description = "Run the wave-status skill of wave-method."
-prompt = """
-Activate the `wave-status` skill and follow it exactly. Its arguments are: {{args}}
-"""
