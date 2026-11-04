@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — every run of a wave skill shows its start and end time, read from the system clock (`layout.md`,
+- v2.9.0 (2026-11-05) — every run of a wave skill shows its start and end time, read from the system clock (`layout.md`,
   "Run times"): the first line is `Started: <date time>`, the last line of the final report is
   `Started: … · Finished: … (<duration>)`; `wave-run` writes `Started` / `Finished` into the wave's Execution,
   `wave-plan` writes `planned <start> – <end>` into the README header (a re-plan into its `Re-plans:` item) and
