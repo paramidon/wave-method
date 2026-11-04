@@ -5,7 +5,7 @@ description: Read-only status of the wave-triage → wave-plan → wave-run pipe
 
 # wave-status — read-only pipeline status
 
-Language: `wave-plan/layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -114,6 +114,8 @@ Use the first rule that applies:
    `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>`.
 6. Every feature merged: `finished; archived by the last wave-run`, or the suggested archive command if the
    plan is not archived.
+
+The report ends with the `Started: … · Finished: …` line (`layout.md`, "Run times").
 
 Write commands in both forms (`layout.md`, "Commands"). Running-wave locks and task-mode
 waiting follow `layout.md`, "Running waves".

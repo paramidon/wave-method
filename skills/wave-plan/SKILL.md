@@ -5,7 +5,7 @@ description: Turn the user's list of problems/features into an implementation pl
 
 # wave-plan — design and slice tasks into waves
 
-Language: `wave-plan/layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -224,6 +224,6 @@ in both forms (`layout.md`, "Commands"):
 `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`, in a fresh session. The coordinator is always medium.
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which
-wait for a merge.
+wait for a merge. End with the `Started: … · Finished: …` line (`layout.md`, "Run times").
 
 Templates: `wave-plan/templates.md` — read it when writing the plan folder (step 9).

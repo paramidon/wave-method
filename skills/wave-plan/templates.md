@@ -5,9 +5,9 @@
 ````markdown
 # <Plan title>
 
-- Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash>
+- Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · planned <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 - Index: `plans/<date>-<topic>/index.md` part <K> (omit when planned from a raw list)
-- Re-plans: none (later one sub-item each: `<date> at <hash>: <what>`; details in `history.md`)
+- Re-plans: none (later one sub-item each: `<date> at <hash>, <start HH:MM> – <end HH:MM>: <what>`; details in `history.md`)
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
 
 ## Features
@@ -100,7 +100,8 @@ earlier waves; or "nothing">. Disjoint files: <why>.
 ```
 
 ## Execution
-Filled in by `wave-run`.
+Filled in by `wave-run`; starts with `Started <YYYY-MM-DD HH:MM>.` and ends with `Finished <YYYY-MM-DD HH:MM>.`
+(`layout.md`, "Run times").
 
 ## Closed problems
 Closed problem-log entries found in this wave (moved here from `problems.md`).

@@ -7,7 +7,7 @@ description: First stage of the wave-triage → wave-plan → wave-run pipeline.
 
 Folder layout and branch names come from `wave-plan/layout.md`.
 
-Language: `wave-plan/layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -131,7 +131,7 @@ For at most 8 problems, keep full problem records in the index:
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash>
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · triaged <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 
 ## Problems
 ### P1. <one-line restatement>
@@ -166,7 +166,7 @@ has exactly one overview row. Reuse the Parts table and the Assumptions and Open
 ````markdown
 # <Topic> — index
 
-- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash>
+- Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · triaged <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 
 ## Problems
 
@@ -223,4 +223,5 @@ Each `triage/P<n>.md` uses the full problem-record format:
   - **the next commands**, one per line in both forms (`layout.md`, "Commands"), each to be run in a
     **fresh session**; say which can be run now (in parallel, in any order) and which only after a given part
     is merged;
-  - "after a part's plan is written, run its waves with `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`".
+  - "after a part's plan is written, run its waves with `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`";
+  - last, the `Started: … · Finished: …` line (`layout.md`, "Run times").

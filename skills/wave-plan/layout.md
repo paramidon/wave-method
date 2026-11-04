@@ -27,6 +27,26 @@ A wave file holds everything its wave needs. If something is missing, that is a 
   prompts, commit messages, branch names.
 - A subagent writes its report in the language that its header's `Report language:` line names.
 
+## Run times
+
+Every run of a wave skill (`wave-triage`, `wave-plan`, `wave-run`, `wave-status`, including a task-mode session and
+the `merge` form) shows when it started and when it ended. Take both times from the system clock with a shell
+command (`date "+%Y-%m-%d %H:%M"`, or `Get-Date -Format "yyyy-MM-dd HH:mm"` in PowerShell); never guess or reuse
+a time from a file.
+
+- **Start:** read the clock before anything else; the very first line the run prints is
+  `Started: <YYYY-MM-DD HH:MM>`. A rule that makes another line "the first line of the report" (a stop line) means
+  the first line after it.
+- **End:** read the clock again right before the final report; its last line is
+  `Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration, e.g. 1 h 12 min>)`. A stop and a run that
+  waits for the user's answer end the same way; a run continued after the user's answer prints a new `Finished`
+  line at its next final report, with the original start.
+- Skills that write to the repository also record both times where they already record the run, read from the
+  clock right before that commit: `wave-run` in the wave file's "Execution" (`Started <…>.` in step 2,
+  `Finished <…>.` in step 8, just before a stop line, which stays last; a `merge` run only in its report);
+  `wave-plan` in the README header (`planned <start> – <end>`; a re-plan in its `Re-plans:` item); `wave-triage` in the index header
+  (`triaged <start> – <end>`). `wave-status` writes nothing.
+
 ## Skill paths
 Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` or `.agents/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
 

@@ -5,7 +5,7 @@ description: Third stage of the wave-triage → wave-plan → wave-run pipeline.
 
 # wave-run — execute one wave of a plan
 
-Language: `wave-plan/layout.md`, "Language".
+Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -153,7 +153,7 @@ continue, stop `red-after-merge`.
 - If the branch exists without a worktree: `git worktree add ../<repo-folder>.worktrees/<plan>-plan plan/<plan>`.
 - In the README set the wave to `🔄 since <YYYY-MM-DD HH:MM>` in "Waves", its tasks to 🔄 in "Tasks", their
   features to 🔄 in "Features" (if ⬜), and apply the interrupted-run repair from step 1. The wave file's
-  "Execution" gets `Started <YYYY-MM-DD HH:MM>.` and `Capabilities: …` in the same commit on the tracking
+  "Execution" gets `Started <YYYY-MM-DD HH:MM>.` (the run's start time from the clock) and `Capabilities: …` in the same commit on the tracking
   branch: `Plan <plan>: wave <N> started`. A task-mode resume keeps the existing start record.
 - Do not merge features that are `👀 review` from earlier runs: they wait for the user (step 9 offers them again).
 
@@ -288,7 +288,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   this wave verified it) gets its closing status and moves to "Closed problems" of the wave file where it was
   found. Then update every earlier task, wave and feature it concerned, as `layout.md` says
   (`⚠️` → `✅ (fixed by Y, wave N)`).
-- Wave file "Execution": date, feature heads before and after, merge commits, check results, conflicts and how
+- Wave file "Execution": `Finished <YYYY-MM-DD HH:MM>.` from the clock (`layout.md`, "Run times"), feature heads before and after, merge commits, check results, conflicts and how
   they were resolved, anything a later reader needs. Keep it factual and short. A stopped wave ends with its
   `Stop <code>: … — next: …` line as specified in "Stops".
 - Run the **status check** (script, `layout.md`, "Statuses") over the README; fix what it finds. Archive if eligible (`layout.md`, "Archive").
@@ -321,7 +321,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   Print every block, also when several features are ready; never shorten one to its title and branch.
 - When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), name the
   paths and say that the second merge brings the first one in from `<main>` and may need conflict resolution.
-- End the report with the questions of step 10.
+- End the report with the questions of step 10, then the `Started: … · Finished: …` line (`layout.md`, "Run times").
 
 **The next command**, always for a fresh session, in both forms (`layout.md`, "Commands"):
 
