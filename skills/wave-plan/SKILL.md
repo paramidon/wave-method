@@ -109,11 +109,10 @@ edit and one acceptance check is enough. Every `low` problem is a section `## P<
   into one feature when one is useless or broken without the other.
 - Each feature has an ID unique in the plan, a slug of 2–4 kebab-case words, a title and its acceptance
   criterion (which acceptance tests prove the whole feature works).
-- Each feature has a line in README "How to try": how the user sees it work by hand in the feature worktree, so
-  the review brief can tell them how to test it. Name the exact command that starts the project (or the part the
-  feature changes), what to do, what they should see, and what they saw before. A feature with nothing visible (a
-  refactoring, CI, a library change) names the command that exercises it and what its output proves. Take the
-  commands from the project (its README, scripts, build files); never write "run the app and check".
+- Each feature has a line in README "How to try": what the user does by hand to see this feature work and what
+  they should see, before → after (`layout.md`, "Feature review", review block). Only the actions specific to the
+  feature — never how to build, start or test the project. A feature with nothing visible (a refactoring, CI, a
+  library change) names the one command that exercises it and what its output proves.
 - **No hidden dependencies between features.** If a task of F2 needs code of F1, then either all tasks of F1
   are in waves before that task and the wave file of that task names `F1 merged` in its `Depends on:` line, or
   F1 and F2 are one feature. F1 reaches the main branch only after the user's review, so `wave-run` stops that
@@ -185,8 +184,8 @@ Write prompts without tying them to a specific vendor's model or tools.
 
 ### 8. Self-check
 - Every P is covered by a feature and a solution (`low` → a section of `lite.md`, others → own file); every
-  feature by tasks, an acceptance criterion and a "How to try" line with a command and an expected result; every
-  task has an acceptance test.
+  feature by tasks, an acceptance criterion and a "How to try" line with feature-specific steps and an expected
+  result; every task has an acceptance test.
 - No empty files: `problems.md` and `history.md` exist only when they have content.
 - No file overlaps inside a wave; dependencies cross waves or use `After`; no hidden cross-feature dependency:
   every one is `F<k> merged` in the `Depends on:` line of the wave that needs it.

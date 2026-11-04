@@ -43,11 +43,10 @@ main branch with each feature merge.
 
 ## How to try
 
-- F1 — `pip install -e .`, then `todo add "buy milk"` → `added 1: buy milk`; `todo list` → `[ ] 1 buy milk`;
-  `todo done 1` → `done 1: buy milk`, and `todo.json` in the folder holds the task; before: no `todo` command
+- F1 — `todo add "buy milk"` → `added 1: buy milk`; `todo list` → `[ ] 1 buy milk`; `todo done 1` →
+  `done 1: buy milk`; before: no `todo` command
 - F2 — open `README.md` → install steps, the three commands and an example session; before: only `LICENSE`
-- F3 — `python -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" .github/workflows/test.yml` → no error, and
-  the file names Python 3.10 and 3.12; after the merge and a push, the Actions tab shows the run; before: no CI
+- F3 — after the merge and a push, the Actions tab shows a test run on Python 3.10 and 3.12; before: no CI
 
 ## Known test failures before start
 

@@ -43,8 +43,7 @@ main branch with each feature merge.
 
 ## How to try
 
-- F1 — `<command that starts the project or the part it changes>`; <what the user does> → <what the user sees
-  when it works>; before this feature: <what they saw instead>
+- F1 — <what the user does, specific to this feature> → <what they see when it works>; before: <what they saw>
 
 ## Known test failures before start
 
@@ -110,43 +109,38 @@ Closed problem-log entries found in this wave (moved here from `problems.md`).
 ### `reviews/<feature>.md`
 
 Written by `wave-run` (`wave-run/SKILL.md` steps 7 and 8), in English like every plan file. While the feature is in
-progress the file holds only the header and "What was done"; the other sections are written when it becomes
-`👀 review` and rewritten when it becomes `👀 review` again after a rejection.
+progress the file holds only the header, "Tasks" and the tasks' `Try:` lines; the other sections are written when it
+becomes `👀 review` and rewritten when it becomes `👀 review` again after a rejection. The user sees only the review
+block made from it (`layout.md`, "Feature review"): the header line, "Essence", "How to test" and "Worth a look".
 
 ````markdown
 # F1 · <Title>
 
-- Plan: `plans/<…>/` · branch: `feat/<plan>/<feature>` · worktree: `<absolute feature worktree path>`
-- Status: 👀 review since <YYYY-MM-DD HH:MM> · <n> commits · <git diff --stat summary line>
+- Branch: `feat/<plan>/<feature>` · worktree: `<absolute feature worktree path>`
+- 👀 review since <YYYY-MM-DD HH:MM>
 
-## What and why
+## Essence
 
-<The user problems of the feature (its P lines) in plain words, and what changes once it is merged: before →
-after, one to three sentences.>
-
-## What was done
-
-- A (wave 1) — <what the task did, in plain words> · files: `<file>`, `<file>`
-- C (wave 2) — ➖ dropped: <reason>
-
-## How it was checked
-
-- Done when: <the README cell> → <met / not met>
-- `<full check command>` → <result, for example 48 passed, 1 known failure `<test>`>
-- Tests added or changed: `<test file>` (<what they cover>)
+<What changes for the user once it is merged, before → after, one or two sentences.>
 
 ## How to test
 
-1. `cd <absolute feature worktree path>`
-2. `<command>` → <what the user should see>
-3. <action> → <what the user should see>; before this feature: <what they saw instead>
-
-Not covered by tests: <what only a person can judge, or "nothing">.
+1. <an action specific to this feature> → <what the user should see>
+2. <…> → <…>
 
 ## Worth a look
 
-- <a decision the user may not expect: a closed problem entry, an assumption, a conflict resolution that changed
-  the feature's code; or "nothing">
+<a decision the user may not expect: a closed problem entry, an assumption, a conflict resolution that changed the
+feature's code; or "nothing">
+
+## Tasks
+
+- A (wave 1) — <what the task did, in plain words>
+- C (wave 2) — ➖ dropped: <reason>
+
+## Check
+
+`<full check command>` → <result>; tests added or changed: `<test file>`
 ````
 
 `problems.md` is created with the first entry (format: `layout.md`, "Problem log"); `history.md` at the first

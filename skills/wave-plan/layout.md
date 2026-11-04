@@ -14,7 +14,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 | `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
-| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs and branch logs of `👀 review` features, index "Parts") |
+| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features, index "Parts") |
 | nobody | `CHANGELOG.md`; `wave-plan/scripts/` (skills run the script, they do not read it) |
 
 A wave file holds everything its wave needs. If something is missing, that is a defect of the plan: record it in `problems.md` and do not look for it in other waves, `history.md` or `archive/`.
@@ -172,22 +172,33 @@ ready.
 A feature branch `feat/<plan>/<feature>` holds only its own feature: its tasks run on it or on task branches merged
 back into it, every other feature has its own branch, and `<main>` (merged in before each wave and before review)
 brings in only merged features. So the feature branch is the branch the user reviews; each ready feature is offered
-on its own and can be merged alone, in any order. It is offered with a review brief — what the feature is and
-why, what each task did, how it was checked, how to test it by hand, what is worth a look (`wave-run/SKILL.md`
-steps 7 and 9) — so the user can review it without reading the plan. The brief is kept in `reviews/<feature>.md`
-on the tracking branch, so a later session (`wave-status`, the `merge` form of `wave-run`) shows the same brief.
-Its "How to test" starts from the README's "How to try" line of the feature, written by `wave-plan`, and the
-`Try:` lines of the task reports.
+on its own and can be merged alone, in any order. Its brief `reviews/<feature>.md` on the tracking branch
+(`wave-run/SKILL.md` steps 7 and 8) keeps the record: the essence, how to test it, what each task did, the check
+result. The user sees only the short **review block** below — in the `wave-run` report, in `wave-status` and in
+the `merge` form — so they can review the feature without reading the plan.
 
-Review commands (`<branch>` = `feat/<plan>/<feature>`; the worktree is the feature worktree of "Names"):
+Review block, in the user's language and plain words, at most about ten lines:
 
-```bash
-git log --oneline --no-merges <main>..<branch>
-git diff --stat <main>...<branch>
-git diff <main>...<branch>
+```
+**F1 · <title>** · `feat/<plan>/<feature>` · `<feature worktree path>`
+<Essence: what changes for the user once it is merged, before → after, one or two sentences.>
+How to test:
+1. <an action specific to this feature> → <what the user should see>
+2. …
+Worth a look: <only when there is something the user may not expect; otherwise no such line>
+Merge: `/wave-run <plan folder> merge F1` · `$wave-run <plan folder> merge F1`
 ```
 
-Then follow the brief's "How to test" in the feature worktree.
+- "How to test" holds only the steps specific to this feature, at most five, each with its expected result. Never
+  how to build, start or test the project, `cd`, the test suite or its counts: the user knows their project. A
+  feature with nothing to see by hand (a refactoring, CI, a library change) gets one step: the command that shows
+  it works and what its output proves. Nothing recorded → `How to test: not recorded — <Done when>`.
+- Not in the block: the task list, the check result, test counts, commits, diff statistics, where the text came
+  from. They stay in the brief and the git history.
+- `wave-run` leaves out the `Merge:` line: its step 10 asks instead. `main-dirty` adds one line with the reason.
+
+The user reviews the code with `git log --oneline --no-merges <main>..<branch>` and `git diff <main>...<branch>`
+when they want to; skills do not print these commands in the block.
 
 - **Approval** is one of: an answer in the `wave-run` session that names the feature (`merge F1`); the command
   `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`; the user's own `git merge` of

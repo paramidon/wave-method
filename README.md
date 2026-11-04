@@ -107,10 +107,10 @@ A medium-tier model is enough for running:
 
 Wave 1 runs A, B and C at the same time, each in its own git worktree. When it ends, F1 and F3 are ready; F2 waits
 for its task D. Nothing is merged yet: `wave-run` shows each ready feature on its own branch
-(`feat/csv-export/F1-login-test-stability`, `feat/csv-export/F3-cache-ttl-unit`) with a review brief — what the
-feature is and which problems it solves, what each task did, how it was checked, step-by-step how to test it by
-hand (commands and expected results), what is worth a look — and the commands to review it, and asks about each
-one. The brief is also kept in the plan folder (`reviews/<feature>.md`). Answer `merge F1`, `later`, or `problems F1: …` (which go to the next re-plan). A feature
+(`feat/csv-export/F1-login-test-stability`, `feat/csv-export/F3-cache-ttl-unit`) in a short block — what changes
+for you, and a few steps to test it by hand with what you should see — and asks about each one. The full brief is
+kept in the plan folder (`reviews/<feature>.md`). Answer `merge F1`, `later`, or `problems F1: …` (which go to the
+next re-plan). A feature
 you leave for later is merged with:
 
 ```
@@ -131,8 +131,7 @@ A feature branch holds only its own feature, so each one can be reviewed and mer
 /wave-status
 ```
 
-shows what each feature is waiting for (features waiting for your review come with their branches, what was done
-and how to test them), running
+shows what each feature is waiting for (features waiting for your review come with the same short block), running
 waves, and the next command. If a wave reports problems, re-plan
 them with `/wave-plan plans/2026-11-02-csv-export`.
 

@@ -24,7 +24,7 @@ One task in one fresh session, whose model is of the task's tier or higher and w
 
 End your report with exactly this block (one item per line, "none" when empty):
 Done: <what changed for the user or the project, in one or two plain sentences, not file names>
-Try: <how a person sees it work by hand: exact command or steps → what they should see; "none" when nothing is visible>
+Try: <the actions specific to this change that show it works → what one should see; not how to build, start or test the project; "none" when nothing is visible>
 Changed: <files>
 Checked: <command> → <result>
 Not checked: <what, and why>

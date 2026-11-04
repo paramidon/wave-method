@@ -3,7 +3,7 @@
 Read by the `wave-run` coordinator only when `SKILL.md` step 1 says so.
 
 A feature is merged into `<main>` only after the user approves that feature. The one-feature-per-branch rule, the
-review commands and what counts as approval: `layout.md`, "Feature review".
+review block and what counts as approval: `layout.md`, "Feature review".
 
 ## Entry points
 
@@ -34,7 +34,7 @@ review commands and what counts as approval: `layout.md`, "Feature review".
    for later, the feature keeps `👀 review` with `Waiting for: main-dirty`; `/wave-run <plan folder> merge <F-ID>` ·
    `$wave-run <plan folder> merge <F-ID>` merges it later.
 3. `git -C <main checkout> merge --no-ff feat/<plan>/<feature> -m "Feature <feature-id> (<plan>): <title>"`,
-   body: one line per task of the feature (its "What was done" line of the brief). Note the merge hash.
+   body: one line per task of the feature (its line under "Tasks" of the brief). Note the merge hash.
 
 Several features are merged one at a time, each with its own merge commit. A later one gets the earlier ones from
 `<main>` in its step 1.
@@ -70,7 +70,7 @@ In the tracking worktree, after the merges and rejections of this run:
 
 ## Report
 
-- Per feature: merged (hash) with the "What was done" lines of its brief, so the user sees what reached `<main>`;
+- Per feature: merged (hash) with the "Essence" of its brief, so the user sees what reached `<main>`;
   left for later (`review`, or `main-dirty` with the reason); or rejected (its entries).
 - Conflicts resolved while merging `<main>` into a feature branch, and the check result.
 - The next command, as in `SKILL.md` step 9 (another ready feature, a later wave, open problems), or

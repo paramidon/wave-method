@@ -6,7 +6,11 @@ and no other file carries a version. Changes since the last tag go into a line
 
 - Unreleased — support for Google Antigravity and Gemini CLI is removed: no Antigravity plugin manifest, Gemini
   CLI extension or `commands/`; Gemini models are gone from the model tiers; the installers' Codex links option is
-  `--no-codex` / `-NoCodex` again (`--no-agents` / `-NoAgents` no longer exist).
+  `--no-codex` / `-NoCodex` again (`--no-agents` / `-NoAgents` no longer exist). A feature waiting for review is
+  shown in a short review block (`layout.md`, "Feature review"), in `wave-run` and `/wave-status` alike: its
+  essence and up to five feature-specific test steps with expected results, plus anything worth a look; no task
+  list, check counts, diff statistics, review commands or build and launch steps. "How to try" lines and task
+  `Try:` lines name only feature-specific actions.
 - v2.7.0 (2026-11-04) — `/wave-status` shows each feature waiting for review with the same full brief as `wave-run`: what
   and why, what was done, how it was checked, how to test it, what is worth a look, commits and diff summary; for
   a plan run before v2.6.0 it builds the brief read-only from the README, the branch's commits and diff and the
