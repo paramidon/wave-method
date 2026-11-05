@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — a tier gate keeps tasks off weaker models (`layout.md`, "Tier gate"): every `medium` and `high` task
+- v2.10.0 (2026-11-05) — a tier gate keeps tasks off weaker models (`layout.md`, "Tier gate"): every `medium` and `high` task
   prompt starts with `Required tier: …`; the executor names its own model first and, below the tier or unknown,
   stops `tier-mismatch` without touching anything (no one can waive it; only a re-plan lowers a task's complexity);
   task commits carry a `Wave-Model:` trailer and reports a `Model:` line; `wave-run` merges nothing whose commits
