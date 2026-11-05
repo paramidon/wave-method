@@ -4,6 +4,11 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- Unreleased — a tier gate keeps tasks off weaker models (`layout.md`, "Tier gate"): every `medium` and `high` task
+  prompt starts with `Required tier: …`; the executor names its own model first and, below the tier or unknown,
+  stops `tier-mismatch` without touching anything (no one can waive it; only a re-plan lowers a task's complexity);
+  task commits carry a `Wave-Model:` trailer and reports a `Model:` line; `wave-run` merges nothing whose commits
+  lack the trailer or name a weaker model — the task becomes ⚠️ and runs again on its tier.
 - v2.9.0 (2026-11-05) — every run of a wave skill shows its start and end time, read from the system clock (`layout.md`,
   "Run times"): the first line is `Started: <date time>`, the last line of the final report is
   `Started: … · Finished: … (<duration>)`; `wave-run` writes `Started` / `Finished` into the wave's Execution,

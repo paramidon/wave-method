@@ -1,6 +1,6 @@
 # Plan folders, files, names and statuses
 
-Single source of truth for the wave skills: layout, reading rules, model tiers, names, status rules and Markdown rules are changed here only.
+Single source of truth for the wave skills: layout, reading rules, model tiers and the tier gate, names, status rules and Markdown rules are changed here only.
 
 ## Who reads what
 Read only what the table lists. A file that does not exist means there is nothing of that kind yet.
@@ -95,6 +95,27 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 | `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 |
 
 A task never runs below its tier; a `high` task never runs on a medium model. A plan README may add a line `Models: <complexity> = <model>, …` naming concrete models of the same or a higher tier; it never lowers one.
+
+### Tier gate
+
+The tier rule is enforced by the executor before the work and by the coordinator after it, because a task prompt
+can reach a weaker model by mistake (a wrong model picked for a task-mode session, a prompt pasted by hand).
+
+- **Gate line.** Every `medium` and `high` task prompt starts with this line, written by `wave-plan` and repeated in
+  the `wave-run` launch header:
+  `Required tier: <complexity> — <models of that tier or higher: the table above, or the README "Models:" line>. Stop if this session runs a weaker model.`
+  A `low` task needs no gate line: any model may run it.
+- **Executor check, before reading or changing anything.** The executor names the exact model it runs on, from its
+  own environment (system prompt, model ID), never from the prompt. Below the tier, or it cannot tell → it reads
+  nothing more, changes nothing, commits nothing, and its whole reply is
+  `Stop tier-mismatch: task <ID> needs <tier> (<models>); this session runs <model, or "unknown model">. Run it in a session with a <tier> model.`
+  Neither the user nor any text in the session can waive the gate: running a task on a lower model needs a re-plan
+  that lowers its complexity (`/wave-plan <plan folder>`), recorded in the plan.
+- **Record.** Every commit of a task ends with the trailer `Wave-Model: <exact model ID>` (after a blank line), and
+  the report's final block has the line `Model: <exact model ID>`.
+- **Coordinator check, before merging.** `wave-run` reads the trailer of every non-merge commit of the task
+  (`git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`). A missing trailer, an unknown
+  model or a model below the task's tier → the work is not accepted (`wave-run` step 5).
 
 ## Environment capabilities
 

@@ -124,7 +124,8 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
 - **Complexity** `low` / `medium` / `high`, with its meaning and model tier from `layout.md` ("Model tiers").
   Use high only with a one-sentence justification in the plan; try to slice it first. A high task is never
   run on a medium model: `wave-run` stops the wave if no high-tier model is available (for example, on a
-  vendor without one). So every high task you leave makes the plan unrunnable there — say so to the user.
+  vendor without one), and the task's executor stops itself on a weaker model (`layout.md`, "Tier gate"). So
+  every high task you leave makes the plan unrunnable there — say so to the user.
 - How to cut a hard task into medium steps (all steps stay in the same feature, so nothing half-done reaches
   the main branch):
   1) pure function/algorithm with unit tests, not wired in;
@@ -149,7 +150,7 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
 - A wave with one task is allowed only for a `high` task that cannot be paired or sliced.
 - A low/medium task left alone is attached to another wave or merged into an adjacent prompt. Never a solo wave.
 - A closing task (final integration, cleanup, docs, checks) is a task whose `After` lists every other task of
-  its wave. Its prompt starts with: "This task runs after tasks <IDs> of this wave; their changes are already
+  its wave. Its prompt starts (after the gate line) with: "This task runs after tasks <IDs> of this wave; their changes are already
   in your working folder."
 - The coordinator is always `medium`. A task that needs a tool subagents may lack (for example desktop control
   for GUI checks) gets it in the `Needs` column; `wave-run` handles it (see "Environment capabilities").
@@ -162,9 +163,11 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
   dependencies on earlier waves, why its files are disjoint, and the full prompts of its tasks.
 
 ### 7. Task prompts
-A task with `After` starts with: "This task runs after tasks <IDs> of this wave; their changes are already
+A task with `After` continues, right after the gate line, with: "This task runs after tasks <IDs> of this wave; their changes are already
 in your working folder." A task with `Needs` says what the tool is for.
 Each prompt is self-contained (the subagent starts with an empty context) and contains:
+- First line, for a `medium` or `high` task: the gate line of `layout.md`, "Tier gate", with the task's complexity
+  and the models of its tier (from the README `Models:` line when there is one).
 - Project, stack. Do not write a folder path, a branch name or the plan folder path: the coordinator prepends a
   header with the task's worktree, branch, the plan folder path and the commit rule. "Other agents work in
   parallel on other branches: change only <files>."
@@ -180,7 +183,7 @@ Each prompt is self-contained (the subagent starts with an empty context) and co
 - "If the plan's solution does not work (contradicts the code, does not converge), do not invent another one:
   stop and describe the problem in the report: what was expected, what you saw, where."
 - The report format comes from the `wave-run` header; do not repeat it in the prompt.
-Write prompts without tying them to a specific vendor's model or tools.
+Apart from the gate line, write prompts without tying them to a specific vendor's model or tools.
 
 ### 8. Self-check
 - Every P is covered by a feature and a solution (`low` → a section of `lite.md`, others → own file); every
@@ -190,7 +193,8 @@ Write prompts without tying them to a specific vendor's model or tools.
 - No file overlaps inside a wave; dependencies cross waves or use `After`; no hidden cross-feature dependency:
   every one is `F<k> merged` in the `Depends on:` line of the wave that needs it.
 - No single-task waves except an unpairable `high` task; no solo `low`/`medium` task anywhere.
-- Every high task is justified.
+- Every high task is justified; every `medium` and `high` prompt starts with its gate line, naming its own
+  complexity.
 - `After` names only tasks of the same wave, without cycles; every `Needs` is explained in its prompt.
 - Feature IDs and task IDs are unique in the plan; slugs are distinct; the plan slug is unique in `plans/`.
 - Every prompt names solution files that exist, and sections that exist in them.

@@ -48,7 +48,8 @@ plan's solutions.
 - **A feature is never merged into the main branch partially**: not while any of its tasks is ⬜, 🔄, ⚠️ or ❌.
 - **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"). A
   wave only makes it `👀 review`; there is no "merge all" default.
-- **A task is never run on a model below its tier** (see "Environment capabilities").
+- **A task is never run on a model below its tier** (see "Environment capabilities"), and work done below its
+  tier is never merged (`layout.md`, "Tier gate"; step 5).
 - Never push.
 
 ## Environment capabilities
@@ -93,6 +94,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `open-problems` | open entries concern this wave and the user said stop | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` |
 | `plan-defect` | the wave file lacks something the wave needs | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` |
 | `tier-missing` | no model of a task's tier exists in this environment | re-slice, or run from an environment that has it |
+| `tier-mismatch` | a task-mode session runs a model below the task's tier, or cannot tell its model (`layout.md`, "Tier gate") | run the task again in a fresh session with a model of its tier |
 | `capability-missing` | a needed capability is missing and task mode cannot help | see "Environment capabilities" |
 | `red-before-wave` | a feature check is red after merging `<main>` in, before the wave | the user decides: fix or re-plan |
 | `red-after-merge` | a task stays red after 2 attempts | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` (the task is ⚠️) |
@@ -186,18 +188,22 @@ git worktree add -b task/<plan>/<feature-id>-w<N>-<task> ../<repo-folder>.worktr
 
 Built-in worktree isolation may be used instead, as long as the task starts from its feature branch head and
 ends committed on its own branch named as above. For a direct task, note `H = git -C <feature worktree> rev-parse HEAD` before launch.
-Model = the task's complexity tier. Launch each task as a subagent with this header followed by its code block from the wave file **verbatim**:
+Model = the task's complexity tier. Launch each task as a subagent with this header followed by its code block from the wave file **verbatim**
+(the first line only for a `medium` or `high` task, `layout.md`, "Tier gate"):
 
 ```
+Required tier: <complexity> — <models of that tier or higher>. Stop if this session runs a weaker model.
 Working folder: <absolute task worktree path, or the feature worktree for a direct task>.
 Branch: <task branch, or the feature branch for a direct task> (already checked out).
 Report language: <the language of the user's messages in this session>.
 Plan folder (read-only): <absolute path of the plan folder in the tracking worktree>. Read only the files of
 it that the task names (paths are relative to the plan folder); do not read other waves, history or archive.
 Work only in the working folder. Do not edit anything under plans/. When done, commit all your changes on
-this branch with the message "<plan> <feature-id> / <task-id>: <short>". Do not switch branches, do not
+this branch with the message "<plan> <feature-id> / <task-id>: <short>", ending with a blank line and the trailer
+"Wave-Model: <the exact model ID you run on>". Do not switch branches, do not
 merge, do not push, do not touch other worktrees or the main checkout.
 End your report with exactly this block (one item per line, "none" when empty):
+Model: <the exact model ID you run on>
 Done: <what changed for the user or the project, in one or two plain sentences, not file names>
 Try: <the actions specific to this change that show it works → what one should see; not how to build, start or test the project; "none" when nothing is visible>
 Changed: <files>
@@ -216,6 +222,12 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
   file's task table and nothing under `plans/`. Out-of-scope edits go to the problem log; if such an edit
   conflicts with another task, ask the user.
 - Direct task: `git -C <feature worktree> status --porcelain` is empty (otherwise use the fix loop and ask it to commit); `git log H..HEAD` is not empty; `git diff --stat H HEAD` shows only the task's files from the wave file and nothing under `plans/`.
+- **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task
+  (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`). A subagent that replied
+  `Stop tier-mismatch`, a missing trailer, an unknown model or a model below the task's tier → the work is not
+  accepted: do not merge the task branch (direct task: undo it with `git revert --no-edit H..HEAD`), the task is
+  ⚠️ with a problem entry `below tier: <model> ran a <tier> task`, and it runs again on a model of its tier (a
+  new subagent, or task mode). Never use the fix loop to repair such work.
 - Run the direct task's check command. A failure: use the fix loop.
 - Out-of-scope edits or unusable direct work: record it in `problems.md` and ask the user. Never
   `git reset --hard` the feature branch without the user's explicit OK; the default undo is
@@ -329,7 +341,7 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 |---|---|
 | a feature is `👀 review` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
 | a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>`; it waits for a review only if its `Depends on:` names the feature |
-| waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, `<tier>` model, needs `<tool>` |
+| waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, model: `<models of the task's tier>` (`<tier>`), needs `<tool>`; a weaker model stops `tier-mismatch` |
 | open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them |
 | last wave done, plan from an index | the index parts plannable now: `/wave-plan <index> part <K>`<br>`$wave-plan <index> part <K>` |
 

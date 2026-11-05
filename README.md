@@ -186,7 +186,9 @@ What it adds compared with "agent, please do these ten things":
   reaches `main` only when you approve it. Nothing half-wired or unreviewed lands on `main`.
 - **Durable, readable state.** Statuses, a problem log and an execution log per wave live in Markdown on a
   tracking branch. A fresh session reads only what it needs; finished waves are never re-read.
-- **Model-tier routing.** Every task is `low`, `medium` or `high`; it never runs below its tier.
+- **Model-tier routing.** Every task is `low`, `medium` or `high`; it never runs below its tier. Each task prompt
+  starts with its required tier, so a weaker model given it by mistake stops instead of doing the work, and the
+  coordinator merges a task only when its commits name a model of its tier.
 - **A closed problem loop.** Whatever a subagent could not check, or found broken, becomes a problem entry that
   the next planning run turns into fix tasks.
 
