@@ -5,7 +5,8 @@ description: Read-only status of the wave-triage → wave-plan → wave-run pipe
 
 # wave-status — read-only pipeline status
 
-Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
+Language: talk to the user in the language of their messages; write everything into the repository in English,
+always (`wave-plan/layout.md`, "Language"). Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").

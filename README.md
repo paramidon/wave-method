@@ -280,7 +280,7 @@ The skills follow these rules on every run:
 | Difficulty scale and the size of one plan | `wave-triage/difficulty.md` |
 | Plan layout, statuses, reading rules, Markdown rules | `wave-plan/layout.md` (single source of truth) |
 | File templates | `wave-plan/templates.md` |
-| Language | the skills talk in the language you write in; everything written to the repository is English |
+| Language | the skills talk in the language you write in; everything written to the repository is English, always (a non-English doc a task changes is translated) |
 
 Your project's own rules (for example an `AGENTS.md` or `CLAUDE.md` with coding conventions) keep working: the
 agents load them as usual, and the planner takes them into account when it writes the task prompts.

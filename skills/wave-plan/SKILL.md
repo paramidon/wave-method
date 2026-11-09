@@ -5,7 +5,8 @@ description: Turn the user's list of problems/features into an implementation pl
 
 # wave-plan — design and slice tasks into waves
 
-Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
+Language: talk to the user in the language of their messages; write everything into the repository in English,
+always (`wave-plan/layout.md`, "Language"). Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -171,7 +172,7 @@ Each prompt is self-contained (the subagent starts with an empty context) and co
 - Project, stack. Do not write a folder path, a branch name or the plan folder path: the coordinator prepends a
   header with the task's worktree, branch, the plan folder path and the commit rule. "Other agents work in
   parallel on other branches: change only <files>."
-- "Write code, comments and docs in English; write the report in the language the header names."
+- "Write code, comments, docs and commit messages in English, even where the existing text is in another language; write the report in the language the header names."
 - The goal in 1–2 sentences, the feature it belongs to, and the solution file and section to read, relative to
   the plan folder (`solutions/P3-atmospheric-flight.md`, "Algorithm D"). Name only the files the task needs:
   the subagent reads nothing else in the plan folder.

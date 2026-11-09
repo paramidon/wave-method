@@ -23,8 +23,16 @@ A wave file holds everything its wave needs. If something is missing, that is a 
 
 - Talk to the user in the language of the user's messages in this session (the language they write their
   prompts in); if it changes, follow the latest message.
-- Everything written to the repository is in English: code, comments, docs, plan and index files, task
-  prompts, commit messages, branch names.
+- Everything written to the repository is in English, always: code, comments, docs (README, design and lore
+  documents, guides), plan and index files, problem records, task prompts, commit messages, branch names. The
+  language of the user's messages, of the user's list or of the existing project does not change this.
+- The only non-English text in a written file: the user's words quoted verbatim (`User's words:`, the source
+  list), and product text (UI strings, in-game text) that the user asked to be in another language.
+- A doc in another language that a task changes is translated to English as a whole by that task: no file
+  ends up in two languages. `wave-plan` counts the translation in the task's size; `wave-triage` notes
+  "non-English doc" in the problem's **Where**.
+- Every subagent prompt that may write to the repository says "write everything in English"; its
+  `Report language:` line names only the language of its report.
 - A subagent writes its report in the language that its header's `Report language:` line names.
 
 ## Run times

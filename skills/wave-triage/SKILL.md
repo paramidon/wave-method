@@ -7,7 +7,8 @@ description: First stage of the wave-triage → wave-plan → wave-run pipeline.
 
 Folder layout and branch names come from `wave-plan/layout.md`.
 
-Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
+Language: talk to the user in the language of their messages; write everything into the repository in English,
+always (`wave-plan/layout.md`, "Language"). Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -86,6 +87,8 @@ are that subagent's assigned `triage/P<n>.md` records. Its prompt must include:
 - The cluster's problems with their one-line restatements, the user's words and the answers.
 - The checklist above (Where, Likely cause, Difficulty with `difficulty.md`, Size, Depends on).
 - `Report language: <the language of the user's messages in this session>.`
+- "Write the records in English; keep only the user's words verbatim in their own language. Mark a doc in
+  another language that the problem changes as `non-English doc` in **Where**."
 - The record-file format from step 6 and the instruction: "Write one file `triage/P<n>.md` per problem in the
   given format; do not read or change other files under `plans/`; do not commit. Do not modify project code."
 - "Return only, per problem, one line:

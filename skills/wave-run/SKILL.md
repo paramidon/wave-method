@@ -5,7 +5,8 @@ description: Third stage of the wave-triage → wave-plan → wave-run pipeline.
 
 # wave-run — execute one wave of a plan
 
-Language: `wave-plan/layout.md`, "Language". Start and end time of the run: `wave-plan/layout.md`, "Run times".
+Language: talk to the user in the language of their messages; write everything into the repository in English,
+always (`wave-plan/layout.md`, "Language"). Start and end time of the run: `wave-plan/layout.md`, "Run times".
 
 Skill paths such as `wave-plan/layout.md` are relative to the wave skills folder, the parent of this skill's
 folder (`wave-plan/layout.md`, "Skill paths").
@@ -195,7 +196,8 @@ Model = the task's complexity tier. Launch each task as a subagent with this hea
 Required tier: <complexity> — <models of that tier or higher>. Stop if this session runs a weaker model.
 Working folder: <absolute task worktree path, or the feature worktree for a direct task>.
 Branch: <task branch, or the feature branch for a direct task> (already checked out).
-Report language: <the language of the user's messages in this session>.
+Report language: <the language of the user's messages in this session>. Everything you write to the
+repository (code, comments, docs, commit messages) is in English, even where the existing text is not.
 Plan folder (read-only): <absolute path of the plan folder in the tracking worktree>. Read only the files of
 it that the task names (paths are relative to the plan folder); do not read other waves, history or archive.
 Work only in the working folder. Do not edit anything under plans/. When done, commit all your changes on
