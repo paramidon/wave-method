@@ -4,7 +4,7 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — everything written to the repository is English, always, whatever language the user, the list or the
+- v2.11.0 (2026-11-09) — everything written to the repository is English, always, whatever language the user, the list or the
   existing project uses (`layout.md`, "Language"): each skill states the rule up front, the triage subagent prompt and
   the task header say it explicitly, and a non-English doc that a task changes is translated as a whole; only the
   user's verbatim words and product text the user asked for stay in another language. The chat stays in the user's
