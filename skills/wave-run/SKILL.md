@@ -51,6 +51,8 @@ plan's solutions.
   wave only makes it `👀 review`; there is no "merge all" default.
 - **A task is never run on a model below its tier** (see "Environment capabilities"), and work done below its
   tier is never merged (`layout.md`, "Tier gate"; step 5).
+- **Every final report follows the template of `wave-run/report.md`**, read right before writing it. The
+  environment's default answer style never shortens it.
 - Never push.
 
 ## Environment capabilities
@@ -80,7 +82,8 @@ waves never look alike.
 
 ## Stops
 
-Every stop prints `Stop <code>: <one line> — next: <command or action>` as the first line of the report.
+Every stop prints `Stop <code>: <one line> — next: <command or action>` as the first line of the report
+(`wave-run/report.md`).
 A stop after the wave started is also the last line of the wave file's "Execution" and is committed with
 `Plan <plan>: wave <N> stopped`. A stop before the wave started writes nothing, except `plan-defect`: its entry is
 appended to `problems.md` on the tracking branch (tracking worktree as in step 2) and committed as
@@ -125,7 +128,8 @@ continue, stop `red-after-merge`.
 - **Extra files.** Read `task-mode.md` when the arguments are `… task <ID>`, when this wave's Execution ends with
   `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read `merge.md` when the
   arguments are `merge <F-IDs>`, when no wave is ⬜ or ❌, or in step 10 when the user approves a feature. Read
-  nothing else of the `wave-run` folder.
+  `report.md` right before every final report (a finished wave, a stop, a task-mode wait, a merge), again each
+  time. Read nothing else of the `wave-run` folder.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
   `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
@@ -319,38 +323,16 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 
 ### 9. Report to the user
 
-- First line if the wave stopped: `Stop <code>: <one line> — next: <command or action>`.
-- Task table: status, what was done in one line, feature.
-- Feature table, one row per feature of the plan: `| Feature | Status | Tasks | Waiting for | Branch |`; `Tasks` is
-  `<done>/<total>` followed by the IDs of the tasks still missing. `Branch` is `feat/<plan>/<feature>`; for a `👀 review` feature it is the
-  branch to review, so the user sees it without reading the blocks below.
-- Task merges: conflicts and how they were resolved.
-- Check result (what passed, what failed).
-- New problem-log entries — the essence of each; entries closed by this wave and the statuses that changed.
-- What to check by hand (UI and anything tests do not cover) for features that are not ready yet, in their
-  feature worktree.
-- **Ready for review**: the review block of `layout.md`, "Feature review", for every `👀 review` feature — those
-  this wave made ready and those still waiting from earlier runs — from its `reviews/<feature>.md`, without the
-  `Merge:` line. Nothing else about a ready feature: no task list, check result, diff statistics or review commands.
-  Print every block, also when several features are ready; never shorten one to its title and branch.
-- When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), name the
-  paths and say that the second merge brings the first one in from `<main>` and may need conflict resolution.
-- End the report with the questions of step 10, then the `Started: … · Finished: …` line (`layout.md`, "Run times").
-
-**The next command**, always for a fresh session, in both forms (`layout.md`, "Commands"):
-
-| Situation | Next command |
-|---|---|
-| a feature is `👀 review` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
-| a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>`; it waits for a review only if its `Depends on:` names the feature |
-| waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, model: `<models of the task's tier>` (`<tier>`), needs `<tool>`; a weaker model stops `tier-mismatch` |
-| open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them |
-| last wave done, plan from an index | the index parts plannable now: `/wave-plan <index> part <K>`<br>`$wave-plan <index> part <K>` |
+Read `wave-run/report.md` now, also when it was read earlier in the session, and print the wave report exactly as
+its template shows: the stop line (if any), the waves, tasks and features tables, merges and checks, problems, the
+review block of every `👀 review` feature, the next command, the merge questions of step 10 and the times line. The
+format is part of the user's request: never retell it as prose, drop a section or replace a review block with a
+link. Check the report against the template before sending it.
 
 ### 10. Ask about each ready feature
 
-Ask once per `👀 review` feature, at the end of the report:
-`Merge F<k> "<title>" — <what it changes, one line> (feat/<plan>/<feature>) into <main>? Answer: merge F<k> · later · problems F<k>: <what is wrong>`.Then wait for the answer. Read `wave-run/merge.md` before acting on it.
+Ask once per `👀 review` feature, at the end of the report, with the merge question of `wave-run/report.md`. Then
+wait for the answer. Read `wave-run/merge.md` before acting on it.
 
 | Answer | What happens |
 |---|---|

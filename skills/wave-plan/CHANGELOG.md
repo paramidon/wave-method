@@ -4,6 +4,12 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- Unreleased — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
+  coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
+  now always shows a waves table next to the tasks and features tables, and keeps every section even when it has
+  one row. The file says that the format is part of the user's request, so the environment's default answer style
+  (short prose, no tables) does not shorten it, and a review block is never replaced by a link. The merge report
+  follows the same file. Step 9 of `wave-run/SKILL.md` and the "Report" of `merge.md` now point to it.
 - v2.11.0 (2026-11-09) — everything written to the repository is English, always, whatever language the user, the list or the
   existing project uses (`layout.md`, "Language"): each skill states the rule up front, the triage subagent prompt and
   the task header say it explicitly, and a non-English doc that a task changes is translated as a whole; only the
