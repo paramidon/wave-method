@@ -54,6 +54,11 @@ Read only the following, according to `layout.md`, "Who reads what":
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
   `git branch --merged <main> "feat/*"`.
+- The main branch name, once, before writing anything: `main` when
+  `git rev-parse --verify --quiet refs/heads/main` succeeds, else `master` when
+  `git rev-parse --verify --quiet refs/heads/master` succeeds (`layout.md`, "Names"). This name is
+  `<main branch>` in every label and command of the report. Never take it from an example in this file, from
+  another repository or from memory.
 
 Do not read solutions, task prompts, other sections of wave files, history or archived plans. The tracking
 branch is authoritative for plan status; read its problem headers and Execution sections there as well when
@@ -82,10 +87,10 @@ Feature status comes first: the user reads it before anything about waves.
   merged block of `layout.md`, "Feature review", for every `✅ merged` feature whose `Merged` hash is not in
   `<main branch>` yet, from its brief, in full; `none` when there is no such feature. These are what the user tests
   before merging `integration/<name>`. A feature without a brief gets the block built as `Ready for review:`
-  builds one, with the merged block's header and `Approved:` line. In the label, `<main branch>` is replaced by
-  the branch name alone, as `git branch` prints it: `Merged, not in main:` or `Merged, not in master:`. Never the
-  plan slug, the integration branch, `<main>`, quotes, a possessive or a second rendering of the name; the label
-  appears once per plan.
+  builds one, with the merged block's header and `Approved:` line.
+  In the label, `<main branch>` is the name resolved in "What to read", alone: never the plan slug, the
+  integration branch, `<main>`, quotes, a possessive or a second rendering of the name; the label appears once
+  per plan.
 - `Ready for review:` the review block of `layout.md`, "Feature review", for every `👀 review` feature, with its
   `Merge:` line, from its brief; never shortened to the title and branch, and nothing else about the feature.
   For `main-dirty` add its reason (`not on <main>`, `staged changes`, or the overlapping paths); the three read-only
@@ -125,6 +130,8 @@ folder exists on its tracking branch `plan/<topic>-p<K>`. For an index with a `F
 ### Template
 
 ````
+Started: <YYYY-MM-DD HH:MM>
+
 ## <plan folder> · `<plan>` · <flow>
 
 - Tracking branch: `plan/<plan>` <present · absent>
@@ -163,7 +170,8 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 - One `## ` block per plan: plan folders under `plans/` first, then plans found only on their tracking branch.
   `<flow>` is `manual`, or `autonomous · target: integration/<name>` followed by ` · manual review: <F-IDs>` when
   that list is not empty.
-- Always printed: the plan header, `Tracking branch`, `Features`, the table, `Waves`, `Next`, the times line.
+- Always printed: the opening `Started:` line, the plan header, `Tracking branch`, `Features`, the table,
+  `Waves`, `Next`, the times line.
   `Merged, not in <main branch>:` and `Integration:`: autonomous flow only, always there (`none`, `not created
   yet`). `Ready for review:`: when a feature is `👀 review`. `Merged, not recorded`, `Last stop`,
   `Inconsistencies`, `Leftovers`: only when they have content. `## Index parts`: when an index has a part
@@ -171,6 +179,8 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 - Labels and column names are written exactly as the template writes them; when the user's language is not
   English, they are translated, and statuses, IDs, branch names, paths and commands stay as written.
 - A merged block and a review block are printed in full, never retold as one line.
+- The report is one message, from the `Started:` line to the times line; nothing follows the times line. A
+  mistake found before sending is fixed by rewriting the report, never by a correction appended below it.
 
 ### Suggested commands
 
@@ -186,10 +196,13 @@ The commands in this subsection are suggestions for the user's report only. Do n
 
 ### Before sending
 
-Compare the report with "Template": every plan has its header, `Tracking branch`, `Features`, the table, `Waves`
-and `Next` lines, in this order. In autonomous flow the `Merged, not in <main branch>:` label appears exactly once
-per plan, with the branch name alone (`Merged, not in main:`), followed by one full merged block per feature or
-`none`. If something is missing, merged into prose, or the label differs, rewrite the report before sending it.
+Compare the report with "Template": the first line is `Started: <YYYY-MM-DD HH:MM>`; every plan has its header,
+`Tracking branch`, `Features`, the table, `Waves` and `Next` lines, in this order; the last line is the
+`Started: … · Finished: …` line. In autonomous flow the `Merged, not in <main branch>:` label appears exactly
+once per plan, with the name resolved in "What to read" (`Merged, not in master:` in a repository whose main
+branch is `master`), followed by one full merged block per feature or `none`, and every command of the report
+names that same branch. If something is missing, merged into prose, or a label or a branch name differs,
+rewrite the whole report before sending it; never send a correction after it.
 
 ## Next-command rules
 
@@ -210,7 +223,8 @@ Use the first rule that applies:
 7. Every feature merged: `finished; archived by the last wave-run`, or the suggested archive command if the
    plan is not archived. In autonomous flow only once the integration branch is in `<main branch>`.
 
-The report ends with the `Started: … · Finished: …` line (`layout.md`, "Run times").
+The report starts with the `Started:` line and ends with the `Started: … · Finished: …` line (`layout.md`,
+"Run times").
 
 Write commands in both forms (`layout.md`, "Commands"). Running-wave locks and task-mode
 waiting follow `layout.md`, "Running waves".
