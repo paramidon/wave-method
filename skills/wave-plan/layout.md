@@ -191,6 +191,7 @@ A wave is running while its status in README "Waves" is `🔄 since <YYYY-MM-DD 
 - While a wave runs, only its coordinator (and the task sessions it asked for) changes the plan folder, its tracking worktree and its feature and task worktrees: no re-plan, no other wave, no renames, no manual fixes. Reading is fine. Any other skill or agent that wants to change them tells the user and stops.
 - A wave whose Execution ends with `Waiting: task mode <IDs>` is resumed by `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>` (`wave-run`, "Environment capabilities").
 - A lock left by a session that is gone is released only by the user's decision.
+  So is a target claim of autonomous flow ("Target claim").
 
 ## Problem log
 `problems.md` is created with the first entry:
@@ -343,12 +344,42 @@ the main checkout.
   Use a result only if its README slug is that of the tracking branch; inherited READMEs are not authoritative.
   They write the same worktree, so their waves never run at the same time: while a wave of one of them is 🔄,
   `wave-run` and `wave-plan` of another stop `wave-running`.
+  The atomic guard is the target claim ("Target claim"); this read of 🔄 marks stays as a second guard.
 - The user reviews it as one diff, `git diff <main branch>...integration/<name>`, and merges it into `<main branch>`
   themselves (`git merge --no-ff integration/<name>` in the main checkout). No skill does.
 - Autonomous flow refuses to start a wave when it cannot guarantee this: stop `target-unsafe` before anything is
   written, when `target:` is not `integration/<name>`; the integration branch is checked out anywhere but the
   integration worktree; or the integration worktree is not on that branch, has tracked changes, or has an unfinished
   merge.
+
+#### Target claim
+
+Every run that writes the integration worktree claims the target first and holds the claim until its last write: a
+wave and the merge form of `wave-run` in autonomous flow, and `wave-plan` in autonomous flow of planning (a new plan or
+a re-plan). The flow form of `wave-run` and `wave-status` write nothing there and take no claim.
+
+- The claim is the ref `refs/wave-method/claims/integration/<name>`, which every worktree of the repository shares. It
+  points to a blob whose one line names the holder: `<plan> wave <N> <YYYY-MM-DD HH:MM>`,
+  `<plan> merge <YYYY-MM-DD HH:MM>` or `<plan> planning <YYYY-MM-DD HH:MM>`.
+- **Take** it by creating the ref with the zero object ID as its expected old value. Git creates the ref only when it
+  does not exist, so of two runs that start together exactly one gets it:
+
+  ```bash
+  oid=$(printf '%s\n' "<holder line>" | git hash-object -w --stdin)
+  git update-ref refs/wave-method/claims/integration/<name> "$oid" 0000000000000000000000000000000000000000
+  ```
+
+  PowerShell: `$oid = "<holder line>" | git hash-object -w --stdin`, then the same `git update-ref`. When
+  `git rev-parse --show-object-format` prints `sha256`, the zero ID has 64 zeros. Keep the oid: the release needs it.
+- **Refused** (the ref exists): read the holder with `git cat-file -p refs/wave-method/claims/integration/<name>` and
+  stop `wave-running`, naming the holder line; nothing written. One exception: a `wave-run` that resumes the wave the
+  holder line names (same plan and wave, its Execution ends with `Waiting: task mode …`) takes the claim over; its
+  oid is `git rev-parse refs/wave-method/claims/integration/<name>`.
+- **Release** it right after the run's last write, and before the report of any stop after the claim:
+  `git update-ref -d refs/wave-method/claims/integration/<name> "$oid"`. The expected old value keeps a run from
+  deleting a claim that is not its own. A wave that ends with `Waiting: task mode …` keeps the claim: it is still 🔄.
+- A claim left by a session that is gone is released only by the user's decision ("Running waves"), with
+  `git update-ref -d refs/wave-method/claims/integration/<name>` once no run holds it. `wave-status` shows every claim.
 
 ### Auto-approval
 
@@ -424,6 +455,9 @@ order:
 
 A re-plan's flow is its README `Flow:` line; a `flow` argument that differs from it stops `flow-mismatch` (the flow
 form of `wave-run` changes the line).
+A re-plan in autonomous flow takes the target claim ("Target claim"), holder line
+`<plan> planning <YYYY-MM-DD HH:MM>`, after its lock check and before it writes anything, and releases it after its
+merge into the integration worktree; refused → stop `wave-running`, nothing written.
 
 In autonomous flow of planning:
 
@@ -437,7 +471,7 @@ In autonomous flow of planning:
 |---|---|---|---|
 | a problem can be read two ways that lead to different work | `wave-triage` step 3; `wave-plan` step 1, also for an index's "Open questions" | ask all such questions once | "Assumed readings"; no question |
 | one problem alone exceeds the part budget | `wave-triage` step 5 | tell the user and ask | the problem goes into no part; "Open questions" gets `P<n>: needs a research step first (not planned, autonomous flow)`; the other parts are written |
-| the tracking branch or folder of a new plan already exists | `wave-plan` step 9 | ask the user | stop `plan-exists`; nothing written |
+| the tracking branch or folder of a new plan already exists | `wave-plan` step 9; autonomous flow: check 0 of "Chained parts and the integration branch", before anything is written | ask the user | stop `plan-exists`; nothing written |
 | a re-plan's `flow` argument differs from its README `Flow:` line | `wave-plan` re-planning | — | stop `flow-mismatch`; nothing written |
 
 #### Assumed readings
@@ -463,29 +497,41 @@ place of the P. `wave-run` copies a feature's assumed lines into "Worth a look" 
 
 In autonomous flow `wave-plan` uses `<main>` = the integration branch and `<main checkout>` = the integration worktree
 ("Names"). All plans of an index share `integration/<topic>`, so a later part is planned and run against the code of
-the earlier parts before the user has merged them. In order, before step 1 of `wave-plan`:
+the earlier parts before the user has merged them. In order, before step 1 of `wave-plan`; a stop in checks 0 to 3
+leaves no branch, worktree, commit or claim behind:
 
-1. Stop `wave-running`, naming the plan and wave, when a plan with the same target has a 🔄 wave ("Integration target").
-2. The checks of `wave-run/autonomous.md`, "Integration target", step 1 (stop `target-unsafe`).
-3. The part is marked "plan after part J is merged": part J is merged when every feature in part J's README (from its
-   tracking branch `plan/<topic>-p<J>`, else from `<main>`) is `✅ merged` or ➖, and the integration branch or
-   `<main branch>` contains each of their `Merged` hashes (`git merge-base --is-ancestor <hash> <branch>`). Otherwise
-   stop before anything is written:
+0. A new plan of an index part, whose slug the index "Parts" table fixes: stop `plan-exists`, nothing written, when
+   the branch `plan/<slug>` exists, the folder `../<repo-folder>.worktrees/<slug>-plan` exists, or the plan folder
+   exists on `<main branch>` or, when that branch exists, on `integration/<topic>`
+   (`git cat-file -e <branch>:<plan folder>/README.md`). A raw list chooses its slug so that none of these exists, and
+   never stops here.
+1. Take the target claim ("Target claim"), holder line `<slug> planning <YYYY-MM-DD HH:MM>`; refused → stop
+   `wave-running`, naming the holder. Then stop `wave-running`, naming the plan and wave, when a plan with the same
+   target has a 🔄 wave ("Integration target"). Every stop from here on releases the claim first.
+2. The checks of `wave-run/autonomous.md`, "Integration target", step 1, without its claim (stop `target-unsafe`).
+3. The part is marked "plan after part J is merged": read part J's README,
+   `git show <source>:plans/<date>-<topic>/plan-<J>/README.md`, from the first source that has it: part J's tracking
+   branch `plan/<slug of part J>` (the slug in the index "Parts" table); else `<main branch>` (a part J run in manual
+   flow loses its tracking branch at its last merge); else `integration/<topic>`, when that branch exists. Part J is
+   merged when every feature of that README is `✅ merged` or ➖ and each of their `Merged` hashes is in
+   `integration/<topic>` (only when that branch exists) or in `<main branch>`
+   (`git merge-base --is-ancestor <hash> <branch>`). Otherwise stop:
 
    ```
    Stop part-unmerged: part <J> — F<k> <status> (<Waiting for>), … — next: …
    ```
 
    `next:` names, per feature, what it waits for: a `👀 review` feature its review and its merge command, a ⚠️ or 🔄
-   feature its `Waiting for`. Give each command in both forms ("Commands"). For part J without a plan folder or
-   tracking branch: `part <J> is not planned`, with its
-   `/wave-plan` command. Whoever drives an unattended run moves on and reports the waiting part with that line.
+   feature its `Waiting for`. Give each command in both forms ("Commands"). When no source has the README:
+   `part <J> is not planned`, with its `/wave-plan` command. Whoever drives an unattended run moves on and reports
+   the waiting part with that line.
 4. `wave-run/autonomous.md`, "Integration target", step 2 (create the branch and worktree, bring in `<main branch>`;
-   stop `target-conflict`).
+   stop `target-conflict`): the first write to the integration worktree.
 
 Then `wave-plan` reads the code and runs the tests in the integration worktree, creates the tracking branch from the
-integration branch and merges it into the integration worktree, never into the main checkout. The plan folder is on
-the integration branch only, until the user merges it into `<main branch>`.
+integration branch, merges it into the integration worktree, never into the main checkout, and releases the claim
+right after that merge (`wave-plan` step 9). The plan folder is on the integration branch only, until the user merges
+it into `<main branch>`.
 
 ## Archive
 
