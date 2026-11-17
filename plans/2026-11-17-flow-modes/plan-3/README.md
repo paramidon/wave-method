@@ -20,7 +20,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D | ✅ |
 | 2 | `waves/w02.md` | E, F | ✅ |
-| 3 | `waves/w03.md` | G, H | ⬜ |
+| 3 | `waves/w03.md` | G, H | 🔄 since 2026-11-18 02:53 |
 
 ## Tasks
 
@@ -32,8 +32,8 @@ Merged: short hash of the merge commit into the main branch.
 | D | `fake-claude-stub` | F1 | 1 | medium | ✅ |
 | E | `next-action-choice` | F1 | 2 | medium | ✅ |
 | F | `morning-report-render` | F1 | 2 | medium | ✅ |
-| G | `driver-loop-cli` | F1 | 3 | medium | ⬜ |
-| H | `driver-doc-ci` | F1 | 3 | low | ⬜ |
+| G | `driver-loop-cli` | F1 | 3 | medium | 🔄 |
+| H | `driver-doc-ci` | F1 | 3 | low | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p3` and reach the
