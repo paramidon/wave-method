@@ -29,6 +29,10 @@ Read only the following, according to `layout.md`, "Who reads what":
   (`git show plan/<plan>:<plan folder>/README.md`), otherwise from the main checkout. Use its Features columns
   `| ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |` and Waves
   columns `| Wave | File | Tasks | Status |`, and its Tasks columns `| ID | Slug | Feature | Wave | Complexity | Status |`.
+  Also its `Flow:` header line (`layout.md`, "Flow"). For a plan in autonomous flow, `<main>` below is its
+  integration branch and `<main checkout>` its integration worktree (`layout.md`, "Names"); also read
+  `git rev-list --count <main branch>..integration/<name>`
+  when that branch exists.
 - Each plan's `problems.md`: entry headers only (`**[I<n> · …] essence**`).
 - The wave file of a wave that is 🔄, ❌ or ⚠️: only its "Execution" section, for the last
   `Stop <code>: … — next: …` or `Waiting: task mode <IDs> — next: …` line.
@@ -50,7 +54,8 @@ it exists. Use `git show plan/<plan>:<plan folder>/<file>` and retain only the a
 For each plan, report the following in order. Keep a blank line before and after every table. Feature status
 comes first: the user reads it before anything about waves.
 
-- Header: plan folder, slug, tracking branch present or absent.
+- Header: plan folder, slug, tracking branch present or absent, and the flow: `manual`, or `autonomous` with its
+  target and manual-review list.
 - `Features:` one line with the count per status, for example `5 — 2 ✅ merged · 1 👀 review · 1 🔄 · 1 ⚠️`
   (omit statuses with a count of 0).
 - The feature table below, one row per feature of the README's Features table, in its order, using the README's
@@ -69,6 +74,9 @@ comes first: the user reads it before anything about waves.
   and commit subjects; "How to test" from its "How to try" line, otherwise from what the Execution section says was
   checked by hand, as feature-specific steps; otherwise `not recorded — <Done when>`. Do not say where the text
   came from.
+- `Integration:` autonomous flow only: `integration/<name>` — `<N>` commits not in `<main branch>`; review
+  `git diff <main branch>...integration/<name>`, then merge it yourself in the main checkout
+  (`git merge --no-ff integration/<name>`); or `in <main branch>` when N is 0, or `not created yet`.
 - `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
   the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.
@@ -76,7 +84,9 @@ comes first: the user reads it before anything about waves.
   status check of `layout.md`, "Statuses").
   May run the script read-only on a plan folder of the tracking branch's worktree; otherwise check by reading.
 - `Leftovers:` task branches or worktrees of waves that are not 🔄; feature worktrees of merged features; a
-  tracking branch of an archived plan. Give a suggested cleanup command for each, as described below.
+  tracking branch of an archived plan. Give a suggested cleanup command for each, as described below. In autonomous
+  flow the kept branches of auto-merged features are leftovers only once the integration branch is in
+  `<main branch>`.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
@@ -95,7 +105,7 @@ The commands in this subsection are suggestions for the user's report only. Do n
 - Leftover task, feature or tracking branch: `git branch -d <branch>`; suggest removing an attached worktree
   first. Do not suggest forced deletion.
 - A ready feature: `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>`, for use after
-  the user has reviewed it; for `main-dirty`, once the main checkout is ready (`layout.md`, "Main readiness").
+  the user has reviewed it; for `main-dirty`, once `<main checkout>` is ready (`layout.md`, "Main readiness").
 - A finished plan that has not been archived: suggest the applicable `git mv` command from
   `layout.md`, "Archive". For an index part, the whole index folder is eligible only when every part is merged.
 
@@ -113,8 +123,10 @@ Use the first rule that applies:
    feature (`wave-run` then stops `feature-unmerged`).
 5. The first ⬜ wave whose earlier waves are ✅, ⚠️ or ➖:
    `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>`.
-6. Every feature merged: `finished; archived by the last wave-run`, or the suggested archive command if the
-   plan is not archived.
+6. Autonomous flow, no wave ⬜ or 🔄, and the integration branch has commits `<main branch>` lacks: review
+   `git diff <main branch>...integration/<name>`, then merge it yourself: `git merge --no-ff integration/<name>`.
+7. Every feature merged: `finished; archived by the last wave-run`, or the suggested archive command if the
+   plan is not archived. In autonomous flow only once the integration branch is in `<main branch>`.
 
 The report ends with the `Started: … · Finished: …` line (`layout.md`, "Run times").
 

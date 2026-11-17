@@ -1,6 +1,6 @@
 ---
 name: wave-run
-description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, offer each feature whose tasks (possibly spread over several waves) are all done for the user's review on its own branch, merge it into the main branch only when the user approves that feature (in the same session, or later with "/wave-run <plan> merge <F-ID>"), and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. Use when the user says "/wave-run <plan> <N>", "запусти волну N", "/wave-run <plan> merge F1", "смержи фичу", or asks to run the next wave of a plan in plans/ or to merge a reviewed feature. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.1 SOL) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
+description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, offer each feature whose tasks (possibly spread over several waves) are all done for the user's review on its own branch, merge it into the main branch only when the user approves that feature (in the same session, or later with "/wave-run <plan> merge <F-ID>"), or, in a plan whose flow is autonomous, approve it itself under fixed conditions and merge it into an integration branch the user merges later, and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. Use when the user says "/wave-run <plan> <N>", "запусти волну N", "/wave-run <plan> merge F1", "смержи фичу", or asks to run the next wave of a plan in plans/ or to merge a reviewed feature. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.1 SOL) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
 ---
 
 # wave-run — execute one wave of a plan
@@ -25,6 +25,9 @@ or a `👀 review` feature, and name it to the user. Task-mode forms:
 `/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`. Merge form (the user approves
 the named features after review): `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`
 (see `wave-run/merge.md`).
+Flow form (switches the plan's flow between waves, `layout.md`, "Flow"):
+`/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
+`$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (see `wave-run/autonomous.md`, "Flow form").
 
 The coordinator does not write task code itself (except merge-conflict resolution) and does not change the
 plan's solutions.
@@ -35,20 +38,23 @@ plan's solutions.
 - Tasks run on the **feature branch** (direct) or on task branches merged back into it (step 4). A feature branch
   holds only its own feature, so it is the branch the user reviews (`layout.md`, "Feature review").
 - A feature whose tasks are all ✅ or ➖ and whose full check is green becomes `👀 review` and waits for the user's
-  review. It reaches `<main>` only when the user approves that feature (step 10, `wave-run/merge.md`).
+  review. It reaches `<main>` only when the user approves that feature (step 10, `wave-run/merge.md`), or, in
+  autonomous flow, when `wave-run` auto-approves it (`layout.md`, "Flow").
 - Statuses and problem entries live on the **tracking branch** `plan/<plan>`; task and feature branches never edit
   `plans/`. The tracking branch is merged into `<main>` once per run that merges a feature.
 
 ## Hard rules
 
 - **Nothing is ever committed directly on the main branch** (`master`/`main`). It only receives
-  `merge --no-ff` of an approved feature branch and of the tracking branch (`wave-run/merge.md`).
+  `merge --no-ff` of an approved feature branch and of the tracking branch (`wave-run/merge.md`). In autonomous
+  flow it receives nothing: `<main>` is the integration branch (`layout.md`, "Integration target").
 - **The coordinator never works in the main checkout.** All edits, git commands and builds run in the
   worktrees below (use `git -C <path>` or set the working folder there). The main checkout is touched only
   for reading and for the final merges.
 - **A feature is never merged into the main branch partially**: not while any of its tasks is ⬜, 🔄, ⚠️ or ❌.
-- **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"). A
-  wave only makes it `👀 review`; there is no "merge all" default.
+- **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"), or,
+  in autonomous flow, by the auto-approval of `wave-run/autonomous.md`, which merges into the integration branch
+  only. In manual flow a wave only makes it `👀 review`; there is no "merge all" default.
 - **A task is never run on a model below its tier** (see "Environment capabilities"), and work done below its
   tier is never merged (`layout.md`, "Tier gate"; step 5).
 - **Every final report follows the template of `wave-run/report.md`**, read right before writing it. The
@@ -100,6 +106,9 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `tier-missing` | no model of a task's tier exists in this environment | re-slice, or run from an environment that has it |
 | `tier-mismatch` | a task-mode session runs a model below the task's tier, or cannot tell its model (`layout.md`, "Tier gate") | run the task again in a fresh session with a model of its tier |
 | `capability-missing` | a needed capability is missing and task mode cannot help | see "Environment capabilities" |
+| `target-unsafe` | autonomous flow cannot guarantee that merges stay on the integration branch (`layout.md`, "Integration target"); the line names the failed check | fix what the line names (free the integration branch, clean or remove its worktree), then run the same command again |
+| `target-conflict` | merging `<main branch>` into the integration branch conflicts (`wave-run/autonomous.md`) | merge `integration/<name>` into `<main branch>`, or `<main branch>` into it, yourself; then run the same command again |
+| `target-unmerged` | the flow form switches to manual while the integration branch has commits `<main branch>` lacks | review `git diff <main branch>...integration/<name>`, merge it yourself, then run the flow form again |
 | `red-before-wave` | a feature check is red after merging `<main>` in, before the wave | the user decides: fix or re-plan |
 | `red-after-merge` | a task stays red after 2 attempts | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>` (the task is ⚠️) |
 | `design-conflict` | a merge conflict would change a plan solution | the user decides |
@@ -107,8 +116,8 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `nothing-to-run` | no wave is ⬜ or ❌ and no feature is `👀 review` | `/wave-status <plan folder>`<br>`$wave-status <plan folder>` |
 
 `main-dirty` is not a stop: the approved feature keeps `👀 review` with `Waiting for: main-dirty`; the report gives
-the reason, and `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>` merges it once the
-main checkout is ready (see `wave-run/merge.md`).
+the reason, and `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>` merges it once
+`<main checkout>` is ready (see `wave-run/merge.md`).
 
 ## Fix loop
 
@@ -129,10 +138,14 @@ continue, stop `red-after-merge`.
   `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read `merge.md` when the
   arguments are `merge <F-IDs>`, when no wave is ⬜ or ❌, or in step 10 when the user approves a feature. Read
   `report.md` right before every final report (a finished wave, a stop, a task-mode wait, a merge), again each
-  time. Read nothing else of the `wave-run` folder.
+  time. Read `autonomous.md` when that README has
+  `Flow: autonomous`, or the arguments are `flow …`. Read the flow here, once, and keep it for the whole run.
+  Read nothing else of the `wave-run` folder. For the flow form, follow "Flow form" of `autonomous.md` here
+  instead of the wave steps below.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
   `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
+- Autonomous flow: the integration-target checks of `autonomous.md`, "Integration target", step 1.
 - Read `README.md`, `waves/w<NN>.md` of this wave and `problems.md` (if it exists). Nothing else of the plan:
   the wave file holds everything the wave needs. If something is missing (a prompt, a file list, a dependency),
   that is a defect of the plan — stop `plan-defect` (see "Stops") and do not search other wave
@@ -145,17 +158,21 @@ continue, stop `red-after-merge`.
 - Task branches or task worktrees of this wave already exist (`git branch --list "task/<plan>/*-w<N>-*"`) →
   show them and ask whether to continue from them, delete them, or stop `leftover-branches`. Never reuse them
   silently. A task-mode resume expects its prepared branches and checks them in step 5 instead.
+  Autonomous flow: `wave-run/autonomous.md`, "Points of steps 1–6".
 - Open entries in `problems.md` (if any) that concern this wave's tasks or their features (and are not `→` a task
   of this wave): show them and ask whether to proceed. If the user declines, stop `open-problems`.
+  Autonomous flow: `wave-run/autonomous.md`, "Points of steps 1–6".
 - A feature branch merged into `<main>` (`git branch --merged <main> "feat/<plan>/*"`) whose README row is not
   `✅ merged` (the user merged it, or a run was interrupted): write `✅ merged`, an empty `Waiting for` and the hash
-  of the merge (`layout.md`, "Feature review") into the README in the "wave N started" commit.
+  of the merge (`layout.md`, "Feature review") into the README in the "wave N started" commit. In autonomous flow,
+  resolve `<main>` for this check as `autonomous.md`, "Integration target", step 1 says.
 - Every feature that the wave file's `Depends on:` line names as `F<k> merged` is `✅ merged` (counting the repair
   above). Otherwise stop `feature-unmerged`, name the feature and its branch, and give its merge command.
 - Uncommitted changes in the main checkout do not matter at this step; do not touch them.
 
 ### 2. Tracking worktree
 
+- Autonomous flow: first `autonomous.md`, "Integration target", step 2.
 - If there is no `plan/<plan>` branch: `git worktree add -b plan/<plan> ../<repo-folder>.worktrees/<plan>-plan <main>`.
 - If the branch exists without a worktree: `git worktree add ../<repo-folder>.worktrees/<plan>-plan plan/<plan>`.
 - In the README set the wave to `🔄 since <YYYY-MM-DD HH:MM>` in "Waves", its tasks to 🔄 in "Tasks", their
@@ -163,6 +180,7 @@ continue, stop `red-after-merge`.
   "Execution" gets `Started <YYYY-MM-DD HH:MM>.` (the run's start time from the clock) and `Capabilities: …` in the same commit on the tracking
   branch: `Plan <plan>: wave <N> started`. A task-mode resume keeps the existing start record.
 - Do not merge features that are `👀 review` from earlier runs: they wait for the user (step 9 offers them again).
+  Autonomous flow: they go to "Auto-approval" of `autonomous.md` after step 8.
 
 ### 3. Feature worktrees
 
@@ -173,8 +191,9 @@ For each feature that has a task in this wave:
 - Bring it up to date: in the feature worktree `git merge <main>` (this brings in features merged since,
   which later tasks may rely on), resolve conflicts as in step 6, run the check command. Known failures listed for
   this branch in the README or the wave file do not count. Any other red test here is a problem of the feature
-  before the wave: record it and stop `red-before-wave` for the user's decision. A red test the plan does not list
-  while an open entry names it is a plan defect: stop `plan-defect`.
+  before the wave: record it and stop `red-before-wave` for the user's decision (autonomous flow:
+  `autonomous.md`, "Points of steps 1–6"). A red test the plan does not list while an open entry names it is a
+  plan defect: stop `plan-defect`.
 - Write the feature branch into the "Branch" column of "Features".
 
 ### 4. Launch groups and placement
@@ -184,6 +203,8 @@ For each feature that has a task in this wave:
 | Launch groups | Group 1 is every task whose `After` is `—`. A task starts when every task in its `After` is in its feature branch and the check command is green. A group launches at once; without parallel subagents, its tasks run one after another with the same worktrees and checks. |
 | Placement | A task runs **direct** (feature worktree, feature branch) unless another task of its feature is in the same group; then each such task gets a task worktree and branch (`layout.md`, "Names"). Direct tasks of different features may share a group. |
 | Task mode | A task that step 1 sent to task mode is prepared in its worktree but not launched (`task-mode.md`). |
+
+Autonomous flow: before each launch group, skip tasks as `autonomous.md`, "Skipped tasks", says.
 
 For every task that needs a task worktree:
 
@@ -227,6 +248,7 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
 - Task branch: `git diff --stat feat/<plan>/<feature>...<task branch>` shows only its files from the wave
   file's task table and nothing under `plans/`. Out-of-scope edits go to the problem log; if such an edit
   conflicts with another task, ask the user.
+  Autonomous flow: `autonomous.md`, "Points of steps 1–6".
 - Direct task: `git -C <feature worktree> status --porcelain` is empty (otherwise use the fix loop and ask it to commit); `git log H..HEAD` is not empty; `git diff --stat H HEAD` shows only the task's files from the wave file and nothing under `plans/`.
 - **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task
   (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`). A subagent that replied
@@ -238,6 +260,7 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
 - Out-of-scope edits or unusable direct work: record it in `problems.md` and ask the user. Never
   `git reset --hard` the feature branch without the user's explicit OK; the default undo is
   `git revert --no-edit H..HEAD`.
+  Autonomous flow: `autonomous.md`, "Points of steps 1–6".
 - Read the report's final block, ignoring `none` values. Every `Not checked:` line not covered by a later task, and
   every `Problems:` line, becomes one entry of `problems.md` (add the ID, `status: open`). A report without the
   block, or with an empty `Done:`: ask the same subagent for it once (fix loop); still missing → one entry
@@ -252,6 +275,7 @@ git merge --no-ff <task branch> -m "Merge <plan> <feature-id> / <task-id>"
 ```
 
 - Conflicts: resolve them yourself when the resolution is mechanical (both sides added independent lines, imports, list entries). When it needs understanding of either task's logic, use the fix loop for the later task with the conflict description (it merges the feature branch into its branch and resolves), then merge again. A conflict that changes a plan solution → stop `design-conflict` and ask the user.
+  Autonomous flow: `autonomous.md`, "Points of steps 1–6".
 - Run the check command from the prompts (build + tests) in every feature worktree touched. Known failures
   from the README and the wave file do not count.
 - A new failure: find by files whose task it is and use the fix loop, passing the error text.
@@ -317,9 +341,11 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   `git -C <main checkout> merge --no-ff plan/<plan> -m "Plan <plan>: status after wave <N>"`.
   The tracking branch only changes `plans/`, so this merge has no code conflicts.
 - Remove the worktrees of features recorded as merged and `git branch -d feat/<plan>/<feature>`. Keep the worktree
-  and branch of a ready feature: the user reviews and checks it there.
+  and branch of a ready feature: the user reviews and checks it there. In autonomous flow, keep a recovered
+  auto-merged feature's branch as in `autonomous.md`, "Auto-approval".
 - When the plan is archived: remove the tracking worktree and `git branch -d plan/<plan>`. A plan whose features are
   all merged but which has open entries keeps its tracking branch and worktree (it waits for a re-plan).
+- Autonomous flow: then run "Auto-approval" of `autonomous.md`.
 
 ### 9. Report to the user
 
@@ -330,6 +356,8 @@ format is part of the user's request: never retell it as prose, drop a section o
 link. Check the report against the template before sending it.
 
 ### 10. Ask about each ready feature
+
+Autonomous flow: skip this step; "Auto-approval" of `autonomous.md` ran after step 8.
 
 Ask once per `👀 review` feature, at the end of the report, with the merge question of `wave-run/report.md`. Then
 wait for the answer. Read `wave-run/merge.md` before acting on it.

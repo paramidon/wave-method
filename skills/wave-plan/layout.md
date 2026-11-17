@@ -7,7 +7,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 
 | Reader | Reads |
 |---|---|
-| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`, `reviews/<feature>.md` of the features with a task in its wave or `👀 review`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so; `wave-run/report.md` right before every final report |
+| `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`, `reviews/<feature>.md` of the features with a task in its wave or `👀 review`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so; `wave-run/autonomous.md` only when the plan's flow is autonomous or the arguments are `flow …` ("Flow"); `wave-run/report.md` right before every final report |
 | task subagent | its prompt, the solution files (and sections) the prompt names |
 | task-mode session | `README.md`, its wave file, the solution files its prompt names; `wave-run/task-mode.md` |
 | `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files |
@@ -134,7 +134,14 @@ What each skill does when one is missing is in that skill.
 
 ## Names
 
-- `<main>` — the main branch (`master` or `main`).
+- `<main branch>` — the repository's main branch (`master` or `main`), in every flow.
+- `<main>` — where approved features are merged: `<main branch>` in manual flow, the plan's integration branch in
+  autonomous flow ("Flow"). Only `wave-run` and `wave-status` resolve it by the flow; `wave-plan` and `wave-triage`
+  always use `<main branch>`.
+- `<main checkout>` — the checkout where those merges are made: the repository's main checkout in manual flow, the
+  integration worktree in autonomous flow.
+- `<name>` — the name of the plan's integration branch after `integration/`: from `target:` of the README `Flow:`
+  line, else `<plan>` ("Flow"). Used in autonomous flow only.
 - `<plan>` — the plan slug from the README header (`slug: …`).
 - `<plan folder>` — the plan folder's path relative to the repository root (`plans/2026-11-02-hop-tuning`).
 - `<feature>` — `<feature-id>-<feature-slug>` from the "Features" table (e.g. `F1-cheap-interbody-omega`).
@@ -145,6 +152,7 @@ What each skill does when one is missing is in that skill.
 | tracking | `plan/<plan>` | `../<repo-folder>.worktrees/<plan>-plan` |
 | feature | `feat/<plan>/<feature>` | `../<repo-folder>.worktrees/<plan>-<feature-id>` |
 | task | `task/<plan>/<feature-id>-w<N>-<task>` | `../<repo-folder>.worktrees/<plan>-w<N>-<task-id>` — only when another task of the same feature runs at the same time (`wave-run` step 4) |
+| integration (autonomous flow) | `integration/<name>` | `../<repo-folder>.worktrees/integration-<name>` |
 
 Example: plan `interbody-periapsis`, feature F1, wave 2, task D → `feat/interbody-periapsis/F1-cheap-interbody-omega`, `task/interbody-periapsis/F1-w2-D-signed-speed-readouts`.
 
@@ -162,9 +170,13 @@ are identical; only the first character differs.
 | Wave | ⬜ not started · 🔄 since <date time> · ✅ done · ⚠️ done, open problems · ❌ stopped · ➖ dropped (never ran) |
 | Feature | ⬜ not started · 🔄 in progress · 👀 review · ✅ merged · ⚠️ blocked · ➖ dropped |
 
-A feature is `👀 review` when all its tasks are ✅ or ➖ and its full check is green; it is merged only after the user's review ("Feature review"). 👀 is not ✅: the feature is finished but not in `<main>` yet. A README written by v2.1.0 may still say `✅ ready`; read it as `👀 review`, and the next commit that touches the row writes `👀 review`.
+A feature is `👀 review` when all its tasks are ✅ or ➖ and its full check is green; it is merged only after the
+user's review ("Feature review") or, in autonomous flow, after auto-approval ("Flow"). 👀 is not ✅: the feature is
+finished but not in `<main>` yet. A README written by v2.1.0 may still say `✅ ready`; read it as `👀 review`, and the
+next commit that touches the row writes `👀 review`. In autonomous flow `✅ merged` means merged into the integration
+branch.
 
-Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, the main checkout was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
+Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, `<main checkout>` was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
 
 **A status shows the current outcome, not the history.**
 
@@ -204,7 +216,7 @@ Every Markdown file the skills write (index, README, solutions, waves, problems,
 
 ## Main readiness
 
-The main checkout is ready for a merge of branch `B` when all of these hold:
+`<main checkout>` is ready for a merge of branch `B` when all of these hold:
 
 1. it is on `<main>` (`git -C <main checkout> branch --show-current`);
 2. its index has no staged changes (`git -C <main checkout> diff --cached --quiet`) — git refuses a merge
@@ -213,7 +225,7 @@ The main checkout is ready for a merge of branch `B` when all of these hold:
    `git -C <main checkout> diff --name-only` and of `git diff --name-only <main>...B` do not intersect.
 
 Untracked files never matter. Not ready → `main-dirty`, with the reason (`not on <main>`, `staged changes`, or
-the overlapping paths). Never stage, unstage, stash, reset or check out anything in the main checkout to make it
+the overlapping paths). Never stage, unstage, stash, reset or check out anything in `<main checkout>` to make it
 ready.
 
 ## Feature review
@@ -252,11 +264,108 @@ when they want to; skills do not print these commands in the block.
 - **Approval** is one of: an answer in the `wave-run` session that names the feature (`merge F1`); the command
   `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`; the user's own `git merge` of
   the branch into `<main>` (a merge commit or a fast-forward; a squash merge is not detected). Silence, `later`
-  or a general "ok" for several features is not an approval. No skill merges a feature on its own.
+  or a general "ok" for several features is not an approval. In autonomous flow the auto-approval of `wave-run`
+  ("Flow", "Auto-approval") is the approval too; it merges into the integration branch only. In manual flow no
+  skill merges a feature on its own.
 - **Merge hash** of a branch the user merged: the last line of
   `git log --merges --ancestry-path --format=%h <branch>..<main>`; none → the branch head (a fast-forward).
 - **Rejection**: the user's findings become open entries `[I<n> · review / feature F<k>]`, and the feature becomes
   ⚠️ blocked; a re-plan adds fix tasks to the same feature.
+
+## Flow
+
+A plan runs in one of two flows. The flow decides only who approves a `👀 review` feature and where an approved
+feature is merged. Merge mechanics (`wave-run/merge.md`), the tier gate, never pushing, never committing directly on
+`<main branch>` and never merging a feature partially are the same in both.
+
+| Flow | Who approves a `👀 review` feature | Merged into | Questions to the user |
+|---|---|---|---|
+| `manual` (default) | the user ("Feature review") | `<main branch>` | at the points of the decision table |
+| `autonomous` | `wave-run` when "Auto-approval" holds; the user for a feature under manual review | the integration branch ("Integration target") | none |
+
+The flow is a header field of the plan README:
+
+```
+- Flow: autonomous · target: integration/<name> · manual review: F2, F5
+```
+
+- A README without a `Flow:` line, or with `- Flow: manual`, is in manual flow and behaves exactly as if this section
+  did not exist.
+- `target:` names the integration branch; without it the target is `integration/<plan>`.
+- `manual review: <F-IDs>` is optional: these features are never auto-approved. Each stays `👀 review` with
+  `Waiting for: review` until the user approves it ("Feature review"), and every wave whose `Depends on:` names it
+  stops `feature-unmerged` until then.
+- `wave-plan` writes the line only when the user asks for autonomous flow while planning. Afterwards it is changed only
+  by the flow form `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
+  `$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (`wave-run/autonomous.md`, "Flow form"), and
+  only while no wave of the plan is 🔄: a flow never changes inside a running wave.
+- `wave-run` reads the flow from the README on the tracking branch in its step 1 and keeps it for the whole run,
+  including the resume of a task-mode wait. `wave-plan` and `wave-triage` do not act on it.
+- Switching to manual is refused while the integration branch has commits `<main branch>` does not have (stop
+  `target-unmerged`): the user merges it first, so every feature branch again differs from `<main branch>` only by
+  its own feature.
+
+### Integration target
+
+In autonomous flow `<main>` is the integration branch and `<main checkout>` the integration worktree ("Names"). Every
+merge that manual flow makes into `<main branch>` goes there instead; autonomous flow never changes `<main branch>` or
+the main checkout.
+
+- `wave-run` creates the integration branch from the head of `<main branch>`, in the integration worktree, when it is
+  missing, and merges `<main branch>` into it before a wave when `<main branch>` has commits it lacks
+  (`wave-run/autonomous.md`, "Integration target"). Nothing else checks it out.
+- It receives only `merge --no-ff`: approved feature branches, the tracking branch and `<main branch>`. Nothing is
+  committed on it directly.
+- The user reviews it as one diff, `git diff <main branch>...integration/<name>`, and merges it into `<main branch>`
+  themselves (`git merge --no-ff integration/<name>` in the main checkout). No skill does.
+- Autonomous flow refuses to start a wave when it cannot guarantee this: stop `target-unsafe` before anything is
+  written, when `target:` is not `integration/<name>`; the integration branch is checked out anywhere but the
+  integration worktree; or the integration worktree is not on that branch, has tracked changes, or has an unfinished
+  merge.
+
+### Auto-approval
+
+In autonomous flow `wave-run` approves a `👀 review` feature itself only when all of these hold. It checks them right
+before the merge (`wave-run/autonomous.md`, "Auto-approval"):
+
+1. every task of the feature, in every wave, is ✅ or ➖;
+2. its full check is green after `<main>` was merged into its branch, and that merge changed none of the feature's own
+   lines (`wave-run/merge.md`, "Merge one feature", step 1);
+3. no open entry of `problems.md` concerns the feature or one of its tasks;
+4. the tier gate is clean: every commit of the feature branch whose subject names one of its tasks
+   (`<plan> <feature-id> / <task-id>: …`) has a `Wave-Model` trailer naming a model of that task's tier or higher
+   ("Tier gate");
+5. the feature is not listed under `manual review:`.
+
+| Condition that fails | The feature |
+|---|---|
+| 5 | stays `👀 review`, `Waiting for: review`, until the user approves it |
+| 1, 2, 3 or 4 | becomes ⚠️ blocked, `Waiting for: I<n>`, naming its open entry (a new entry for 2 and 4) |
+| `<main checkout>` is not ready ("Main readiness") | stays `👀 review`, `Waiting for: main-dirty` |
+
+The run goes on with everything that does not depend on a feature left unmerged.
+
+### Decision table
+
+Every point where `wave-run` asks the user or waits for them. Manual flow is the behaviour of `wave-run/SKILL.md` and
+`wave-run/merge.md`; autonomous flow follows `wave-run/autonomous.md`. To **skip** a task (`wave-run/autonomous.md`,
+"Skipped tasks") is to not launch it and mark it ⚠️ with the entry that blocks it.
+
+| Point | Where | Manual flow | Autonomous flow |
+|---|---|---|---|
+| a feature is `👀 review` | step 10; merge form without a wave | ask per feature; merge only what the user approves | "Auto-approval"; no question |
+| open entries concern this wave | step 1 | show them and ask whether to proceed; no → stop `open-problems` | proceed; skip the tasks of a feature that has an entry with `status: open` |
+| task branches of this wave exist | step 1 | ask: continue from them, delete them, or stop `leftover-branches` | never reuse or delete them: stop `leftover-branches` |
+| `Depends on: F<k> merged` and F<k> is not `✅ merged` | step 1 | stop `feature-unmerged` | the same stop; "Auto-approval" has usually merged F<k> before |
+| a feature check is red before the wave | step 3 | stop `red-before-wave` | new entry; the feature is ⚠️ blocked; skip its tasks; the wave goes on |
+| an out-of-scope edit, or unusable direct work | step 5 | entry; ask the user | entry; do not merge the task (a direct task is reverted); the task is ⚠️ and the feature ⚠️ blocked; skip its dependants |
+| a merge conflict would change a plan solution | step 6 | stop `design-conflict` | abort the merge; entry; the task is ⚠️ and the feature ⚠️ blocked; skip its dependants; the wave goes on |
+| a task stays red after 2 attempts | fix loop | the task is ⚠️; stop `red-after-merge` if no other task can continue | the same |
+| no model of a task's tier; a session or work below its tier | steps 1 and 5, task mode | stop `tier-missing` or `tier-mismatch`; the work runs again on its tier | the same; never waived |
+| a task needs task mode | step 4 | `Waiting: task mode` with one command per task | the same; whoever drives the run starts those sessions |
+| merging `<main>` into a ready feature changed its own lines | `merge.md` step 1 | show the resolution and ask again | not merged: entry, the feature ⚠️ blocked |
+| `<main checkout>` is not ready for a merge | `merge.md` step 2 | ask the user to clear it; `main-dirty` if left for later | `main-dirty`; no question |
+| every feature is merged | step 8; `merge.md` "Record" | archive the plan ("Archive") | no archive: the tracking branch stays until the user merged the integration branch |
 
 ## Archive
 
@@ -265,5 +374,7 @@ When every feature of a plan is `✅ merged` (or ➖), and the status check pass
 - a plan without an index: `git mv plans/<date>-<slug> plans/archive/<date>-<slug>` on its tracking branch (by `wave-run` when it records the last merge);
 - a plan of an index part: archive the whole index folder only when every part in the index's "Parts" table has
   a plan folder whose features are all merged; otherwise leave it in place.
+- In autonomous flow `wave-run` does not archive and keeps the tracking branch: the plan is finished for the user only
+  once they merged the integration branch into `<main branch>`; `wave-status` then suggests the archive.
 
 Archived folders are never read unless the user asks.
