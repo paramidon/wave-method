@@ -114,12 +114,15 @@ Written by `wave-run` (`wave-run/SKILL.md` steps 7 and 8), in English like every
 progress the file holds only the header, "Tasks" and the tasks' `Try:` lines; the other sections are written when it
 becomes `👀 review` and rewritten when it becomes `👀 review` again after a rejection. The user sees only the review
 block made from it (`layout.md`, "Feature review"): the header line, "Essence", "How to test" and "Worth a look".
+A feature merged into an integration branch is
+shown with the merged block instead (`layout.md`, "Feature review").
 
 ````markdown
 # F1 · <Title>
 
 - Branch: `feat/<plan>/<feature>` · worktree: `<absolute feature worktree path>`
 - 👀 review since <YYYY-MM-DD HH:MM>
+- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, <auto-approved | approved by the user> (autonomous flow only)
 
 ## Essence
 
