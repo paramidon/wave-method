@@ -18,7 +18,7 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D | ❌ re-run (stopped at the baseline before any task; check fixed by re-plan 1) |
+🔄 since 2026-11-18 01:19 |
 | 2 | `waves/w02.md` | E, F | ⬜ |
 | 3 | `waves/w03.md` | G, H | ⬜ |
 
@@ -26,10 +26,10 @@ Merged: short hash of the merge commit into the main branch.
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `driver-git-state` | F1 | 1 | medium | ⬜ |
-| B | `claude-call-runner` | F1 | 1 | medium | ⬜ |
-| C | `driver-rails-guard` | F1 | 1 | medium | ⬜ |
-| D | `fake-claude-stub` | F1 | 1 | medium | ⬜ |
+| A | `driver-git-state` | F1 | 1 | medium | 🔄 |
+| B | `claude-call-runner` | F1 | 1 | medium | 🔄 |
+| C | `driver-rails-guard` | F1 | 1 | medium | 🔄 |
+| D | `fake-claude-stub` | F1 | 1 | medium | 🔄 |
 | E | `next-action-choice` | F1 | 2 | medium | ⬜ |
 | F | `morning-report-render` | F1 | 2 | medium | ⬜ |
 | G | `driver-loop-cli` | F1 | 3 | medium | ⬜ |
