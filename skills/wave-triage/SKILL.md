@@ -72,7 +72,9 @@ Clusters are a scheduling device of triage only; parts still follow dependencies
 Collect every ambiguity that leads to different work. Ask all clarifying questions in one message, grouped
 under cluster headings; problems without questions are not mentioned. Decide small things yourself and record
 them as assumptions. Write the answers into the problem records (in `triage/P<n>.md` for more than 8 problems,
-or inline in the index for at most 8). Autonomous flow: ask nothing; choose by "Assumed readings" of
+or inline in the index for at most 8).
+
+Autonomous flow: ask nothing; choose by "Assumed readings" of
 `layout.md` and record each choice as an `Assumed (autonomous, not asked) · P<n>: …` line under "Assumptions";
 "Open questions" stays `none` unless step 5 adds a line.
 
@@ -120,7 +122,11 @@ table.
 A part = one wave-plan run in a fresh session = one plan folder. Every part stays within the
 "Part budget" of `wave-triage/difficulty.md` (points, `high` limits, expected features and tasks).
 
+In autonomous flow, first leave out each problem that alone exceeds the part budget. Add its "Open questions"
+line as specified in `layout.md`, "Planning in autonomous flow", and split the remaining problems into parts.
+
 Use this deterministic procedure:
+
 1. Dependency groups = connected components of confirmed dependencies.
 2. Sort groups: groups containing a `high` problem first (by number of `high`, then points, descending), then
    by points descending.
@@ -134,8 +140,7 @@ Use this deterministic procedure:
 
 Give each part a plan slug, unique in `plans/`: `<topic>-p<K>`. Its plan folder will be
 `plans/<date>-<topic>/plan-<K>/`. A problem that alone exceeds the budget: follow the last rule of "Part budget"
-and ask the user. Autonomous flow: put it into no part and add the "Open questions"
-line of `layout.md`, "Planning in autonomous flow".
+and ask the user.
 
 ### 6. Index and record templates
 For at most 8 problems, keep full problem records in the index:
@@ -219,6 +224,7 @@ Each `triage/P<n>.md` uses the full problem-record format:
 ````
 
 ### 7. Self-check
+
 - Every problem is in exactly one part (in autonomous flow, except a problem left out by step 5 with its
   "Open questions" line); every part is within budget.
 - Every dependency between parts is either inside one part or marked "after part K is merged".

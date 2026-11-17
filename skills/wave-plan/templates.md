@@ -54,6 +54,7 @@ main branch with each feature merge.
 
 - …
 - Assumed (autonomous, not asked) · F<k>: <question> → <chosen reading>; not chosen: <other reading> (autonomous flow only: `layout.md`, "Assumed readings")
+
 ````
 
 ### `solutions/P<n>-<slug>.md`

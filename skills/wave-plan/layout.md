@@ -10,7 +10,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 | `wave-run` coordinator | `README.md`, `waves/w<NN>.md` of its wave, `problems.md`, `reviews/<feature>.md` of the features with a task in its wave or `👀 review`; a solution file only to resolve a conflict or a failure; `wave-run/task-mode.md` and `wave-run/merge.md` only when its step 1 says so; `wave-run/autonomous.md` only when the plan's flow is autonomous or the arguments are `flow …` ("Flow"); `wave-run/report.md` right before every final report |
 | task subagent | its prompt, the solution files (and sections) the prompt names |
 | task-mode session | `README.md`, its wave file, the solution files its prompt names; `wave-run/task-mode.md` |
-| `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files; the README of part J of the index (from its tracking branch) when the part is marked "plan after part J is merged"; in autonomous flow of planning also `wave-run/autonomous.md`, "Integration target" |
+| `wave-plan`, new plan | the index (`index.md`; for a large index also the `triage/P<n>.md` records of its part's problems), `wave-plan/templates.md` when writing files; the README of part J of the index when the part is marked "plan after part J is merged"; in autonomous flow of planning use the README source in "Chained parts and the integration branch" and also read `wave-run/autonomous.md`, "Integration target" |
 | `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
@@ -316,14 +316,15 @@ merge that manual flow makes into `<main branch>` goes there instead; autonomous
 the main checkout.
 
 - `wave-run`, and `wave-plan` in autonomous flow of planning, create the integration branch from the head of
-  `<main branch>`, in the integration worktree, when it is missing, and merge `<main branch>` into it before a wave when
-  `<main branch>` has commits it lacks
+  `<main branch>`, in the integration worktree, when it is missing, and merge `<main branch>` into it before a wave or
+  before planning when `<main branch>` has commits it lacks
   (`wave-run/autonomous.md`, "Integration target"). Nothing else checks it out.
 - It receives only `merge --no-ff`: approved feature branches, the tracking branches of its plans and `<main branch>`.
   Nothing is committed on it directly.
-- Plans of a target: the plans whose README, on their tracking branch, has a `Flow:` line naming
+- **Plans of a target** are the plans whose own README, on their tracking branch, has a `Flow:` line naming
   `integration/<name>` — for each branch of `git branch --list "plan/*"`,
   `git grep -l -E "^- Flow: autonomous · target: integration/<name>( ·|$)" <branch> -- "plans/*README.md" ":!plans/archive"`.
+  Use a result only if its README slug is that of the tracking branch; inherited READMEs are not authoritative.
   They write the same worktree, so their waves never run at the same time: while a wave of one of them is 🔄,
   `wave-run` and `wave-plan` of another stop `wave-running`.
 - The user reviews it as one diff, `git diff <main branch>...integration/<name>`, and merges it into `<main branch>`
@@ -433,7 +434,7 @@ In autonomous flow `wave-plan` uses `<main>` = the integration branch and `<main
 ("Names"). All plans of an index share `integration/<topic>`, so a later part is planned and run against the code of
 the earlier parts before the user has merged them. In order, before step 1 of `wave-plan`:
 
-1. Stop `wave-running` when a plan with the same target has a 🔄 wave ("Integration target", plans of a target).
+1. Stop `wave-running`, naming the plan and wave, when a plan with the same target has a 🔄 wave ("Integration target").
 2. The checks of `wave-run/autonomous.md`, "Integration target", step 1 (stop `target-unsafe`).
 3. The part is marked "plan after part J is merged": part J is merged when every feature in part J's README (from its
    tracking branch `plan/<topic>-p<J>`, else from `<main>`) is `✅ merged` or ➖, and the integration branch or
@@ -445,7 +446,8 @@ the earlier parts before the user has merged them. In order, before step 1 of `w
    ```
 
    `next:` names, per feature, what it waits for: a `👀 review` feature its review and its merge command, a ⚠️ or 🔄
-   feature its `Waiting for`; part J without a plan folder or tracking branch: `part <J> is not planned`, with its
+   feature its `Waiting for`. Give each command in both forms ("Commands"). For part J without a plan folder or
+   tracking branch: `part <J> is not planned`, with its
    `/wave-plan` command. Whoever drives an unattended run moves on and reports the waiting part with that line.
 4. `wave-run/autonomous.md`, "Integration target", step 2 (create the branch and worktree, bring in `<main branch>`;
    stop `target-conflict`).

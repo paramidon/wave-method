@@ -18,6 +18,7 @@ rules. It is the single source of truth; this skill does not repeat it.
 
 ## Input
 Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) → `wave-run`.
+
 - **Flow of planning** (`layout.md`, "Planning in autonomous flow"): `flow autonomous` or `flow manual` as the first
   two words of the arguments, else the index header's `Flow:` line for an index part, else manual. Read it first and
   keep it for the run. Manual: every step below as written. Autonomous: the answers of that subsection replace every
@@ -228,12 +229,15 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 
 ### 9. Write, commit on the tracking branch, merge
 1. Tracking worktree from `<main>` (`master` or `main`; the integration branch in autonomous flow):
+
    ```bash
    git worktree add -b plan/<slug> ../<repo-folder>.worktrees/<slug>-plan <main>
    ```
-   If the branch or the folder already exists for a new plan, ask the user (autonomous flow: stop `plan-exists`, nothing written).
-   For a re-plan, use the existing tracking worktree (create it from the existing `plan/<slug>` branch if the
-   folder is gone; if the branch is gone too, create it from `<main>` with `-b plan/<slug>`; merge `<main>` into it first).
+
+   If the branch or the folder already exists for a new plan, ask the user. For a re-plan, use the existing
+   tracking worktree (create it from the existing `plan/<slug>` branch if the folder is gone; if the branch is
+   gone too, create it from `<main>` with `-b plan/<slug>`; merge `<main>` into it first).
+   Autonomous flow: for a new plan with an existing branch or folder, stop `plan-exists`; do not write the plan.
 2. Write the plan folder from `templates.md` and commit only that folder: `Plan <slug>: <short>`
    (or `Plan <slug>: re-plan`).
 3. Merge into the main branch so the plan is visible there: the main checkout must be ready for the merge of
@@ -248,14 +252,14 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 
 Answer the user briefly: feature table, wave table, how many tasks of each complexity (and which
 waves need a high-tier model for their tasks), after which wave each feature is ready for review (and which
-waves wait for a merge, `Depends on: F<k> merged`), assumptions, remaining questions,
-(autonomous flow: every `Assumed (autonomous, not asked)` line, and no remaining questions) and **the next command**,
+waves wait for a merge, `Depends on: F<k> merged`), assumptions, remaining questions, and **the next command**,
 in both forms (`layout.md`, "Commands"):
 `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`, in a fresh session. The coordinator is always medium.
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which
-wait for a merge. Autonomous flow: say that the plan is on `integration/<name>` until the user merges that branch,
-and mark the other parts by the chain check, not by the main branch. End with the `Started: … · Finished: …` line
-(`layout.md`, "Run times").
+wait for a merge. End with the `Started: … · Finished: …` line (`layout.md`, "Run times").
+
+In autonomous flow include every `Assumed (autonomous, not asked)` line, with no remaining questions. Say that the
+plan is on `integration/<name>` until the user merges that branch, and mark the other parts by the chain check.
 
 Templates: `wave-plan/templates.md` — read it when writing the plan folder (step 9).

@@ -19,11 +19,13 @@ suggested as commands for the user in the report; never execute those commands.
 ## Input
 
 The argument is an optional plan folder. Without it, inspect every plan folder under `plans/` except
-`plans/archive/`, plus every index (`plans/<date>-<topic>/index.md`). Also every plan that exists only on its
+`plans/archive/`, plus every index (`plans/<date>-<topic>/index.md`).
+
+Also inspect every plan that exists only on its
 tracking branch (a plan of autonomous flow lives on the integration branch until the user merges it, `layout.md`,
 "Planning in autonomous flow"): for each branch `plan/<slug>` of `git branch --list "plan/*"` whose plan is not
 among those folders, its README is the path of
-``git grep -l -F "slug: `<slug>`" plan/<slug> -- "plans/*README.md" ":!plans/archive"``;
+``git grep -l -F 'slug: `<slug>`' plan/<slug> -- "plans/*README.md" ":!plans/archive"``;
 read it and its files from that branch.
 
 ## What to read
@@ -99,10 +101,10 @@ comes first: the user reads it before anything about waves.
 |---|---|---|---|---|---|
 | F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <feature branch> | <README Merged> |
 
-Then report each index's parts without a plan folder (in the main checkout or on the tracking branch
-`plan/<topic>-p<K>`), whether their "Plan when" condition is met (for an index with a `Flow: autonomous` line:
-check 3 of `layout.md`, "Chained parts and the integration branch"), and their
-`/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands.
+Then report each index's parts without a plan folder, whether their "Plan when" condition is met, and their
+`/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands. Also count a part as planned when its plan
+folder exists on its tracking branch `plan/<topic>-p<K>`. For an index with a `Flow: autonomous` line, use check 3 of
+`layout.md`, "Chained parts and the integration branch", to decide whether the condition is met.
 
 ### Suggested commands
 
