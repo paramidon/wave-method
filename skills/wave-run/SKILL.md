@@ -27,7 +27,7 @@ the named features after review): `/wave-run <plan folder> merge <F-IDs>` · `$w
 (see `wave-run/merge.md`).
 Flow form (switches the plan's flow between waves, `layout.md`, "Flow"):
 `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
-`$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (see `wave-run/autonomous.md`).
+`$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (see `wave-run/autonomous.md`, "Flow form").
 
 The coordinator does not write task code itself (except merge-conflict resolution) and does not change the
 plan's solutions.
@@ -54,7 +54,7 @@ plan's solutions.
 - **A feature is never merged into the main branch partially**: not while any of its tasks is ⬜, 🔄, ⚠️ or ❌.
 - **A feature is never merged without the user's approval** of that feature (`layout.md`, "Feature review"), or,
   in autonomous flow, by the auto-approval of `wave-run/autonomous.md`, which merges into the integration branch
-  only. A wave only makes it `👀 review`; there is no "merge all" default.
+  only. In manual flow a wave only makes it `👀 review`; there is no "merge all" default.
 - **A task is never run on a model below its tier** (see "Environment capabilities"), and work done below its
   tier is never merged (`layout.md`, "Tier gate"; step 5).
 - **Every final report follows the template of `wave-run/report.md`**, read right before writing it. The
@@ -138,9 +138,10 @@ continue, stop `red-after-merge`.
   `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read `merge.md` when the
   arguments are `merge <F-IDs>`, when no wave is ⬜ or ❌, or in step 10 when the user approves a feature. Read
   `report.md` right before every final report (a finished wave, a stop, a task-mode wait, a merge), again each
-  time. Read `autonomous.md` when the README on the tracking branch (else on `<main branch>`) has
+  time. Read `autonomous.md` when that README has
   `Flow: autonomous`, or the arguments are `flow …`. Read the flow here, once, and keep it for the whole run.
-  Read nothing else of the `wave-run` folder.
+  Read nothing else of the `wave-run` folder. For the flow form, follow "Flow form" of `autonomous.md` here
+  instead of the wave steps below.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
   `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
@@ -163,7 +164,8 @@ continue, stop `red-after-merge`.
   Autonomous flow: `wave-run/autonomous.md`, "Points of steps 1–6".
 - A feature branch merged into `<main>` (`git branch --merged <main> "feat/<plan>/*"`) whose README row is not
   `✅ merged` (the user merged it, or a run was interrupted): write `✅ merged`, an empty `Waiting for` and the hash
-  of the merge (`layout.md`, "Feature review") into the README in the "wave N started" commit.
+  of the merge (`layout.md`, "Feature review") into the README in the "wave N started" commit. In autonomous flow,
+  resolve `<main>` for this check as `autonomous.md`, "Integration target", step 1 says.
 - Every feature that the wave file's `Depends on:` line names as `F<k> merged` is `✅ merged` (counting the repair
   above). Otherwise stop `feature-unmerged`, name the feature and its branch, and give its merge command.
 - Uncommitted changes in the main checkout do not matter at this step; do not touch them.
@@ -339,7 +341,8 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
   `git -C <main checkout> merge --no-ff plan/<plan> -m "Plan <plan>: status after wave <N>"`.
   The tracking branch only changes `plans/`, so this merge has no code conflicts.
 - Remove the worktrees of features recorded as merged and `git branch -d feat/<plan>/<feature>`. Keep the worktree
-  and branch of a ready feature: the user reviews and checks it there.
+  and branch of a ready feature: the user reviews and checks it there. In autonomous flow, keep a recovered
+  auto-merged feature's branch as in `autonomous.md`, "Auto-approval".
 - When the plan is archived: remove the tracking worktree and `git branch -d plan/<plan>`. A plan whose features are
   all merged but which has open entries keeps its tracking branch and worktree (it waits for a re-plan).
 - Autonomous flow: then run "Auto-approval" of `autonomous.md`.

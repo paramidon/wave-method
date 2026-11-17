@@ -17,7 +17,8 @@ the review block and what counts as approval: `layout.md`, "Feature review".
 ## Checks
 
 - `SKILL.md` step 1, only the lock (`wave-running`) and the record of features the user merged. Its records go
-  into the commit of "Record", not into a "started" commit.
+  into the commit of "Record", not into a "started" commit. In autonomous flow first run the read-only checks of
+  `autonomous.md`, "Integration target", step 1.
 - `SKILL.md` step 2: the tracking worktree, without a "started" commit.
 - Every feature the merge command names is `👀 review`, or merged by the user (then it is only recorded). Otherwise
   stop `not-ready` before merging anything, naming the feature, its status and its `Waiting for`.

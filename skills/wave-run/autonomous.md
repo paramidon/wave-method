@@ -17,7 +17,8 @@ the closest code of `SKILL.md`, "Stops"; its `next:` says what the user must dec
 2. `autonomous`: `<name>` is the `<name>` of the current `target:`, else `<plan>`; run the checks of "Integration
    target", step 1. `manual`: the integration branch of the current `Flow:` line exists and
    `git rev-list --count <main branch>..integration/<name>` is not 0 → stop `target-unmerged`.
-3. Tracking worktree as `SKILL.md` step 2, without a "started" commit. In the README header write the `Flow:` line,
+3. Tracking worktree as `SKILL.md` step 2, without preparing the integration target or making a "started" commit.
+   In the README header write the `Flow:` line,
    replacing an existing `Flow:` line, else right after the `- Re-plans:` line. For `autonomous`:
    `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>`, where the last part is present only
    when the list is not empty (`review <F-IDs>` replaces the list; `review none` empties it; without `review` the
@@ -39,6 +40,9 @@ Step 1, read-only, right after the README is read. `<name>` comes from `target:`
    (`git -C <integration worktree> branch --show-current`), or has tracked changes
    (`git -C <integration worktree> status --porcelain --untracked-files=no`), or an unfinished merge
    (`git -C <integration worktree> rev-parse -q --verify MERGE_HEAD` succeeds).
+
+For the merge-record check of `SKILL.md` step 1, read `<main>` as `integration/<name>`, or as `<main branch>`
+if that branch is missing and will be created at its head.
 
 Step 2, before the tracking worktree and the "wave started" commit:
 
@@ -86,16 +90,16 @@ Run after step 8's commit and before the report; it replaces step 10. In the mer
 `merge.md` when no wave is ⬜ or ❌. For every `👀 review` feature of the plan, in "Features" order (this run's and
 earlier ones):
 
-1. Listed under `manual review:` → leave it `👀 review`, `Waiting for: review`.
+1. Apply condition 5 of `layout.md`, "Auto-approval", and its outcome on failure.
 2. Conditions 1, 3 and 4 of `layout.md`, "Auto-approval". For 4 run
-   `git log --no-merges --format="%h %s%n%(trailers:key=Wave-Model,valueonly)" <main>..feat/<plan>/<feature>`: every
-   commit whose subject starts with `<plan> <feature-id> / <task-id>:` has a `Wave-Model` trailer naming a model of
-   that task's tier or higher (`layout.md`, "Model tiers", or the README `Models:` line). A failure → the feature is
+   `git log --no-merges --format="%h %s%n%(trailers:key=Wave-Model,valueonly)" <main>..feat/<plan>/<feature>` and
+   use `layout.md`, "Model tiers", or the README `Models:` line to evaluate the trailers. A failure → the feature is
    `⚠️ blocked I<n>`; for 4 a new entry `below tier: <model> ran a <tier> task (<hash>)`.
 3. `merge.md`, "Merge one feature", step 1. Red → the feature is `⚠️ blocked I<n>` with a new entry, as in 2; do not
    merge. When resolving a conflict changed lines of the feature's own changes: do not merge; a new entry
    `merging <main> changed F<k>'s own lines in <files>: needs the user's review`; the feature is `⚠️ blocked I<n>`.
-4. Step 2 of the same: not ready → `👀 review`, `Waiting for: main-dirty`, with the reason in the report; no question.
+4. Step 2 of the same: apply the "Auto-approval" outcome for `<main checkout>` readiness in `layout.md`;
+   record the reason in the report.
 5. Step 3 of the same, with one more body line after the task lines: `Approved-By: wave-run autonomous flow`.
 
 Then `merge.md`, "Record", with these differences:

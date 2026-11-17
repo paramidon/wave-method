@@ -29,7 +29,7 @@ Stop <code>: <one line> — next: <command or action>
 
 ## Wave <N> · <plan> — <wave status from README "Waves">
 
-Flow: <manual · or: autonomous · target integration/<name> · manual review <F-IDs>>
+- Flow: <flow value>
 
 ### Waves
 
@@ -62,7 +62,7 @@ Flow: <manual · or: autonomous · target integration/<name> · manual review <F
 
 ### Auto-merged
 
-- **F<k> <title>** → `integration/<name>` `<hash>`: <"Essence" of its brief> — why: tasks <done>/<total> ✅ or ➖, check green after merging `<main>` in, no open entries, tier gate clean, not under manual review
+- **F<k> <title>** → `integration/<name>` `<hash>`: <"Essence" of its brief> — why: <how the conditions in `layout.md`, "Auto-approval", held>
 - **F<m> <title>** not merged: <manual review · ⚠️ I<n>: <the condition that failed> · `main-dirty`: <reason>>
 
 ### Check by hand
@@ -86,7 +86,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 |---|---|---|
 | Stop line | the wave stopped | `SKILL.md`, "Stops"; it is the first line of the report |
 | Title | always | the wave's status as README "Waves" now has it: ✅, ⚠️ with its entry IDs, ❌, or `🔄 waiting for task mode` |
-| Flow | always | the `Flow:` line of the README as the run read it ("manual" when the README has none); `layout.md`, "Flow" |
+| Flow | always | the flow as the run read it, in the README syntax of `layout.md`, "Flow": `- Flow: manual` (also when absent), or `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>` (use the resolved target and omit the last part when the list is empty) |
 | Waves | always | one row per wave of the plan, from README "Waves"; `Tasks` lists the wave's task IDs |
 | Tasks of wave N | always | one row per task of this wave; `Done` is the task's `Done:` line in one line, or the reason it is ⚠️, ❌ or waiting |
 | Features | always | one row per feature of the plan, from README "Features"; `Tasks` is `<done>/<total>` followed by the IDs of the tasks still missing; `Branch` is `feat/<plan>/<feature>`, for a `👀 review` feature the branch to review |
@@ -123,7 +123,7 @@ Used at the end of the merge form (`wave-run/merge.md`).
 ````
 ## Merge · <plan>
 
-Flow: <manual · or: autonomous · target integration/<name> · manual review <F-IDs>>
+- Flow: <flow value>
 
 ### Features
 
@@ -152,7 +152,9 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 "Features" is always printed with every feature of the plan as README "Features" has it after "Record". "Merged",
 "Not merged" and "Checks" are printed when they have a line. "Next" follows the table of the wave report, or says
 `finished; archived` when the plan was archived. The merge form with no wave ⬜ or ❌ first shows the "Ready for
-review" section and the merge questions of the wave report (`wave-run/merge.md`, "Entry points"). The `Flow:` line is always printed.
+review" section and the merge questions of the wave report (`wave-run/merge.md`, "Entry points"). In autonomous
+flow use its "Auto-merged" section for auto-approval and show the merge command for features still ready for review.
+The `Flow:` line is always printed.
 
 ## Flow report
 
@@ -161,7 +163,7 @@ Used at the end of the flow form (`wave-run/autonomous.md`, "Flow form").
 ```
 ## Flow · <plan> — <manual|autonomous>
 
-Flow: <the new `Flow:` line>
+- Flow: <new flow value>
 
 ### Features
 

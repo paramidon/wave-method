@@ -265,8 +265,8 @@ when they want to; skills do not print these commands in the block.
   `/wave-run <plan folder> merge <F-IDs>` · `$wave-run <plan folder> merge <F-IDs>`; the user's own `git merge` of
   the branch into `<main>` (a merge commit or a fast-forward; a squash merge is not detected). Silence, `later`
   or a general "ok" for several features is not an approval. In autonomous flow the auto-approval of `wave-run`
-  ("Flow", "Auto-approval") is the approval too; it merges into the integration branch only. No skill merges a feature
-  into `<main branch>` on its own.
+  ("Flow", "Auto-approval") is the approval too; it merges into the integration branch only. In manual flow no
+  skill merges a feature on its own.
 - **Merge hash** of a branch the user merged: the last line of
   `git log --merges --ancestry-path --format=%h <branch>..<main>`; none → the branch head (a fast-forward).
 - **Rejection**: the user's findings become open entries `[I<n> · review / feature F<k>]`, and the feature becomes
