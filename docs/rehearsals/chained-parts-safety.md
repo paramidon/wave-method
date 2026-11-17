@@ -261,6 +261,7 @@ Takeover race: 1 1 1 1 1 1 1 1 1 1
 - Run: After `git update-ref -d "$R" "$winner"` in Bash, I used PowerShell 7.6.9. I set `$token = [guid]::NewGuid().ToString('N').Substring(0, 8)` and `$oid = "todo-p2 wave 1 2026-11-17 03:00 run $token" | git hash-object -w --stdin`. I took the claim using the 40-zero expected OID, ran `git cat-file -p $R`, and inspected the raw bytes with `od -An -tx1` in Git Bash. Then I ran `git update-ref -d $R $oid` and `git for-each-ref $R`.
 - Expected: Take and guarded release succeed. Git prints the ASCII holder line. The byte check shows its line ending.
 - Seen: Take and release both exited 0. The holder blob `35c7b9c` printed `todo-p2 wave 1 2026-11-17 03:00 run ea84a8fd` and ended in `0d 0a` (CRLF). `git for-each-ref $R` printed nothing after release.
+- Seen: I repeated the same commands in a fresh repository under `<scratch>` with Windows PowerShell 5.1.26100.9818. Take and release both exited 0. Git printed `todo-p2 wave 1 2026-11-17 03:00 run af820bf9` from blob `adcfc8f`. Its final bytes were `0d 0a` (CRLF), and `git for-each-ref $R` printed nothing after release.
 - Result: holds
 
 ## Scenario 8. Refused-claim objects
