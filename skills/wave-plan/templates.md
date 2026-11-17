@@ -8,6 +8,7 @@
 - Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · planned <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 - Index: `plans/<date>-<topic>/index.md` part <K> (omit when planned from a raw list)
 - Re-plans: none (later one sub-item each: `<date> at <hash>, <start HH:MM> – <end HH:MM>: <what>`; details in `history.md`)
+- Flow: (omit for manual flow; `autonomous · target: integration/<slug> · manual review: <F-IDs>` only when the user asks for it: `layout.md`, "Flow")
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
 
 ## Features

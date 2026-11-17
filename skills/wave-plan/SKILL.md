@@ -45,6 +45,10 @@ The plan slug (`<slug>`, 2–4 kebab-case words) must differ from every other pl
 branch `plan/<slug>`, which lives as long as the plan; it reaches the main branch only by merges (step 9).
 Do not edit files in the main checkout.
 
+The flow (`layout.md`, "Flow") is a README header line: write `- Flow: autonomous · target: integration/<slug>` only
+when the user asks for autonomous flow; otherwise write none (manual). A re-plan keeps the line as it is. A plan is
+always created from, and merged into, the main branch, whatever its flow.
+
 Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL). They implement
 a given solution well and design poorly. So every design decision is made here and written into the plan.
 If a task prompt says "figure out how", the design is not finished.
