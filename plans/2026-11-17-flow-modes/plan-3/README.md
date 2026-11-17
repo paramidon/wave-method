@@ -19,7 +19,7 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D | ✅ |
-| 2 | `waves/w02.md` | E, F | ⬜ |
+| 2 | `waves/w02.md` | E, F | 🔄 since 2026-11-18 01:45 |
 | 3 | `waves/w03.md` | G, H | ⬜ |
 
 ## Tasks
@@ -30,8 +30,8 @@ Merged: short hash of the merge commit into the main branch.
 | B | `claude-call-runner` | F1 | 1 | medium | ✅ |
 | C | `driver-rails-guard` | F1 | 1 | medium | ✅ |
 | D | `fake-claude-stub` | F1 | 1 | medium | ✅ |
-| E | `next-action-choice` | F1 | 2 | medium | ⬜ |
-| F | `morning-report-render` | F1 | 2 | medium | ⬜ |
+| E | `next-action-choice` | F1 | 2 | medium | 🔄 |
+| F | `morning-report-render` | F1 | 2 | medium | 🔄 |
 | G | `driver-loop-cli` | F1 | 3 | medium | ⬜ |
 | H | `driver-doc-ci` | F1 | 3 | low | ⬜ |
 
