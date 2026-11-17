@@ -91,7 +91,9 @@ comes first: the user reads it before anything about waves.
   came from.
 - `Integration:` autonomous flow only: `integration/<name>` — `<N>` commits not in `<main branch>`; review
   `git diff <main branch>...integration/<name>`, then merge it yourself in the main checkout
-  (`git merge --no-ff integration/<name>`); or `in <main branch>` when N is 0, or `not created yet`.
+  (`git merge --no-ff integration/<name>`); or `in <main branch>` when N is 0, or `not created yet`. When
+  `refs/wave-method/claims/integration/<name>` exists, add `· claimed by <holder line>` (`git cat-file -p <that ref>`,
+  `layout.md`, "Target claim").
 - `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
   the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.
@@ -101,7 +103,8 @@ comes first: the user reads it before anything about waves.
 - `Leftovers:` task branches or worktrees of waves that are not 🔄; feature worktrees of merged features; a
   tracking branch of an archived plan. Give a suggested cleanup command for each, as described below. In autonomous
   flow the kept branches of auto-merged features are leftovers only once the integration branch is in
-  `<main branch>`.
+  `<main branch>`. A target claim whose holder line names a wave that is not 🔄 on that plan's tracking branch:
+  suggest `git update-ref -d refs/wave-method/claims/integration/<name>`, once the user is sure no run holds it.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
