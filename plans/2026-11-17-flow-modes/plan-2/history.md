@@ -36,3 +36,23 @@ driver form, so they are one new solution, `solutions/P13-print-mode-runs.md`, a
   (47d69de) before this re-plan; nothing of F2 changes.
 
 Task H and wave 2 stay ⚠️ until wave 4 closes I5 and I6.
+
+## Re-plan 2026-11-17 (at 06e0731): I7–I8
+
+Wave 3 closed I1–I4 but left F1 ⚠️ blocked with two open entries about the target claim. Both concern the
+"Target claim" subsection of `skills/wave-plan/layout.md` on the F1 branch, so they are one new solution,
+`solutions/P14-claim-handoff.md`, and one new wave of F1 fix tasks.
+
+- I7 (two resumes adopt one claim) → a waiting form of the claim, written by compare-and-swap when a wave ends with
+  `Waiting: task mode …`, and a takeover by compare-and-swap from that waiting oid; a run token in every holder line,
+  because two runs of one plan and wave in the same minute stored the same blob and so shared one oid (task P).
+  Measured on git 2.52.0.windows.1: 10 rounds of two concurrent takeovers → one success each round.
+- I8 (a refused claim writes a blob) → the guarantee is stated for refs, worktrees and commits; the unreachable blob
+  is documented (git refuses a ref to a missing object, so the blob cannot be avoided) (task P).
+- Task Q rehearses both and appends scenarios 7 and 8 to `docs/rehearsals/chained-parts-safety.md`.
+
+Wave order: wave 4 (F3) depends on `F1 merged`, and `wave-run` refuses a wave while an earlier one is ⬜
+(`earlier-wave-open`), so a wave 5 of F1 fixes could never start. Wave 4 is ➖ dropped; its tasks N and O run
+unchanged as S and T in wave 6, after wave 5 and F1's merge. I5 and I6 now point to S and T.
+
+Tasks I and M and wave 3 stay ⚠️ until wave 5 closes I7 and I8.
