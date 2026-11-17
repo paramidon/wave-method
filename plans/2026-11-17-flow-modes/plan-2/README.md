@@ -11,8 +11,8 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3) | task E's 12 walkthroughs hold, the six rehearsal scenarios of tasks L and M hold, and the check command is green | ⚠️ blocked (I1, I2, I3, I4) | wave 3 | `feat/flow-modes-p2/F1-autonomous-planning` | |
-| F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ⬜ | wave 2 | | |
-| F3 | `headless-skill-probe` | Print-mode findings for the driver | P7 | H (2) | `docs/claude-print-mode.md` has all six sections and every probe P-a…P-f recorded | ⬜ | wave 2 | | |
+| F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | 🔄 in progress | wave 2 | | |
+| F3 | `headless-skill-probe` | Print-mode findings for the driver | P7 | H (2) | `docs/claude-print-mode.md` has all six sections and every probe P-a…P-f recorded | 🔄 in progress | wave 2 | | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -21,7 +21,7 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⚠️ I1, I2, I3, I4 |
-| 2 | `waves/w02.md` | F, G (after F), H | ⬜ |
+| 2 | `waves/w02.md` | F, G (after F), H | 🔄 since 2026-11-17 18:53 |
 | 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ⬜ |
 
 ## Tasks
@@ -33,9 +33,9 @@ Merged: short hash of the merge commit into the main branch.
 | C | `triage-status-autonomous` | F1 | 1 | medium | ✅ |
 | D | `wave-run-plan-lookup` | F1 | 1 | low | ✅ |
 | E | `planning-closing-check` | F1 | 1 | medium | ⚠️ I1, I2, I3, I4 |
-| F | `merged-block-layout` | F2 | 2 | medium | ⬜ |
-| G | `merged-block-readers` | F2 | 2 | medium | ⬜ |
-| H | `print-mode-probe` | F3 | 2 | medium | ⬜ |
+| F | `merged-block-layout` | F2 | 2 | medium | 🔄 |
+| G | `merged-block-readers` | F2 | 2 | medium | 🔄 |
+| H | `print-mode-probe` | F3 | 2 | medium | 🔄 |
 | I | `target-claim-layout` | F1 | 3 | medium | ⬜ |
 | J | `wave-plan-claim-order` | F1 | 3 | low | ⬜ |
 | K | `run-status-claim` | F1 | 3 | medium | ⬜ |
