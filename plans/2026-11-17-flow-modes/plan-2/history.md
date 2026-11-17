@@ -75,3 +75,26 @@ part 3 driver can rely on. F3 is merged, so the fixes form a new feature F4 with
   plan with several merged features. Task W recomputes the caps over both chains.
 
 Wave 6 stays ⚠️ until wave 7 closes I9 and I10; F3 stays ✅ merged.
+
+## Re-plan 2026-11-17 (at 6ad9095): I9–I11
+
+Wave 7 left F4 ⚠️ blocked: task V's chain planned a single wave with no parallel launch group (I10 open), M10 wrote
+the wrong main branch name and appended a correction (I9 open), and M9 and M10 opened with the plan header instead of
+`Started:` (I11). F4 is not merged, so the fixes stay in F4: one solution,
+`solutions/P16-status-format-fixture-chain.md`, and one wave of three chained tasks.
+
+- I11 → the `wave-status` template opens with `Started:`; "Before sending" checks the first and the last line
+  (task X). The shared run-times rule stays: `wave-run` already follows it.
+- I9 → `wave-status` resolves the main branch name with `git rev-parse --verify --quiet refs/heads/main`, else
+  `master`, and no longer lists both spellings as examples; a report is one message with nothing after the times
+  line (task X). Task Y checks the label on `master` (C5, C6), on `main` after a rename (C7) and with nothing left to
+  merge (C8).
+- I10 → task Y no longer lets `wave-plan` decide the plan's shape: it runs the ready two-wave plan of
+  `examples/01-greenfield-todo-cli/` (each wave one launch group of two tasks of different features), switched to
+  autonomous flow by the flow form; a direct probe call (C4) measures what `claude -p` does with background
+  subagents when the main agent ends. Alternatives not taken: another toy list (the planner may still merge tasks),
+  and forcing background launches in `wave-run` (not what the driver needs to know).
+- Task Z rewrites the reading rules 2 and 3 of `docs/claude-print-mode.md` for the new first line, adds rule 5 only
+  if background subagents outlive the process, and recomputes the caps over the three chains.
+
+Waves 6 and 7 and task V stay ⚠️ until wave 8 closes I9–I11; F4 stays ⚠️ blocked, waiting for wave 8.
