@@ -368,7 +368,9 @@ Reading the result:
    following `Stop <code>:` line by splitting it at the first ` — next: `. The `wave-status` template puts the
    plan header first and the timing line at the end.
 3. Treat unexpected output as a failed check even on exit 0. A nonempty `permission_denials` array can mean skipped
-   checks or guessed output. A closing question requires attention because autonomous flow does not ask.
+   checks or guessed output. A missing opening `Started:` in `wave-triage`, `wave-plan` or `wave-run` calls for
+   inspecting whether the skill loaded and followed its report format. A closing question requires attention
+   because autonomous flow does not ask.
 4. Before continuing, read the state from git, never from report headings: the labels of a report follow the
    user's language and can vary. For each plan of the run, read its README from the tracking branch
    (`git show plan/<plan>:<plan folder>/README.md`) and its `Flow:` line. A Features row `✅ merged` with hash `<h>`
@@ -389,3 +391,6 @@ Reading the result:
   name and appended a second heading that referred back to it. Re-run both forms of `wave-status` on autonomous
   plans with several merged features. Check that each plan prints one heading with the actual main branch name
   followed by every full merged-feature block, and compare the blocks with the tracking and integration refs.
+- M9 and M10 opened with the plan heading as the `wave-status` template specifies. The shared run-times rule
+  in `wave-plan/layout.md` requires `Started:` first. Reconcile the two instructions, then rerun `wave-status`
+  with and without a plan folder and verify the agreed first line and final timing line in both reports.
