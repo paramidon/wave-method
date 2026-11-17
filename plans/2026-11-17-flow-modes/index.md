@@ -2,6 +2,29 @@
 
 - Index: `plans/2026-11-17-flow-modes/index.md` · created 2026-11-17 · base: f5768a5 · triaged 2026-11-17 15:27 – (running)
 
+## Problems
+
+| P | Summary | Cluster | Difficulty | Size | Depends on | Part |
+|---|---|---|---|---|---|---|
+| P1 | Flow field (manual/autonomous), per-feature override, decision table in layout.md | skill-rules | | | | |
+| P2 | Integration target so autonomous merges never reach the real main; refuse otherwise | skill-rules | | | | |
+| P3 | wave-run autonomous behaviour (auto-approval, each interactive point) in autonomous.md | skill-rules | | | | |
+| P4 | wave-plan / wave-triage proceed on recorded assumptions instead of questions | skill-rules | | | | |
+| P5 | Final reports show the active flow and what was auto-merged and why | skill-rules | | | | |
+| P6 | Cross-platform overnight driver in `scripts/` with rails, lock, log, morning report | driver-docs | | | | |
+| P7 | Verify for real how `claude -p` runs skills; design the driver prompts around it | driver-docs | | | | |
+| P8 | README, autonomous example, status_check.py new fields, CHANGELOG Unreleased | driver-docs | | | | |
+| P9 | End-to-end test on a throwaway repo: manual run, autonomous run with red/blocked | driver-docs | | | | |
+| P10 | "Plan after part K is merged" checks the integration target in autonomous flow | skill-rules | | | | |
+| P11 | Morning report shows each feature's review block (essence, how to test) | driver-docs | | | | |
+
+## Clusters
+
+| Cluster | Area | Problems |
+|---|---|---|
+| skill-rules | skill texts: `wave-plan/layout.md`, `templates.md`, `wave-run/*`, `wave-plan/SKILL.md`, `wave-triage/SKILL.md` | P1, P2, P3, P4, P5, P10 |
+| driver-docs | `scripts/` driver, `status_check.py`, README, `examples/`, CHANGELOG, end-to-end test | P6, P7, P8, P9, P11 |
+
 ## Source list (verbatim)
 
 The user's task text, split into numbered problems. Shared context of the whole list:
