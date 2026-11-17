@@ -2,8 +2,9 @@
 
 Read by the `wave-run` coordinator only when `SKILL.md` step 1 says so.
 
-A feature is merged into `<main>` only after the user approves that feature. The one-feature-per-branch rule, the
-review block and what counts as approval: `layout.md`, "Feature review".
+A feature is merged into `<main>` only after the user approves that feature, or, in autonomous flow, after
+auto-approval (`layout.md`, "Flow"; `wave-run/autonomous.md`, "Auto-approval"). The one-feature-per-branch rule,
+the review block and what counts as approval: `layout.md`, "Feature review".
 
 ## Entry points
 
@@ -11,7 +12,7 @@ review block and what counts as approval: `layout.md`, "Feature review".
 |---|---|
 | `SKILL.md` step 10: the user's answer after a wave | "Merge one feature" for each approved feature, "Rejection" for each rejected one, then "Record" |
 | `/wave-run <plan folder> merge <F-IDs>`<br>`$wave-run <plan folder> merge <F-IDs>` | "Checks", then "Merge one feature" for each named feature in "Features" order, then "Record". Naming a feature in this command is the approval. |
-| `/wave-run <plan folder>`<br>`$wave-run <plan folder>` with no wave ⬜ or ❌ | "Checks"; then the "Ready for review" section of the wave report (`wave-run/report.md`) for every `👀 review` feature, in full, from its `reviews/<feature>.md` (a feature without one, from an older `wave-run`: build its brief as `SKILL.md` step 7 says and show it; write it into the plan only together with a "Record" commit of this run), and the questions of step 10; merge only what the user approves. No feature `👀 review` → stop `nothing-to-run`. |
+| `/wave-run <plan folder>`<br>`$wave-run <plan folder>` with no wave ⬜ or ❌ | "Checks"; then the "Ready for review" section of the wave report (`wave-run/report.md`) for every `👀 review` feature, in full, from its `reviews/<feature>.md` (a feature without one, from an older `wave-run`: build its brief as `SKILL.md` step 7 says and show it; write it into the plan only together with a "Record" commit of this run), and the questions of step 10; merge only what the user approves. No feature `👀 review` → stop `nothing-to-run`. Autonomous flow: "Checks", then "Auto-approval" of `autonomous.md`; no questions; features under manual review are shown with their merge command. |
 
 ## Checks
 
@@ -28,11 +29,13 @@ review block and what counts as approval: `layout.md`, "Feature review".
    conflicts as in `SKILL.md` step 6, run the **full** check command. Red → the feature becomes ⚠️ blocked with a
    new problem entry; do not merge. If resolving a conflict changed lines of the feature's own changes, show the
    resolution to the user and ask again before merging: they approved a different diff.
+   Autonomous flow: `autonomous.md`, "Auto-approval".
 2. Check main readiness for `feat/<plan>/<feature>` (`layout.md`, "Main readiness"). Not ready → tell the user
    the reason (the staged files, the overlapping paths, or the branch) and ask them to clear it and answer when
    done; on the answer check again. Never stage, unstage, stash or reset anything yourself. If the user leaves it
    for later, the feature keeps `👀 review` with `Waiting for: main-dirty`; `/wave-run <plan folder> merge <F-ID>` ·
    `$wave-run <plan folder> merge <F-ID>` merges it later.
+   Autonomous flow: `autonomous.md`, "Auto-approval".
 3. `git -C <main checkout> merge --no-ff feat/<plan>/<feature> -m "Feature <feature-id> (<plan>): <title>"`,
    body: one line per task of the feature (its line under "Tasks" of the brief). Note the merge hash.
 
@@ -50,6 +53,8 @@ The user answers `problems F<k>: <findings>`, or says what is wrong with a ready
   same feature, and a later wave makes it ready again.
 
 ## Record
+
+Autonomous flow: with the differences of `autonomous.md`, "Auto-approval".
 
 In the tracking worktree, after the merges and rejections of this run:
 
