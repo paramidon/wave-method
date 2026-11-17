@@ -12,7 +12,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3), P (5), Q (5) | task E's 12 walkthroughs hold, the rehearsal scenarios 1–6 of tasks L and M and 7–8 of task Q hold, and the check command is green | ⚠️ blocked (I7, I8) | wave 5 | `feat/flow-modes-p2/F1-autonomous-planning` | |
+| F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3), P (5), Q (5) | task E's 12 walkthroughs hold, the rehearsal scenarios 1–6 of tasks L and M and 7–8 of task Q hold, and the check command is green | 👀 review | review | `feat/flow-modes-p2/F1-autonomous-planning` | |
 | F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ✅ merged | | `feat/flow-modes-p2/F2-merged-review-blocks` | 47d69de |
 | F3 | `headless-skill-probe` | Print-mode findings for the driver | P7, P13 | H (2), N (4), O (4), S (6), T (6) | `docs/claude-print-mode.md` has all six sections, probes P-a…P-f and Q-a…Q-d recorded and a prompt table that matches the merged skill texts; `docs/rehearsals/print-mode-chain.md` records a real triage → plan → wave-run → status chain | ⚠️ blocked (I5, I6) | wave 6 (needs F1 merged) | `feat/flow-modes-p2/F3-headless-skill-probe` | |
 
@@ -24,9 +24,9 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ✅ (fixed by I–M, wave 3) |
 | 2 | `waves/w02.md` | F, G (after F), H | ⚠️ I5, I6 |
-| 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ⚠️ I7, I8 |
+| 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ✅ (fixed by P, Q, wave 5) |
 | 4 | `waves/w04.md` | N, O (after N) | ➖ dropped (tasks → wave 6) |
-| 5 | `waves/w05.md` | P, Q (after P) | 🔄 since 2026-11-17 21:21 |
+| 5 | `waves/w05.md` | P, Q (after P) | ✅ |
 | 6 | `waves/w06.md` | S, T (after S) | ⬜ |
 
 ## Tasks
@@ -41,15 +41,15 @@ Merged: short hash of the merge commit into the main branch.
 | F | `merged-block-layout` | F2 | 2 | medium | ✅ |
 | G | `merged-block-readers` | F2 | 2 | medium | ✅ |
 | H | `print-mode-probe` | F3 | 2 | medium | ⚠️ I5, I6 |
-| I | `target-claim-layout` | F1 | 3 | medium | ⚠️ I7 |
+| I | `target-claim-layout` | F1 | 3 | medium | ✅ (fixed by P, Q, wave 5) |
 | J | `wave-plan-claim-order` | F1 | 3 | low | ✅ |
 | K | `run-status-claim` | F1 | 3 | medium | ✅ |
 | L | `autonomous-index-rehearsal` | F1 | 3 | medium | ✅ |
-| M | `chain-safety-rehearsal` | F1 | 3 | medium | ⚠️ I8 |
+| M | `chain-safety-rehearsal` | F1 | 3 | medium | ✅ (fixed by P, Q, wave 5) |
 | N | `print-mode-chain-runs` | F3 | 4 | medium | ➖ superseded by S |
 | O | `print-mode-doc-update` | F3 | 4 | medium | ➖ superseded by T |
-| P | `claim-handoff-texts` | F1 | 5 | low | 🔄 |
-| Q | `claim-handoff-rehearsal` | F1 | 5 | medium | 🔄 |
+| P | `claim-handoff-texts` | F1 | 5 | low | ✅ |
+| Q | `claim-handoff-rehearsal` | F1 | 5 | medium | ✅ |
 | S | `print-mode-chain-runs` | F3 | 6 | medium | ⬜ |
 | T | `print-mode-doc-update` | F3 | 6 | medium | ⬜ |
 
