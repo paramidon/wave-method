@@ -10,7 +10,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5, P12, P13 | A (1), B (1), C (1), D (1), E (2) ➖, F (2) ➖, G (3), H (3), I (3) | task I's four scenario walkthroughs hold and the check command is green | 👀 review | review | `feat/flow-modes-p1/F1-autonomous-flow` | |
+| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5, P12, P13 | A (1), B (1), C (1), D (1), E (2) ➖, F (2) ➖, G (3), H (3), I (3) | task I's four scenario walkthroughs hold and the check command is green | ✅ merged | | `feat/flow-modes-p1/F1-autonomous-flow` | `2bdea6c` |
 
 Merged: short hash of the merge commit into the main branch.
 
