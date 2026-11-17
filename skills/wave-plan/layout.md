@@ -356,11 +356,21 @@ the main checkout.
 
 Every run that writes the integration worktree claims the target first and holds the claim until its last write: a
 wave and the merge form of `wave-run` in autonomous flow, and `wave-plan` in autonomous flow of planning (a new plan or
-a re-plan). The flow form of `wave-run` and `wave-status` write nothing there and take no claim.
+a re-plan). The flow form of `wave-run`, a task-mode session (`… task <ID>`) and `wave-status` write nothing there and
+take no claim.
 
 - The claim is the ref `refs/wave-method/claims/integration/<name>`, which every worktree of the repository shares. It
-  points to a blob whose one line names the holder: `<plan> wave <N> <YYYY-MM-DD HH:MM>`,
-  `<plan> merge <YYYY-MM-DD HH:MM>` or `<plan> planning <YYYY-MM-DD HH:MM>`.
+  points to a blob whose one line names the holder, in ASCII only: `<plan> wave <N> <YYYY-MM-DD HH:MM> run <token>`,
+  `<plan> wave <N> waiting <YYYY-MM-DD HH:MM> run <token>` (a wave waiting for task mode),
+  `<plan> merge <YYYY-MM-DD HH:MM> run <token>` or `<plan> planning <YYYY-MM-DD HH:MM> run <token>`. Where another
+  text names a holder line without ` run <token>`, the run appends it. `<token>` is eight random hex characters,
+  chosen once per run, so no two runs hold the same oid:
+
+  ```bash
+  token=$(od -An -N4 -tx1 /dev/urandom | tr -d ' \n')
+  ```
+
+  PowerShell: `$token = [guid]::NewGuid().ToString('N').Substring(0, 8)`.
 - **Take** it by creating the ref with the zero object ID as its expected old value. Git creates the ref only when it
   does not exist, so of two runs that start together exactly one gets it:
 
@@ -370,14 +380,36 @@ a re-plan). The flow form of `wave-run` and `wave-status` write nothing there an
   ```
 
   PowerShell: `$oid = "<holder line>" | git hash-object -w --stdin`, then the same `git update-ref`. When
-  `git rev-parse --show-object-format` prints `sha256`, the zero ID has 64 zeros. Keep the oid: the release needs it.
+  `git rev-parse --show-object-format` prints `sha256`, the zero ID has 64 zeros. Keep the oid: every later step of
+  the claim needs it.
 - **Refused** (the ref exists): read the holder with `git cat-file -p refs/wave-method/claims/integration/<name>` and
-  stop `wave-running`, naming the holder line; nothing written. One exception: a `wave-run` that resumes the wave the
-  holder line names (same plan and wave, its Execution ends with `Waiting: task mode …`) takes the claim over; its
-  oid is `git rev-parse refs/wave-method/claims/integration/<name>`.
+  stop `wave-running`, naming the holder line; nothing written. Only a resume takes over a held claim ("Take over"
+  below).
+- **Nothing written** by a refused claim, wait or takeover means: the attempt changed no ref, branch, worktree, commit
+  or worktree file. `git hash-object -w` stores the holder blob before `git update-ref` tries the ref (git refuses a ref to a
+  missing object), so each refused attempt may leave one unreachable loose blob in the object store; `git gc` prunes
+  it later (after `gc.pruneExpire`, two weeks by default). Check that a stop wrote nothing by comparing refs and
+  worktrees, not the object store.
+- **Wait**: a wave that ends with `Waiting: task mode …` keeps the claim (it is still 🔄) and marks it as waiting,
+  right after its "waiting for task mode" commit: store the line `<plan> wave <N> waiting <YYYY-MM-DD HH:MM> run
+  <token>` with `git hash-object -w --stdin` as above, as `$wait`, then
+  `git update-ref refs/wave-method/claims/integration/<name> "$wait" "$oid"`. Exit 0 → the claim now has the oid
+  `$wait`. Otherwise the claim is no longer this run's: stop `wave-running`, naming the holder, instead of the
+  waiting report.
+- **Take over**: a `wave-run` that resumes a wave waiting for task mode (`wave-run/task-mode.md`) reads
+  `cur=$(git rev-parse -q --verify refs/wave-method/claims/integration/<name>)` (PowerShell: `$cur = …`, the same
+  command), then:
+  - no ref: take the claim as above;
+  - the holder line (`git cat-file -p "$cur"`) is the waiting line of this plan and wave: store this run's own line
+    `<plan> wave <N> <YYYY-MM-DD HH:MM> run <token>` as `$oid`, then
+    `git update-ref refs/wave-method/claims/integration/<name> "$oid" "$cur"`. Git moves the ref only while it still
+    points to `$cur`, so of two resumes exactly one takes it over. Exit 0 → this run holds the claim with `$oid`;
+    otherwise read the holder again and stop `wave-running`, naming it;
+  - any other holder line, the running line of this same wave included (another resume runs it): stop
+    `wave-running`, naming it.
 - **Release** it right after the run's last write, and before the report of any stop after the claim:
-  `git update-ref -d refs/wave-method/claims/integration/<name> "$oid"`. The expected old value keeps a run from
-  deleting a claim that is not its own. A wave that ends with `Waiting: task mode …` keeps the claim: it is still 🔄.
+  `git update-ref -d refs/wave-method/claims/integration/<name> "$oid"`. The expected old value, unique by its token,
+  keeps a run from deleting a claim that is not its own. A run that did not get the claim releases nothing.
 - A claim left by a session that is gone is released only by the user's decision ("Running waves"), with
   `git update-ref -d refs/wave-method/claims/integration/<name>` once no run holds it. `wave-status` shows every claim.
 

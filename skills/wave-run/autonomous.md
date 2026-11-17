@@ -44,8 +44,9 @@ Step 1, right after the README is read; it writes nothing but the target claim.
 
 Then take the target claim (`layout.md`, "Target claim"), holder line `<plan> wave <N> <YYYY-MM-DD HH:MM>`, or
 `<plan> merge <YYYY-MM-DD HH:MM>` in the merge form; refused → stop `wave-running`, naming the holder, nothing
-written, unless this run resumes the holder's own wave (it takes the claim over). The flow form runs the checks
-above and takes no claim. Then: another plan of the same target (`layout.md`, "Integration target") has a 🔄
+written. A resume of a wave waiting for task mode takes the claim over instead (`layout.md`, "Target claim",
+"Take over"). The flow form runs the checks above and takes no claim. Then:
+another plan of the same target (`layout.md`, "Integration target") has a 🔄
 wave on its tracking branch → stop `wave-running`, naming that plan and wave. From the claim on, every stop
 releases the claim before its report.
 
@@ -63,7 +64,8 @@ Step 2, before the tracking worktree and the "wave started" commit:
 
 Step 3, release: right after the run's last write to the integration worktree (the end of "Auto-approval", in a
 wave and in the merge form), release the target claim (`layout.md`, "Target claim"). A run that ends with
-`Waiting: task mode …` keeps it; the resume takes it over.
+`Waiting: task mode …` keeps it and marks it as waiting right after its "waiting for task mode" commit
+(`layout.md`, "Target claim", "Wait"); the resume takes it over.
 
 ## Skipped tasks
 

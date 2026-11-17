@@ -251,7 +251,7 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
    `git -C <main checkout> merge --no-ff plan/<slug> -m "Plan <slug>: <short>"`.
    If the main checkout is not ready, do not touch it: give the user the merge command.
    Autonomous flow: the run still holds its target claim
-   (`git cat-file -p refs/wave-method/claims/integration/<name>` prints this run's holder line; otherwise stop
+   (`git rev-parse refs/wave-method/claims/integration/<name>` prints this run's oid; otherwise stop
    `wave-running`, the plan stays on its tracking branch); merge into `<main checkout>`, the integration worktree,
    with the same readiness rule, never into the main checkout; then release the claim (`layout.md`, "Target
    claim"), also when the integration worktree was not ready and the user got the merge command.
