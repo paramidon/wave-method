@@ -38,6 +38,7 @@ jobs:
       - name: Run checks
         run: |
           python skills/wave-plan/scripts/test_status_check.py
+          python -m unittest discover -s scripts/tests -v
           for plan in examples/*/; do python skills/wave-plan/scripts/status_check.py "${plan%/}"; done
 
       - name: Build archives
