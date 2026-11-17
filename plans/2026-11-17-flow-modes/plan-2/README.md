@@ -26,7 +26,7 @@ Merged: short hash of the merge commit into the main branch.
 | 2 | `waves/w02.md` | F, G (after F), H | ⚠️ I5, I6 |
 | 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ⚠️ I7, I8 |
 | 4 | `waves/w04.md` | N, O (after N) | ➖ dropped (tasks → wave 6) |
-| 5 | `waves/w05.md` | P, Q (after P) | ⬜ |
+| 5 | `waves/w05.md` | P, Q (after P) | 🔄 since 2026-11-17 21:21 |
 | 6 | `waves/w06.md` | S, T (after S) | ⬜ |
 
 ## Tasks
@@ -48,8 +48,8 @@ Merged: short hash of the merge commit into the main branch.
 | M | `chain-safety-rehearsal` | F1 | 3 | medium | ⚠️ I8 |
 | N | `print-mode-chain-runs` | F3 | 4 | medium | ➖ superseded by S |
 | O | `print-mode-doc-update` | F3 | 4 | medium | ➖ superseded by T |
-| P | `claim-handoff-texts` | F1 | 5 | low | ⬜ |
-| Q | `claim-handoff-rehearsal` | F1 | 5 | medium | ⬜ |
+| P | `claim-handoff-texts` | F1 | 5 | low | 🔄 |
+| Q | `claim-handoff-rehearsal` | F1 | 5 | medium | 🔄 |
 | S | `print-mode-chain-runs` | F3 | 6 | medium | ⬜ |
 | T | `print-mode-doc-update` | F3 | 6 | medium | ⬜ |
 
