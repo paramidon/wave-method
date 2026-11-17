@@ -56,3 +56,22 @@ Wave order: wave 4 (F3) depends on `F1 merged`, and `wave-run` refuses a wave wh
 unchanged as S and T in wave 6, after wave 5 and F1's merge. I5 and I6 now point to S and T.
 
 Tasks I and M and wave 3 stay ⚠️ until wave 5 closes I7 and I8.
+
+## Re-plan 2026-11-17 (at 16d9953): I9–I10
+
+Wave 6 finished F3, and the user merged it (5db5e02) with two open entries from task S's chain, both about what the
+part 3 driver can rely on. F3 is merged, so the fixes form a new feature F4 with one solution,
+`solutions/P15-multiwave-status-checks.md`, and one wave of three chained tasks.
+
+- I9 (the merged-feature label varied in R6) → `wave-status` gets a fenced report template with literal labels and a
+  "Before sending" check, modelled on `wave-run/report.md`; the label is pinned to the branch name alone
+  (`Merged, not in main:`) (task U). Separately, the driver stops reading report headings: reading rule 4 of
+  `docs/claude-print-mode.md` takes merged features from the README on the tracking branch and
+  `git merge-base --is-ancestor` (task W). Alternative not taken: lenient heading matching in the driver, since labels
+  follow the user's language.
+- I10 (one small wave only) → a second chain with a six-item list that needs several waves, one `wave-run` call per
+  wave, a subagent table and a post-exit check (refs, worktrees and `claude.exe` processes 120 s after exit), recorded
+  in `docs/rehearsals/print-mode-multiwave.md` (task V); its two `wave-status` calls also check task U's template on a
+  plan with several merged features. Task W recomputes the caps over both chains.
+
+Wave 6 stays ⚠️ until wave 7 closes I9 and I10; F3 stays ✅ merged.
