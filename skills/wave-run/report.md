@@ -62,7 +62,7 @@ Stop <code>: <one line> — next: <command or action>
 
 ### Auto-merged
 
-- **F<k> <title>** → `integration/<name>` `<hash>`: <"Essence" of its brief> — why: <how the conditions in `layout.md`, "Auto-approval", held>
+<merged block of every feature merged in this run ("Feature review"), each followed by a blank line>
 - **F<m> <title>** not merged: <manual review · ⚠️ I<n>: <the condition that failed> · `main-dirty`: <reason>>
 
 ### Check by hand
@@ -92,7 +92,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 | Features | always | one row per feature of the plan, from README "Features"; `Tasks` is `<done>/<total>` followed by the IDs of the tasks still missing; `Branch` is `feat/<plan>/<feature>`, for a `👀 review` feature the branch to review |
 | Merges and checks | always | task merges with their conflicts, then the check result of every feature worktree touched (what passed, what failed) |
 | Problems | always | new entries of `problems.md` (the essence of each), entries this wave closed and the statuses that changed; `none` when there is nothing |
-| Auto-merged | autonomous flow | one line per `👀 review` feature that "Auto-approval" of `wave-run/autonomous.md` looked at in this run: merged (target, hash, "Essence", and why: the five conditions of `layout.md`, "Auto-approval", held) or not merged (manual review, the failed condition with its entry, or `main-dirty` with the reason); `none` when no feature was `👀 review` |
+| Auto-merged | autonomous flow | for every `👀 review` feature that "Auto-approval" of `wave-run/autonomous.md` looked at in this run: merged → its merged block of `layout.md`, "Feature review", in full (its `Approved:` line says why and the review block rules for "How to test" apply); not merged → one line (manual review, the failed condition with its entry, or `main-dirty` with the reason); `none` when no feature was `👀 review` |
 | Check by hand | a feature that is not `👀 review` has something tests do not cover (UI, visuals) | one line per check, in its feature worktree |
 | Ready for review | a feature is `👀 review` | the review block of `layout.md`, "Feature review", for every `👀 review` feature (this wave's and earlier ones), from its `reviews/<feature>.md`, without the `Merge:` line (autonomous flow: with it, since no question is asked); nothing else about a ready feature (no task list, check result, test counts, commits or diff statistics). When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), add one line naming the paths: the second merge brings the first one in from `<main>` and may need conflict resolution. |
 | Next | always | the next command from the table below, for a fresh session, in both forms (`layout.md`, "Commands") |
@@ -155,6 +155,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 review" section and the merge questions of the wave report (`wave-run/merge.md`, "Entry points"). In autonomous
 flow use its "Auto-merged" section for auto-approval and show the merge command for features still ready for review.
 The `Flow:` line is always printed.
+Autonomous flow: each "Merged" line is the feature's merged block instead (`layout.md`, "Feature review").
 
 ## Flow report
 
@@ -183,4 +184,5 @@ started".
 ## Before sending
 
 Compare the report with the template: every "always" section is there, in order, as a table or list. If one is
-missing or retold as prose, rewrite the report before sending it.
+missing or retold as prose, rewrite the report before sending it. In autonomous flow every merged feature is a
+full merged block, never a one-line summary.

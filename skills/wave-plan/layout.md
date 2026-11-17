@@ -14,7 +14,7 @@ Read only what the table lists. A file that does not exist means there is nothin
 | `wave-plan`, re-plan | `README.md`, `problems.md`, solution files of the affected P, the wave files where the open entries were found, every wave file not run yet that has a task of an affected feature |
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
-| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features, index "Parts") |
+| `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features and, in autonomous flow, of features merged into the integration branch but not yet into `<main branch>`, index "Parts") |
 | nobody | `CHANGELOG.md`; `wave-plan/scripts/` (skills run the script, they do not read it) |
 
 A wave file holds everything its wave needs. If something is missing, that is a defect of the plan: record it in `problems.md` and do not look for it in other waves, `history.md` or `archive/`.
@@ -258,6 +258,22 @@ Merge: `/wave-run <plan folder> merge F1` · `$wave-run <plan folder> merge F1`
   from. They stay in the brief and the git history.
 - `wave-run` leaves out the `Merge:` line: its step 10 asks instead. `main-dirty` adds one line with the reason.
 
+A feature merged into an integration branch (autonomous flow, "Flow") is shown with its **merged block**: the review
+block with two lines changed, built from the same brief, so the user can test it in the integration worktree, where
+it sits together with the other features merged since the user's last merge:
+
+```
+**F1 · <title>** · merged into `integration/<name>` `<hash>` · `<integration worktree path>`
+<Essence>
+How to test:
+1. <an action specific to this feature> → <what the user should see>
+Worth a look: <as in the review block>
+Approved: <auto — every task ✅ or ➖, check green, no open entry, tier gate clean, not under manual review · by the user>
+```
+
+The brief stays on the tracking branch after the merge, in every flow; nothing deletes it, and archiving moves it
+with the plan.
+
 The user reviews the code with `git log --oneline --no-merges <main>..<branch>` and `git diff <main>...<branch>`
 when they want to; skills do not print these commands in the block.
 
@@ -355,6 +371,21 @@ before the merge (`wave-run/autonomous.md`, "Auto-approval"):
 | `<main checkout>` is not ready ("Main readiness") | stays `👀 review`, `Waiting for: main-dirty` |
 
 The run goes on with everything that does not depend on a feature left unmerged.
+
+### Results of an autonomous run
+
+What the user is shown after an unattended run, by every reader (the `wave-run` report, `wave-status`, a driver's
+summary): per plan in autonomous flow, from its README and briefs on the tracking branch:
+
+| Feature | Shown as |
+|---|---|
+| `✅ merged`, and its `Merged` hash is not in `<main branch>` yet (`git merge-base --is-ancestor <hash> <main branch>` fails) | its merged block ("Feature review") |
+| `👀 review` | its review block, with the `Merge:` line |
+| ⚠️ blocked | one line: `F<k> <title> — ⚠️ I<n>: <essence of the entry>` |
+| 🔄 or ⬜ | one line: `F<k> <title> — <status>, waiting for <Waiting for>` |
+
+Merged features drop out of this view once the user has merged the integration branch into `<main branch>`. A feature
+without a brief (a plan run by an older `wave-run`) is shown as `wave-status` builds a missing brief.
 
 ### Decision table
 

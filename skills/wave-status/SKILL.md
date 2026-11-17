@@ -47,6 +47,9 @@ Read only the following, according to `layout.md`, "Who reads what":
   "User problems" lines of its P and its "How to try" line, its commit subjects
   (`git log --oneline --no-merges <main>..<branch>`), and the "Execution" section of the wave file of its last wave
   (the last wave in its "Tasks (wave)" cell), for what was checked by hand.
+- Autonomous flow: for each `✅ merged` feature whose `Merged` hash is not in `<main branch>`
+  (`git merge-base --is-ancestor <hash> <main branch>` fails): its brief, from the tracking branch. If it has no
+  brief, read the same fallback sources listed above for a feature under review.
 - Each index's "Parts" table.
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
@@ -73,6 +76,11 @@ comes first: the user reads it before anything about waves.
   (`2/4 · ⚠️ B`).
 - `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
   `none running` when no wave is 🔄.
+- `Merged, not in <main branch>:` autonomous flow only ("Results of an autonomous run" of `layout.md`): the
+  merged block of `layout.md`, "Feature review", for every `✅ merged` feature whose `Merged` hash is not in
+  `<main branch>` yet, from its brief, in full. These are what the user tests before merging `integration/<name>`.
+  A feature without a brief gets the block built as `Ready for review:` builds one, with the merged block's header
+  and `Approved:` line.
 - `Ready for review:` the review block of `layout.md`, "Feature review", for every `👀 review` feature, with its
   `Merge:` line, from its brief; never shortened to the title and branch, and nothing else about the feature.
   For `main-dirty` add its reason (`not on <main>`, `staged changes`, or the overlapping paths); the three read-only
