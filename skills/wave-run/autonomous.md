@@ -106,10 +106,15 @@ Then `merge.md`, "Record", with these differences:
 
 - the Execution line is `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)`; a feature left unmerged gets
   `Not merged <YYYY-MM-DD HH:MM>: <feature-id> — <manual review · I<n> · main-dirty>`;
+- the brief `reviews/<feature>.md` of every merged feature gets the header line
+  ``- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, auto-approved`` after its `👀 review since` line;
 - remove the worktree of a merged feature but keep its branch; `wave-status` lists it as a leftover once the
   integration branch is in `<main branch>`;
 - no archive: the tracking branch and its worktree stay (`layout.md`, "Archive");
 - the tracking branch is merged into `<main checkout>`, the integration worktree.
+
+A feature under manual review that the user approves with the merge form is merged into the integration branch by
+`merge.md` as in manual flow; its brief gets the same header line ending `approved by the user`.
 
 ## Report
 
