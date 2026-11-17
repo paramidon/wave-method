@@ -11,7 +11,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3) | task E's 12 walkthroughs hold, the six rehearsal scenarios of tasks L and M hold, and the check command is green | ⚠️ blocked (I1, I2, I3, I4) | wave 3 | `feat/flow-modes-p2/F1-autonomous-planning` | |
-| F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | 👀 review | review | `feat/flow-modes-p2/F2-merged-review-blocks` | |
+| F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ✅ merged | | `feat/flow-modes-p2/F2-merged-review-blocks` | 47d69de |
 | F3 | `headless-skill-probe` | Print-mode findings for the driver | P7 | H (2) | `docs/claude-print-mode.md` has all six sections and every probe P-a…P-f recorded | ⚠️ blocked (I5, I6) | I5, I6 | `feat/flow-modes-p2/F3-headless-skill-probe` | |
 
 Merged: short hash of the merge commit into the main branch.
