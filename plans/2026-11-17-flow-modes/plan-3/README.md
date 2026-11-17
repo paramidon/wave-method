@@ -10,7 +10,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | 🔄 in progress | wave 3 | `feat/flow-modes-p3/F1-overnight-driver` | |
+| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | 👀 review | review | `feat/flow-modes-p3/F1-overnight-driver` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -20,7 +20,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D | ✅ |
 | 2 | `waves/w02.md` | E, F | ✅ |
-| 3 | `waves/w03.md` | G, H | 🔄 since 2026-11-18 02:53 |
+| 3 | `waves/w03.md` | G, H | ✅ |
 
 ## Tasks
 
@@ -32,8 +32,8 @@ Merged: short hash of the merge commit into the main branch.
 | D | `fake-claude-stub` | F1 | 1 | medium | ✅ |
 | E | `next-action-choice` | F1 | 2 | medium | ✅ |
 | F | `morning-report-render` | F1 | 2 | medium | ✅ |
-| G | `driver-loop-cli` | F1 | 3 | medium | 🔄 |
-| H | `driver-doc-ci` | F1 | 3 | low | 🔄 |
+| G | `driver-loop-cli` | F1 | 3 | medium | ✅ |
+| H | `driver-doc-ci` | F1 | 3 | low | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p3` and reach the
