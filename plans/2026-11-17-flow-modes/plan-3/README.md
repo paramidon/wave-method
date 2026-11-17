@@ -18,7 +18,7 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-🔄 since 2026-11-18 01:19 |
+| 1 | `waves/w01.md` | A, B, C, D | 🔄 since 2026-11-18 01:19 |
 | 2 | `waves/w02.md` | E, F | ⬜ |
 | 3 | `waves/w03.md` | G, H | ⬜ |
 
