@@ -23,7 +23,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⚠️ I1, I2, I3, I4 |
 | 2 | `waves/w02.md` | F, G (after F), H | ⚠️ I5, I6 |
-| 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ⬜ |
+| 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | 🔄 since 2026-11-17 20:40 |
 | 4 | `waves/w04.md` | N, O (after N) | ⬜ |
 
 ## Tasks
@@ -38,11 +38,11 @@ Merged: short hash of the merge commit into the main branch.
 | F | `merged-block-layout` | F2 | 2 | medium | ✅ |
 | G | `merged-block-readers` | F2 | 2 | medium | ✅ |
 | H | `print-mode-probe` | F3 | 2 | medium | ⚠️ I5, I6 |
-| I | `target-claim-layout` | F1 | 3 | medium | ⬜ |
-| J | `wave-plan-claim-order` | F1 | 3 | low | ⬜ |
-| K | `run-status-claim` | F1 | 3 | medium | ⬜ |
-| L | `autonomous-index-rehearsal` | F1 | 3 | medium | ⬜ |
-| M | `chain-safety-rehearsal` | F1 | 3 | medium | ⬜ |
+| I | `target-claim-layout` | F1 | 3 | medium | 🔄 |
+| J | `wave-plan-claim-order` | F1 | 3 | low | 🔄 |
+| K | `run-status-claim` | F1 | 3 | medium | 🔄 |
+| L | `autonomous-index-rehearsal` | F1 | 3 | medium | 🔄 |
+| M | `chain-safety-rehearsal` | F1 | 3 | medium | 🔄 |
 | N | `print-mode-chain-runs` | F3 | 4 | medium | ⬜ |
 | O | `print-mode-doc-update` | F3 | 4 | medium | ⬜ |
 
