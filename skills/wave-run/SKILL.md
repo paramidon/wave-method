@@ -97,7 +97,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 
 | Code | When | Next |
 |---|---|---|
-| `wave-running` | a wave of this plan is 🔄, unless it is this wave waiting for task mode | wait for it, or the user releases the lock |
+| `wave-running` | a wave of this plan is 🔄, unless it is this wave waiting for task mode; in autonomous flow also a wave of another plan with the same integration branch | wait for it, or the user releases the lock |
 | `earlier-wave-open` | an earlier wave is ⬜, 🔄 or ❌ | run or re-plan that wave |
 | `feature-unmerged` | the wave file's `Depends on:` names `F<k> merged` and F<k> is not `✅ merged` | review F<k> (`layout.md`, "Feature review"), then `/wave-run <plan folder> merge F<k>`<br>`$wave-run <plan folder> merge F<k>` |
 | `leftover-branches` | task branches or worktrees of this wave exist | the user: continue from them, delete them, or stop |
@@ -133,7 +133,9 @@ continue, stop `red-after-merge`.
 ### 1. Readiness check (read-only, except a plan-defect entry)
 
 - Find the tracking worktree: `git worktree list`. If `plan/<plan>` exists, read the plan folder there;
-  otherwise read it from `<main>`.
+  otherwise read it from `<main>`. When the plan folder is missing in the main checkout (a plan of autonomous
+  flow, `layout.md`, "Planning in autonomous flow"), its tracking branch is the `plan/*` branch where
+  `git cat-file -e <branch>:<plan folder>/README.md` succeeds.
 - **Extra files.** Read `task-mode.md` when the arguments are `… task <ID>`, when this wave's Execution ends with
   `Waiting: task mode …`, or when the capability check below sends a task to task mode. Read `merge.md` when the
   arguments are `merge <F-IDs>`, when no wave is ⬜ or ❌, or in step 10 when the user approves a feature. Read
@@ -299,7 +301,8 @@ are now all ✅ or ➖:
    test" follows the rules of the review block (`layout.md`, "Feature review"): the steps specific to this
    feature from its README "How to try" line and the `Try:` lines of its tasks (kept in the brief by earlier waves,
    and from this wave's reports); drop duplicates, steps that need a later feature, and every build, launch or
-   test-suite step.
+   test-suite step. In "Worth a look" also copy every README "Assumptions"
+   line `Assumed (autonomous, not asked) · F<k>: …` of this feature (`layout.md`, "Assumed readings").
 
 Merge nothing into `<main>` in this step: a ready feature waits for the user's approval (step 10).
 

@@ -41,6 +41,9 @@ Step 1, read-only, right after the README is read. `<name>` comes from `target:`
    (`git -C <integration worktree> status --porcelain --untracked-files=no`), or an unfinished merge
    (`git -C <integration worktree> rev-parse -q --verify MERGE_HEAD` succeeds).
 
+Another plan of the same target ("Plans of a target" in `layout.md`, "Integration target") has a 🔄 wave on its
+tracking branch → stop `wave-running`, naming that plan and wave; nothing written.
+
 For the merge-record check of `SKILL.md` step 1, read `<main>` as `integration/<name>`, or as `<main branch>`
 if that branch is missing and will be created at its head.
 
