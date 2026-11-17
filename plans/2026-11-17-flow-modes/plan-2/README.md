@@ -16,7 +16,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3), P (5), Q (5) | task E's 12 walkthroughs hold, the rehearsal scenarios 1–6 of tasks L and M and 7–8 of task Q hold, and the check command is green | ✅ merged | | `feat/flow-modes-p2/F1-autonomous-planning` | bbd2449 |
 | F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ✅ merged | | `feat/flow-modes-p2/F2-merged-review-blocks` | 47d69de |
 | F3 | `headless-skill-probe` | Print-mode findings for the driver | P7, P13 | H (2), N (4), O (4), S (6), T (6) | `docs/claude-print-mode.md` has all six sections, probes P-a…P-f and Q-a…Q-d recorded and a prompt table that matches the merged skill texts; `docs/rehearsals/print-mode-chain.md` records a real triage → plan → wave-run → status chain | ✅ merged | | `feat/flow-modes-p2/F3-headless-skill-probe` | 5db5e02 |
-| F4 | `multiwave-print-chain` | Exact wave-status labels and a multi-wave print-mode chain | P15 | U (7), V (7), W (7) | task U's 3 walkthroughs hold; `docs/rehearsals/print-mode-multiwave.md` records M1, M2, at least two `wave-run` calls, M9 and M10 with the subagent table and post-exit checks; `docs/claude-print-mode.md` has the multi-wave table, the caps of that record and the git-based reading rule 4; the check command is green | ⬜ | wave 7 | `feat/flow-modes-p2/F4-multiwave-print-chain` | |
+| F4 | `multiwave-print-chain` | Exact wave-status labels and a multi-wave print-mode chain | P15 | U (7), V (7), W (7) | task U's 3 walkthroughs hold; `docs/rehearsals/print-mode-multiwave.md` records M1, M2, at least two `wave-run` calls, M9 and M10 with the subagent table and post-exit checks; `docs/claude-print-mode.md` has the multi-wave table, the caps of that record and the git-based reading rule 4; the check command is green | 🔄 | wave 7 | `feat/flow-modes-p2/F4-multiwave-print-chain` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -30,7 +30,7 @@ Merged: short hash of the merge commit into the main branch.
 | 4 | `waves/w04.md` | N, O (after N) | ➖ dropped (tasks → wave 6) |
 | 5 | `waves/w05.md` | P, Q (after P) | ✅ |
 | 6 | `waves/w06.md` | S, T (after S) | ⚠️ I9, I10 |
-| 7 | `waves/w07.md` | U, V (after U), W (after V) | ⬜ |
+| 7 | `waves/w07.md` | U, V (after U), W (after V) | 🔄 since 2026-11-17 22:16 |
 
 ## Tasks
 
@@ -55,9 +55,9 @@ Merged: short hash of the merge commit into the main branch.
 | Q | `claim-handoff-rehearsal` | F1 | 5 | medium | ✅ |
 | S | `print-mode-chain-runs` | F3 | 6 | medium | ✅ |
 | T | `print-mode-doc-update` | F3 | 6 | medium | ✅ |
-| U | `status-report-template` | F4 | 7 | medium | ⬜ |
-| V | `multiwave-chain-runs` | F4 | 7 | medium | ⬜ |
-| W | `print-mode-doc-refresh` | F4 | 7 | medium | ⬜ |
+| U | `status-report-template` | F4 | 7 | medium | 🔄 |
+| V | `multiwave-chain-runs` | F4 | 7 | medium | 🔄 |
+| W | `print-mode-doc-refresh` | F4 | 7 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p2` and reach the
