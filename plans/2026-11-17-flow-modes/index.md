@@ -48,7 +48,7 @@ run (P9, `high`), which needs the driver.
 
 ## Assumptions
 
-- The driver starts from an existing index or plan folder; the user runs `wave-triage` himself (answer, 2026-11-17).
+- The driver starts from an existing index or plan folder; the user runs `wave-triage` (answer, 2026-11-17).
 - The end-to-end test (P9) is a task of the plan, run by an agent with real `claude -p` sessions in a scratch repo
   (answer, 2026-11-17).
 - The user's "Phase 1 design, stop for approval" is served by the pipeline itself: each part's plan is the design,
