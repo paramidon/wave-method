@@ -7,6 +7,7 @@
   - 2026-11-17 at 855d09b, 20:33 – 20:38: I5–I6 → P13, wave 4 (tasks N, O); details in `history.md`
   - 2026-11-17 at 06e0731, 20:56 – 21:02: I7–I8 → P14, wave 5 (tasks P, Q); wave 4 dropped, N, O → wave 6 (S, T); details in `history.md`
   - 2026-11-17 at 16d9953, 21:58 – 22:03: I9–I10 → P15, new feature F4, wave 7 (tasks U, V, W); details in `history.md`
+  - 2026-11-17 at 6ad9095, 22:51 – 22:58: I9–I11 → P16, wave 8 (tasks X, Y, Z) in F4; details in `history.md`
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
@@ -16,7 +17,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10, P12 | A (1), B (1), C (1), D (1), E (1), I (3), J (3), K (3), L (3), M (3), P (5), Q (5) | task E's 12 walkthroughs hold, the rehearsal scenarios 1–6 of tasks L and M and 7–8 of task Q hold, and the check command is green | ✅ merged | | `feat/flow-modes-p2/F1-autonomous-planning` | bbd2449 |
 | F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ✅ merged | | `feat/flow-modes-p2/F2-merged-review-blocks` | 47d69de |
 | F3 | `headless-skill-probe` | Print-mode findings for the driver | P7, P13 | H (2), N (4), O (4), S (6), T (6) | `docs/claude-print-mode.md` has all six sections, probes P-a…P-f and Q-a…Q-d recorded and a prompt table that matches the merged skill texts; `docs/rehearsals/print-mode-chain.md` records a real triage → plan → wave-run → status chain | ✅ merged | | `feat/flow-modes-p2/F3-headless-skill-probe` | 5db5e02 |
-| F4 | `multiwave-print-chain` | Exact wave-status labels and a multi-wave print-mode chain | P15 | U (7), V (7), W (7) | task U's 3 walkthroughs hold; `docs/rehearsals/print-mode-multiwave.md` records M1, M2, at least two `wave-run` calls, M9 and M10 with the subagent table and post-exit checks; `docs/claude-print-mode.md` has the multi-wave table, the caps of that record and the git-based reading rule 4; the check command is green | ⬜ | wave 7 | `feat/flow-modes-p2/F4-multiwave-print-chain` | |
+| F4 | `multiwave-print-chain` | Exact wave-status labels and a multi-wave print-mode chain | P15, P16 | U (7), V (7), W (7), X (8), Y (8), Z (8) | task U's 3 walkthroughs hold; `docs/rehearsals/print-mode-fixture-chain.md` records C1–C8 with the subagent table, the background probe outcome and post-exit checks, and C5–C8 pass the `Started:` and label checks; `docs/claude-print-mode.md` has the multi-wave and fixture tables, the caps of all three chains and the git-based reading rule 4; the check command is green | ⚠️ blocked I9, I10, I11 → wave 8 | wave 8 | `feat/flow-modes-p2/F4-multiwave-print-chain` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -30,7 +31,8 @@ Merged: short hash of the merge commit into the main branch.
 | 4 | `waves/w04.md` | N, O (after N) | ➖ dropped (tasks → wave 6) |
 | 5 | `waves/w05.md` | P, Q (after P) | ✅ |
 | 6 | `waves/w06.md` | S, T (after S) | ⚠️ I9, I10 |
-| 7 | `waves/w07.md` | U, V (after U), W (after V) | ⬜ |
+| 7 | `waves/w07.md` | U, V (after U), W (after V) | ⚠️ I9, I10, I11 |
+| 8 | `waves/w08.md` | X, Y (after X), Z (after Y) | ⬜ |
 
 ## Tasks
 
@@ -55,9 +57,12 @@ Merged: short hash of the merge commit into the main branch.
 | Q | `claim-handoff-rehearsal` | F1 | 5 | medium | ✅ |
 | S | `print-mode-chain-runs` | F3 | 6 | medium | ✅ |
 | T | `print-mode-doc-update` | F3 | 6 | medium | ✅ |
-| U | `status-report-template` | F4 | 7 | medium | ⬜ |
-| V | `multiwave-chain-runs` | F4 | 7 | medium | ⬜ |
-| W | `print-mode-doc-refresh` | F4 | 7 | medium | ⬜ |
+| U | `status-report-template` | F4 | 7 | medium | ✅ |
+| V | `multiwave-chain-runs` | F4 | 7 | medium | ⚠️ I9, I10, I11 |
+| W | `print-mode-doc-refresh` | F4 | 7 | medium | ✅ |
+| X | `status-opening-and-branch` | F4 | 8 | low | ⬜ |
+| Y | `fixture-chain-runs` | F4 | 8 | medium | ⬜ |
+| Z | `print-mode-doc-final` | F4 | 8 | medium | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p2` and reach the
@@ -72,6 +77,7 @@ main branch with each feature merge.
 - P13 — re-plan of I5–I6: real `claude -p` runs of `wave-triage`, `wave-plan`, `wave-run` and `wave-status` in the driver form, the `auto` and `dontAsk` modes and PowerShell probed, and the driver prompt table checked against F1's merged forms → F3 · `solutions/P13-print-mode-runs.md`
 - P14 — re-plan of I7–I8: a wave waiting for task mode marks its claim as waiting, exactly one resume takes it over by compare-and-swap, every holder line carries a run token, and "nothing written" after a refused claim is stated for refs, worktrees and commits (one unreachable blob may remain) → F1 · `solutions/P14-claim-handoff.md`
 - P15 — re-plan of I9–I10: `wave-status` prints `Merged, not in main:` exactly (a report template), the driver reads merged features from git, and a multi-wave chain with parallel subagents is measured under `claude -p` through process exit, validating the caps → F4 · `solutions/P15-multiwave-status-checks.md`
+- P16 — re-plan of I9–I11: `wave-status` opens with `Started:`, resolves the main branch name from git and appends no correction; a chain on the fixed two-wave example plan plus a background-subagent probe measures parallel launch groups and multi-wave runs → F4 · `solutions/P16-status-format-fixture-chain.md`
 - P11 — after an autonomous run every merged and every `👀 review` feature is shown with its review block (essence, how to test, no how-to-build) → F2 · `solutions/P11-merged-review-blocks.md`
 
 ## How to try
@@ -79,7 +85,7 @@ main branch with each feature merge.
 - F1 — run `/wave-triage flow autonomous <a list with one ambiguous item>` in a scratch repository → no question; the index has `- Flow: autonomous · target: integration/<topic>` and an `Assumed (autonomous, not asked)` line; then `/wave-plan <index> part 2` while part 1 has a feature still `👀 review` → `Stop part-unmerged: part 1 — F… 👀 review (review) — next: …`, nothing created; once part 1 is merged into `integration/<topic>`, the same command plans part 2 on that branch and `main` stays unchanged; a second planning or wave run on that branch while one runs → `Stop wave-running: … <holder line>`, and `/wave-status` shows `claimed by <holder line>`; two resumes of a wave waiting for task mode at once → exactly one goes on, the other stops `wave-running` naming it; `docs/rehearsals/*.md` list the commands that repeat every scenario; before: both skills asked questions, and part 2 waited for part 1 on `main`.
 - F2 — after an autonomous wave that merged a feature, the wave report's "Auto-merged" shows its full block (merged into `integration/<name>` with the hash, essence, how to test, `Approved: auto — …`), and `/wave-status <plan>` shows it under `Merged, not in main:` until you merge the integration branch; before: one line with the essence only, and nothing in `wave-status`.
 - F3 — open `docs/claude-print-mode.md` → it says, from real `claude -p` runs of all four skills, how print mode runs them, and gives the prompt, flags, turn and budget caps per skill (Git Bash and PowerShell) for the driver; `/wave-run <plan folder>` with no flow form for a plan of an autonomous index; `docs/rehearsals/print-mode-chain.md` shows the measured chain; before: an unverified guess, probed on `wave-status` only.
-- F4 — run `/wave-status` on a plan in autonomous flow with two features merged into `integration/<name>` → one `Merged, not in main:` line followed by both merged blocks, the same in print mode; open `docs/claude-print-mode.md` → caps measured over a multi-wave chain too, and reading rule 4 takes merged features from git refs; `docs/rehearsals/print-mode-multiwave.md` shows each wave's subagents and that nothing changed after `claude -p` exited; before: a label rendered twice with the plan slug, and one single-wave chain.
+- F4 — run `/wave-status` in a repository whose main branch is `master`, on a plan in autonomous flow with two features merged into `integration/<name>` → the report opens with `Started:`, has one `Merged, not in master:` line followed by both merged blocks and nothing after the times line, the same in print mode; open `docs/claude-print-mode.md` → caps measured over three chains, reading rule 4 takes merged features from git refs, and it says what happens to background subagents when `claude -p` ends; `docs/rehearsals/print-mode-fixture-chain.md` shows two waves with their subagents and that nothing changed after exit; before: a label rendered twice or with the wrong branch, a report without `Started:`, and only single-wave chains.
 
 ## Known test failures before start
 
@@ -88,6 +94,7 @@ main branch with each feature merge.
 - none on `main` at 0d9c78d and on `feat/flow-modes-p2/F3-headless-skill-probe` at 07200f3 (re-plan 2, 2026-11-17: the same check green)
 - none on `main` at 50583bc, on `feat/flow-modes-p2/F1-autonomous-planning` at 6206f9d and on F3's branch at 07200f3 (re-plan 3, 2026-11-17: the same check green)
 - none on `main` at 16d9953 (re-plan 4, 2026-11-17: the same check green); F4's branch starts there
+- none on `feat/flow-modes-p2/F4-multiwave-print-chain` at 3351459 (re-plan 5, 2026-11-17: the same check green); wave 8 starts there
 
 ## Assumptions
 
@@ -113,3 +120,7 @@ main branch with each feature merge.
 - Re-plan 4: the driver never extracts data from report headings (they follow the user's language); the `wave-status` template fixes the report for people, the git recipe of reading rule 4 serves the driver.
 - Re-plan 4: the multi-wave chain uses the same rehearsal caps as the first chain and derives the driver's caps from both; it does not run calls at the driver's caps, so a cap is validated by measurement, not by a failed run.
 - Re-plan 4: task V needs the Claude Code CLI (signed in) and spends at most 30 USD by `total_cost_usd`; on a claude.ai subscription that counts toward usage limits. If the `wave-run` session's subagents lack the CLI, run V in task mode.
+- Re-plan 5: I9–I11 are one solution (P16) in F4, which is not merged; I11 is a defect of task U's template, not of the shared run-times rule (`wave-run` reports open with `Started:`).
+- Re-plan 5: task Y runs the ready plan of `examples/01-greenfield-todo-cli/` instead of planning a toy list, so two waves with a launch group of two are certain; its scratch repository starts on `master` and is renamed to `main` before C7, so both branch names are checked.
+- Re-plan 5: background subagents are measured by a direct probe call (C4), not by changing `wave-run`; `wave-run` keeps leaving the launch mode to the coordinator.
+- Re-plan 5: task Y needs the Claude Code CLI (signed in) and network for `pip install pytest pyyaml` in a scratch venv, and spends at most 30 USD by `total_cost_usd`. If the `wave-run` session's subagents lack the CLI, run Y in task mode.
