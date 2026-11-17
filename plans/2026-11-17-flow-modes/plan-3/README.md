@@ -10,7 +10,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | 👀 review | review | `feat/flow-modes-p3/F1-overnight-driver` | |
+| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | ✅ merged | | `feat/flow-modes-p3/F1-overnight-driver` | `b17f026` |
 
 Merged: short hash of the merge commit into the main branch.
 
