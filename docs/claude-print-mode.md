@@ -26,6 +26,9 @@ real runs. It is the input for the part 3 driver, which runs the skills unattend
   temporary folder. From the second P-a run on, every command was run with `MSYS_NO_PATHCONV=1` set and
   `< /dev/null` as stdin (see P-a).
 
+- Re-run (2026-11-17): Claude Code 2.1.326. Q-d and the chain rehearsal used project skills installed from
+  the branch containing the merged autonomous-flow skills. Q-a to Q-c used repositories without wave skills.
+
 ## What the docs say
 
 All pages were read on 2026-11-17.
@@ -53,6 +56,11 @@ All pages were read on 2026-11-17.
   - The page also documents `--permission-mode` (`acceptEdits`, `auto`, `bypassPermissions`, `manual`, `dontAsk`,
     `plan`), `--allowedTools`, `--dangerously-skip-permissions` (the same as `bypassPermissions`),
     `--disable-slash-commands`, `--plugin-dir`, `--add-dir`, `--setting-sources` and `--max-budget-usd`.
+
+- <https://code.claude.com/docs/en/permissions> ("Configure permissions"): a classifier reviews actions in
+  `auto`. `dontAsk` denies calls that would prompt and permits preapproved calls. `bypassPermissions`
+  skips most approval prompts and is intended for isolated environments. The CLI reference also lists
+  `--permission-prompts none` for denying calls that would prompt.
 
 ## Probes
 
@@ -181,87 +189,175 @@ Every run exited with code 0, `success` and `is_error` false, even when the work
 | `--permission-mode acceptEdits --allowedTools "Bash(git add *),Bash(git commit *)"` | yes | yes | none |
 | `--dangerously-skip-permissions` | yes | yes | none |
 
-`--permission-mode auto` and `dontAsk` were not run: they are documented, but the four runs above were enough to
-choose the driver's flags.
+P-f tested four flag combinations. Q-a and Q-b record the later runs of the two additional permission modes.
+
+### Q-a: auto mode
+
+Q-a through Q-c used the same Git Bash prompt, each in a fresh repository with one README commit:
+
+```bash
+prompt='Do these steps as separate commands and report each as done or refused: 1. create probe.txt containing x; 2. git add probe.txt; 3. git commit -m probe; 4. git worktree add -b feat/probe ../wt-probe; 5. in ../wt-probe create b.txt and commit it; 6. back in this folder run git merge --no-ff feat/probe -m merge-probe; 7. python -c "print(1)".'
+MSYS_NO_PATHCONV=1 claude -p "$prompt" --model haiku --max-turns 15 --max-budget-usd 0.5 --output-format json --permission-mode auto < /dev/null
+```
+
+Exit 0, subtype `success`, no permission denials. All seven steps completed. The Git log and worktree list
+confirmed both commits, the sibling worktree and the merge. Claude reported Python output `1`.
+
+### Q-b: dontAsk with and without an allowlist
+
+```bash
+MSYS_NO_PATHCONV=1 claude -p "$prompt" --model haiku --max-turns 15 --max-budget-usd 0.5 --output-format json --permission-mode dontAsk < /dev/null
+MSYS_NO_PATHCONV=1 claude -p "$prompt" --model haiku --max-turns 15 --max-budget-usd 0.5 --output-format json --permission-mode dontAsk --allowedTools "Write,Edit,Bash(git *),Bash(python *)" < /dev/null
+```
+
+Both exited 0 with subtype `success`.
+
+| Step | Without allowlist | With allowlist |
+|---|---|---|
+| 1. Write probe.txt | Refused | Done |
+| 2. Stage probe.txt | Skipped | Done |
+| 3. Commit probe.txt | Skipped | Done |
+| 4. Add sibling worktree | Refused | Done |
+| 5. Write and commit b.txt | Skipped | File written, commit refused |
+| 6. Merge | Skipped | Skipped |
+| 7. Run Python | Refused | Refused |
+
+Without the list, `permission_denials` contained the Write call and the Bash worktree and Python calls. With the
+list, it contained a compound Bash call starting with `cd ../wt-probe` and a PowerShell Python call. The model
+combined commands at step 5 despite the instruction to run separately, and the Python rule covered Bash.
+
+### Q-c: turn off permission prompts
+
+```bash
+MSYS_NO_PATHCONV=1 claude -p "$prompt" --model haiku --max-turns 15 --max-budget-usd 0.5 --output-format stream-json --verbose --permission-prompts none < /dev/null
+```
+
+Exit 0, subtype `success`. `AskUserQuestion` was absent from `system/init`. `permission_denials` covered step 1
+(Write), step 4 (Bash worktree) and step 7 (Bash Python). Steps 2, 3, 5 and 6 were skipped, and the repository
+stayed at its initial commit.
+
+### Q-d: Windows PowerShell and PowerShell 7
+
+The toy repository had the skills installed and three passing unit tests. The commands below ran in
+`powershell -NoProfile -File <scratch>/q-d.ps1` (5.1.26100.9818) and
+`pwsh -NoProfile -File <scratch>/q-d.ps1` (7.6.9).
+
+```powershell
+$common = @('--model', 'haiku', '--max-budget-usd', '0.5', '--setting-sources', 'project,local', '--output-format', 'json')
+$prompt = @'
+Repeat the text after the colon exactly, nothing else:
+"quoted"
+$HOME
+one ` | two
+'@
+$out = $null | claude -p "/wave-status" @common --max-turns 15
+$exitCode = $LASTEXITCODE
+($out | ConvertFrom-Json).subtype
+$out = $null | claude -p $prompt @common --max-turns 15
+$exitCode = $LASTEXITCODE
+($out | ConvertFrom-Json).result
+$out = $null | claude -p "/wave-status" @common --max-turns 1
+$exitCode = $LASTEXITCODE
+($out | ConvertFrom-Json).subtype
+```
+
+| Call | Windows PowerShell 5.1 | PowerShell 7 |
+|---|---|---|
+| Status | Exit 0, `success`. `Started:` appeared only in the footer after a compound Bash permission denial. | Exit 0, `success`. `Started:` appeared first. No denials. |
+| Here-string | Exit 0, `success`. Both double quotes were lost. The dollar sign, backtick and pipe survived. No denials. | Exit 0, `success`. All three lines matched after normalizing line endings. No denials. |
+| One-turn status | Exit 1, `error_max_turns`. No denials. | Exit 1, `error_max_turns`. No denials. |
+
+No call emitted the stdin timeout warning. A 5.1 retry passed `$prompt.Replace('"', '\"')` as the prompt.
+It exited 0 with subtype `success`, no permission denials and an exact match after line-ending normalization.
+
+### Chain runs (R1–R3 and R6)
+
+See the [chain rehearsal](rehearsals/print-mode-chain.md) for the commands and repository checks. The plan had
+one wave, so R4 and R5 were unnecessary.
+
+| Run | Skill | Exit | Subtype | Turns | Cost (USD) | Minutes | Denials | Stop line |
+|---|---|---:|---|---:|---:|---:|---:|---|
+| R1 | wave-triage | 0 | success | 8 | 0.3803526 | 0.860 | 0 | none |
+| R2 | wave-plan | 0 | success | 16 | 0.8076864 | 1.822 | 0 | none |
+| R3 | wave-run | 0 | success | 20 | 0.562945385 | 2.111 | 0 | none |
+| R6 | wave-status | 0 | success | 6 | 0.01326129 | 0.502 | 0 | none |
 
 ## Result
 
-A user-invoked skill runs from a slash command in `claude -p`. The prompt `/wave-status`, or `/wave-method:wave-status`
-for the plugin install, is expanded before the run, exactly as the headless docs say. Naming the skill in words also
-works, because the model calls the `Skill` tool, but that relies on the model choosing to do so. The slash form is
-the reliable one: it needs no model decision, it is what the docs describe, and it passes arguments the same way as
-an interactive session (the rest of the line).
+All four wave skills ran via leading slash commands in print mode. The rehearsal created an autonomous index,
+planned its single part, executed the single wave and reported the merged feature. Both `Agent` calls returned
+before the final stream event. The merged feature and passing tests were verified in the integration worktree.
 
-Three conditions apply:
+Use `MSYS_NO_PATHCONV=1` in Git Bash to preserve the leading slash. PowerShell passed the slash intact and
+`$null | claude` closed stdin without a timeout warning in both versions. For a plugin install, grant access
+to its folder with `--add-dir`.
 
-- On Windows, a shell must not rewrite the leading `/`. Git Bash does unless `MSYS_NO_PATHCONV=1` is set.
-  PowerShell and `cmd` do not rewrite it.
-- With the plugin install, the plugin folder must be readable: add it with `--add-dir`.
-- The default Manual permission mode denies the writes and git commands that the skills need, so the driver must
-  set a permission mode.
+The rehearsal used `bypassPermissions`. The seven-step write, worktree, merge and Python probe also completed under
+`auto`. The `dontAsk` allowlist covered the initial commit and worktree creation. The remaining operations failed
+or were skipped. A `success` result can accompany tool denials or an incomplete report.
 
 ## Prompt form for the driver
 
-Flags for every call:
-
-```
-claude -p "<prompt>" --output-format json --permission-mode bypassPermissions --model <model of the skill's tier> --max-turns <cap> --max-budget-usd <cap> < /dev/null
+```bash
+MSYS_NO_PATHCONV=1 claude -p "$prompt" --output-format json --permission-mode bypassPermissions --model "$model" --max-turns "$turnCap" --max-budget-usd "$budgetCap" < /dev/null
 ```
 
-- `--output-format json` gives one object to parse.
-- `--permission-mode bypassPermissions` (the same as `--dangerously-skip-permissions`) is the only tested mode in
-  which a skill can write, run git, create worktrees and run the check commands without a list of every command.
-  The driver must run only in a repository it owns, and preferably in a container or VM. The narrower alternative
-  is `--permission-mode acceptEdits` plus `--allowedTools` for each command the skill runs (`Bash(git *)`,
-  `Bash(python *)`, …). A command missing from that list is denied without any error, as P-f shows.
-- `--model`: `opus` for `wave-triage` and `wave-plan`. The coordinator of `wave-run` must be medium or higher
-  (`sonnet`), but a wave with `high` tasks needs subagents of the high tier. `wave-status` can use `haiku`.
-- `--max-turns`: a safety cap, not a target. A run that reaches it fails (P-e). Set it well above a normal run, for
-  example 400 for `wave-run` and 60 for `wave-status`.
-- `--max-budget-usd`: a per-call spend cap.
-- Do not use `--bare`: it skips skill discovery and never reads the subscription login.
-- With the plugin install, add `--add-dir <plugin folder>` and use the `wave-method:` prefix. Pass
-  `--setting-sources project,local` when the user's own plugin version must not load.
-- On Windows from Git Bash, set `MSYS_NO_PATHCONV=1`. Always give stdin explicitly (`< /dev/null`).
+Use `bypassPermissions` in a repository owned by the driver in an isolated environment. `auto` is an alternative
+that passed Q-a on this account. Check tool denials and repository state after each call. Use
+`--setting-sources project,local` to exclude the user's installed plugin if needed. For a plugin install, use
+`--add-dir <plugin folder>` and the `wave-method:` prefix. Avoid `--bare` because it skips skill auto-discovery and
+does not read the subscription login.
 
-Prompts. The skill command must be the first word of the prompt, and only one skill can be used per call:
+Start the prompt with the slash command and invoke one skill per call. Caps for the first three skills are three
+times the largest measurements, rounded up to tens of turns and whole dollars. `wave-status` retains its prior
+60-turn and $0.50 caps.
 
-| Skill | Prompt |
-|---|---|
-| `wave-triage` | `/wave-triage flow autonomous <the list of problems, one per line>` |
-| `wave-plan` | `/wave-plan flow autonomous <index path> part <K>` |
-| `wave-run` | Once per plan: `/wave-run <plan folder> flow autonomous`. Then, per wave: `/wave-run <plan folder> <N>` (or `/wave-run <plan folder>` for the next open wave) |
-| `wave-status` | `/wave-status` or `/wave-status <plan folder>` |
+| Skill | Prompt | Model | Turns | USD | Rehearsal |
+|---|---|---|---:|---:|---|
+| `wave-triage` | `/wave-triage flow autonomous <list>` | `opus` | 30 | 2 | R1 used an inline numbered list. |
+| `wave-plan` | `/wave-plan flow autonomous <index path> part <K>` | `opus` | 50 | 3 | R2. |
+| `wave-run` | `/wave-run <plan folder> <N>` or `/wave-run <plan folder>` for the next ⬜ or ❌ wave | `sonnet` or higher | 60 | 2 | R3 used next-wave selection. Explicit numbering was unnecessary for the single-wave plan. |
+| `wave-status` | `/wave-status` or `/wave-status <plan folder>` | `haiku` | 60 | 0.50 | R6 reported all plans to check the complete pipeline. A folder-scoped call was unnecessary for the single plan. |
 
-Plugin install: `/wave-method:wave-triage …`, and the same for the other skills.
+Use `/wave-run <plan folder> flow autonomous [review <F-IDs>]` only to switch a manual plan into autonomous flow
+or change the manual-review list. The rehearsal plan already used autonomous flow and the default review list.
+The plugin namespace was outside the project-install rehearsal. A wave with high-tier tasks needs high-tier subagents.
+
+Put a multiline PowerShell prompt in a single-quoted here-string. For the embedded double quotes tested in Q-d,
+Windows PowerShell 5.1 needed a backslash before each quote. PowerShell 7.6 used the literal value.
+
+```powershell
+$nativePrompt = $prompt
+if ($PSVersionTable.PSVersion.Major -eq 5) {
+    $nativePrompt = $prompt.Replace('"', '\"')
+}
+$out = $null | claude -p $nativePrompt --output-format json --permission-mode bypassPermissions --model $model --max-turns $turnCap --max-budget-usd $budgetCap
+$exitCode = $LASTEXITCODE
+if ($out) {
+    $result = $out | ConvertFrom-Json
+}
+```
 
 Reading the result:
 
-1. A non-zero exit code means the run failed: for example `error_max_turns`, a budget cap, an API or auth failure,
-   or SIGTERM (exit 143). Read `subtype` and `errors` from the JSON. In this case there may be no `result`.
-2. If the exit code is 0, `is_error` false and `subtype` `success`, the report is in `result`. Its first line is
-   `Started: <time>`. If the next line starts with `Stop <code>:`, it is the stop line. Parse it as
-   `Stop <code>: <one line> — next: <command or action>`, split on the first ` — next: `. A run without a stop line
-   finished its step normally. Its next command follows the skill's report, for example `Next:` in `wave-status` and
-   the next command in `wave-run`.
-3. Treat the run as failed, even with exit code 0, when:
-   - `permission_denials` is not empty: the skill may have skipped or guessed a step (P-d, P-f);
-   - `result` has no `Started:` line: the skill most likely did not load (the first P-a run);
-   - `result` ends with a question to the user: autonomous flow never asks, so a question means the skill was not
-     followed (P-e).
-4. Do not trust the report alone. Read the repository state that the skill writes (README statuses, the wave
-   file's "Execution", branches) before starting the next call.
+1. A non-zero exit code means the run failed. Read `subtype` and `errors` where JSON is available. A turn or budget
+   cap, API or authentication error, or termination can leave no `result` field.
+2. If the exit code is 0, `is_error` is false and `subtype` is `success`, the report is in `result`. Expect
+   `Started: <time>` on its first line. Parse an immediately following `Stop <code>:` line by splitting it at
+   the first ` — next: `. In the absence of a stop line, read the next command from the report, for example
+   `Next:` in `wave-status`.
+3. Treat unexpected output as a failed check even on exit 0. A nonempty `permission_denials` array can mean skipped
+   checks or guessed output. A missing first-line `Started:` means skill loading or report formatting needs
+   inspection. A closing question requires attention because autonomous flow does not ask.
+4. Before continuing, verify the README statuses, wave execution record and Git refs. Read the merged-feature
+   details even if the section heading varies, as it did in R6.
 
 ## Open points
 
-- `num_turns` does not equal the turn limit. P-c reported 12 turns under `--max-turns 10` and completed, while P-e
-  reported 2 turns and failed under `--max-turns 1`. Caps must therefore be generous, and real runs should measure
-  them.
-- No full `wave-run`, `wave-triage` or `wave-plan` run was probed, only `wave-status`. Subagents launched by
-  `wave-run` in `-p` (their models, permissions, and the 10-minute wait for background work at exit) and the length
-  of a real wave are unmeasured.
-- `--permission-mode auto`, `dontAsk` and `--permission-prompts none` were not tested. `auto` may be a safer choice
-  than `bypassPermissions` for a night run if its classifier allows git worktrees and merges.
-- The `flow autonomous` arguments of `wave-triage` and `wave-plan` come from part 2's feature F1, which is not
-  merged into `main` yet. Check the final argument form once it is merged.
-- PowerShell was not probed. It does not rewrite a leading `/`, but the driver's quoting there is untested.
+- P-c completed with 12 reported turns under a cap of 10, while P-e and Q-d failed at the one-turn cap. Repeated
+  runs near the cap would help relate CLI turn enforcement to `num_turns`.
+- The chain measured one small wave with two completed `Agent` calls. Rehearse a larger multi-wave plan with
+  background subagents and inspect the stream through process exit to measure wait behavior and validate the caps.
+- R6 reported the full F1 block under a repeated, unexpected heading. Re-run `wave-status` on plans with several
+  merged features and compare the report against the tracking and integration refs before depending on heading-based
+  extraction.
