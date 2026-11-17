@@ -97,7 +97,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 
 | Code | When | Next |
 |---|---|---|
-| `wave-running` | a wave of this plan is 🔄, unless it is this wave waiting for task mode | wait for it, or the user releases the lock |
+| `wave-running` | a wave of this plan is 🔄, unless it is this wave waiting for task mode; in autonomous flow also a target claim held by another run (`layout.md`, "Target claim") | wait for it, or the user releases the lock |
 | `earlier-wave-open` | an earlier wave is ⬜, 🔄 or ❌ | run or re-plan that wave |
 | `feature-unmerged` | the wave file's `Depends on:` names `F<k> merged` and F<k> is not `✅ merged` | review F<k> (`layout.md`, "Feature review"), then `/wave-run <plan folder> merge F<k>`<br>`$wave-run <plan folder> merge F<k>` |
 | `leftover-branches` | task branches or worktrees of this wave exist | the user: continue from them, delete them, or stop |
@@ -149,7 +149,7 @@ continue, stop `red-after-merge`.
 - A wave of this plan is 🔄 → stop `wave-running`, unless it is this wave and its Execution ends with
   `Waiting: task mode …` (resume, see `wave-run/task-mode.md`). A task-mode session uses the checks of
   `task-mode.md` instead and does not start another coordinator.
-- Autonomous flow: the integration-target checks of `autonomous.md`, "Integration target", step 1.
+- Autonomous flow: the integration-target checks of `autonomous.md`, "Integration target", step 1. They take the target claim.
 - Read `README.md`, `waves/w<NN>.md` of this wave and `problems.md` (if it exists). Nothing else of the plan:
   the wave file holds everything the wave needs. If something is missing (a prompt, a file list, a dependency),
   that is a defect of the plan — stop `plan-defect` (see "Stops") and do not search other wave
