@@ -10,7 +10,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5, P12, P13 | A (1), B (1), C (1), D (1), E (2) ➖, F (2) ➖, G (3), H (3), I (3) | task I's four scenario walkthroughs hold and the check command is green | 🔄 | wave 3 | `feat/flow-modes-p1/F1-autonomous-flow` | |
+| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5, P12, P13 | A (1), B (1), C (1), D (1), E (2) ➖, F (2) ➖, G (3), H (3), I (3) | task I's four scenario walkthroughs hold and the check command is green | 👀 review | review | `feat/flow-modes-p1/F1-autonomous-flow` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -18,23 +18,23 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D | ⚠️ I1, I2 → task H (wave 3) |
+| 1 | `waves/w01.md` | A, B, C, D | ✅ (fixed by H, wave 3) |
 | 2 | `waves/w02.md` | E, F (after E) | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | G, H, I (after G, H) | 🔄 since 2026-11-17 16:15 |
+| 3 | `waves/w03.md` | G, H, I (after G, H) | ✅ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `layout-flow-section` | F1 | 1 | medium | ⚠️ I1, I2 → task H |
+| A | `layout-flow-section` | F1 | 1 | medium | ✅ (fixed by H, wave 3) |
 | B | `autonomous-procedures` | F1 | 1 | medium | ✅ |
 | C | `report-flow-lines` | F1 | 1 | low | ✅ |
 | D | `status-plan-flow-pointers` | F1 | 1 | low | ✅ |
 | E | `wave-run-flow-pointers` | F1 | 2 | medium | ➖ superseded by G |
 | F | `flow-consistency-pass` | F1 | 2 | medium | ➖ superseded by I |
-| G | `wave-run-flow-wiring` | F1 | 3 | medium | 🔄 |
-| H | `main-dirty-name-wording` | F1 | 3 | low | 🔄 |
-| I | `flow-closing-check` | F1 | 3 | medium | 🔄 |
+| G | `wave-run-flow-wiring` | F1 | 3 | medium | ✅ |
+| H | `main-dirty-name-wording` | F1 | 3 | low | ✅ |
+| I | `flow-closing-check` | F1 | 3 | medium | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p1` and reach the
