@@ -28,6 +28,8 @@ real runs. It is the input for the part 3 driver, which runs the skills unattend
 
 - Re-run (2026-11-17): Claude Code 2.1.326. Q-d and the chain rehearsal used project skills installed from
   the branch containing the merged autonomous-flow skills. Q-a to Q-c used repositories without wave skills.
+- Second chain rehearsal (2026-11-17) used `claude --version` `2.1.326 (Claude Code)` and project skills
+  installed from the F4 feature branch at `bb08040`. See the [rehearsal record](rehearsals/print-mode-multiwave.md).
 
 ## What the docs say
 
@@ -282,11 +284,29 @@ one wave, so R4 and R5 were unnecessary.
 | R3 | wave-run | 0 | success | 20 | 0.562945385 | 2.111 | 0 | none |
 | R6 | wave-status | 0 | success | 6 | 0.01326129 | 0.502 | 0 | none |
 
+### Multi-wave chain runs (M1–M10)
+
+The [multi-wave rehearsal](rehearsals/print-mode-multiwave.md) produced one wave, so M4–M8 were skipped.
+
+| Run | Skill | Exit | Subtype | Turns | Cost (USD) | Minutes | Denials | Stop line |
+|---|---|---:|---|---:|---:|---:|---:|---|
+| M1 | wave-triage | 0 | success | 9 | 0.4521856 | 1.118 | 0 | none |
+| M2 | wave-plan | 0 | success | 15 | 1.0327658 | 3.024 | 0 | none |
+| M3 | wave-run | 0 | success | 22 | 0.674513175 | 2.444 | 0 | none |
+| M9 | wave-status | 0 | success | 6 | 0.01507618 | 0.688 | 0 | none |
+| M10 | wave-status | 0 | success | 6 | 0.01271511 | 0.396 | 0 | none |
+
+M3 ran two foreground subagents sequentially, and both returned before the `result` event.
+For all five calls, refs, worktree listings and the Claude process count at 120 seconds passed the post-exit checks.
+
 ## Result
 
 All four wave skills ran via leading slash commands in print mode. The rehearsal created an autonomous index,
 planned its single part, executed the single wave and reported the merged feature. Both `Agent` calls returned
 before the final stream event. The merged feature and passing tests were verified in the integration worktree.
+
+The second rehearsal also ran one wave. The observed `wave-run` call exited after both foreground subagents
+returned, and the repository refs and worktree listings were identical at exit and 120 seconds later.
 
 Use `MSYS_NO_PATHCONV=1` in Git Bash to preserve the leading slash. PowerShell passed the slash intact and
 `$null | claude` closed stdin without a timeout warning in both versions. For a plugin install, grant access
@@ -309,15 +329,16 @@ that passed Q-a on this account. Check tool denials and repository state after e
 does not read the subscription login.
 
 Start the prompt with the slash command and invoke one skill per call. Caps for the first three skills are three
-times the largest measurements, rounded up to tens of turns and whole dollars. `wave-status` retains its prior
-60-turn and $0.50 caps.
+times the largest measurements across the first chain (R1–R3 and R6) and the second chain (M1–M3, M9 and M10),
+rounded up to tens of turns and whole dollars. `wave-status` retains its prior 60-turn and $0.50 caps, which
+cover three times its observed maxima across both chains.
 
 | Skill | Prompt | Model | Turns | USD | Rehearsal |
 |---|---|---|---:|---:|---|
 | `wave-triage` | `/wave-triage flow autonomous <list>` | `opus` | 30 | 2 | R1 used an inline numbered list. |
-| `wave-plan` | `/wave-plan flow autonomous <index path> part <K>` | `opus` | 50 | 3 | R2. |
-| `wave-run` | `/wave-run <plan folder> <N>` or `/wave-run <plan folder>` for the next ⬜ or ❌ wave | `sonnet` or higher | 60 | 2 | R3 used next-wave selection. Explicit numbering was unnecessary for the single-wave plan. |
-| `wave-status` | `/wave-status` or `/wave-status <plan folder>` | `haiku` | 60 | 0.50 | R6 reported all plans to check the complete pipeline. A folder-scoped call was unnecessary for the single plan. |
+| `wave-plan` | `/wave-plan flow autonomous <index path> part <K>` | `opus` | 50 | 4 | R2 and M2. |
+| `wave-run` | `/wave-run <plan folder> <N>` or `/wave-run <plan folder>` for the next ⬜ or ❌ wave | `sonnet` or higher | 70 | 3 | R3 and M3 used next-wave selection for their single-wave plans. |
+| `wave-status` | `/wave-status` or `/wave-status <plan folder>` | `haiku` | 60 | 0.50 | R6 and M9 reported all plans. M10 scoped the report to one plan folder. |
 
 Use `/wave-run <plan folder> flow autonomous [review <F-IDs>]` only to switch a manual plan into autonomous flow
 or change the manual-review list. The rehearsal plan already used autonomous flow and the default review list.
@@ -342,22 +363,29 @@ Reading the result:
 
 1. A non-zero exit code means the run failed. Read `subtype` and `errors` where JSON is available. A turn or budget
    cap, API or authentication error, or termination can leave no `result` field.
-2. If the exit code is 0, `is_error` is false and `subtype` is `success`, the report is in `result`. Expect
-   `Started: <time>` on its first line. Parse an immediately following `Stop <code>:` line by splitting it at
-   the first ` — next: `. In the absence of a stop line, read the next command from the report, for example
-   `Next:` in `wave-status`.
+2. If the exit code is 0, `is_error` is false and `subtype` is `success`, the report is in `result`. For
+   `wave-triage`, `wave-plan` and `wave-run`, expect `Started: <time>` on the first line. Parse an immediately
+   following `Stop <code>:` line by splitting it at the first ` — next: `. The `wave-status` template puts the
+   plan header first and the timing line at the end.
 3. Treat unexpected output as a failed check even on exit 0. A nonempty `permission_denials` array can mean skipped
-   checks or guessed output. A missing first-line `Started:` means skill loading or report formatting needs
-   inspection. A closing question requires attention because autonomous flow does not ask.
-4. Before continuing, verify the README statuses, wave execution record and Git refs. Read the merged-feature
-   details even if the section heading varies, as it did in R6.
+   checks or guessed output. A closing question requires attention because autonomous flow does not ask.
+4. Before continuing, read the state from git, never from report headings: the labels of a report follow the
+   user's language and can vary. For each plan of the run, read its README from the tracking branch
+   (`git show plan/<plan>:<plan folder>/README.md`) and its `Flow:` line. A Features row `✅ merged` with hash `<h>`
+   is merged but not yet in the main branch when `git merge-base --is-ancestor <h> <main branch>` exits non-zero;
+   its text for a summary is `git show plan/<plan>:<plan folder>/reviews/<feature>.md`. A row `👀 review` waits for
+   the user. Wave statuses are the README "Waves" table; a held integration branch is
+   `git for-each-ref refs/wave-method/claims/`. Show the `wave-status` report to the user as it is; do not extract
+   data from it.
 
 ## Open points
 
 - P-c completed with 12 reported turns under a cap of 10, while P-e and Q-d failed at the one-turn cap. Repeated
   runs near the cap would help relate CLI turn enforcement to `num_turns`.
-- The chain measured one small wave with two completed `Agent` calls. Rehearse a larger multi-wave plan with
-  background subagents and inspect the stream through process exit to measure wait behavior and validate the caps.
-- R6 reported the full F1 block under a repeated, unexpected heading. Re-run `wave-status` on plans with several
-  merged features and compare the report against the tracking and integration refs before depending on heading-based
-  extraction.
+- Both chains reached one wave each. Rehearse a plan with several waves and a parallel launch group that uses
+  background subagents. Check final agent output against the stream's `result` event, compare refs and worktrees
+  at exit and after 120 seconds, and compare the measured turns and costs with the driver caps.
+- M9 printed the expected merged heading with the full feature block. M10 put the block under the wrong branch
+  name and appended a second heading that referred back to it. Re-run both forms of `wave-status` on autonomous
+  plans with several merged features. Check that each plan prints one heading with the actual main branch name
+  followed by every full merged-feature block, and compare the blocks with the tracking and integration refs.
