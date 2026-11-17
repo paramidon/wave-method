@@ -61,8 +61,10 @@ it exists. Use `git show plan/<plan>:<plan folder>/<file>` and retain only the a
 
 ## Report
 
-For each plan, report the following in order. Keep a blank line before and after every table. Feature status
-comes first: the user reads it before anything about waves.
+The user asked for this report by running the command, and its format is part of that request. Print it as the
+template in "Template" shows; the bullets below say what each line holds. The environment's default answer style
+(short prose, no tables) does not shorten it. Keep a blank line before and after every table and every block.
+Feature status comes first: the user reads it before anything about waves.
 
 - Header: plan folder, slug, tracking branch present or absent, and the flow: `manual`, or `autonomous` with its
   target and manual-review list.
@@ -78,9 +80,12 @@ comes first: the user reads it before anything about waves.
   `none running` when no wave is 🔄.
 - `Merged, not in <main branch>:` autonomous flow only ("Results of an autonomous run" of `layout.md`): the
   merged block of `layout.md`, "Feature review", for every `✅ merged` feature whose `Merged` hash is not in
-  `<main branch>` yet, from its brief, in full. These are what the user tests before merging `integration/<name>`.
-  A feature without a brief gets the block built as `Ready for review:` builds one, with the merged block's header
-  and `Approved:` line.
+  `<main branch>` yet, from its brief, in full; `none` when there is no such feature. These are what the user tests
+  before merging `integration/<name>`. A feature without a brief gets the block built as `Ready for review:`
+  builds one, with the merged block's header and `Approved:` line. In the label, `<main branch>` is replaced by
+  the branch name alone, as `git branch` prints it: `Merged, not in main:` or `Merged, not in master:`. Never the
+  plan slug, the integration branch, `<main>`, quotes, a possessive or a second rendering of the name; the label
+  appears once per plan.
 - `Ready for review:` the review block of `layout.md`, "Feature review", for every `👀 review` feature, with its
   `Merge:` line, from its brief; never shortened to the title and branch, and nothing else about the feature.
   For `main-dirty` add its reason (`not on <main>`, `staged changes`, or the overlapping paths); the three read-only
@@ -117,6 +122,56 @@ Then report each index's parts without a plan folder, whether their "Plan when" 
 folder exists on its tracking branch `plan/<topic>-p<K>`. For an index with a `Flow: autonomous` line, use check 3 of
 `layout.md`, "Chained parts and the integration branch", to decide whether the condition is met.
 
+### Template
+
+````
+## <plan folder> · `<plan>` · <flow>
+
+- Tracking branch: `plan/<plan>` <present · absent>
+- Features: <count per status>
+
+| Feature | Status | Tasks | Waiting for | Branch | Merged |
+|---|---|---|---|---|---|
+| F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <feature branch> | <README Merged> |
+
+- Waves: <1 ✅ · 2 🔄 since <date time> · 3 ⬜ · or: none running>
+
+Merged, not in <main branch>:
+
+<merged block of every such feature, each followed by a blank line · or: none>
+
+Ready for review:
+
+<review block of every 👀 review feature, each followed by a blank line>
+
+- Integration: <as the bullet says>
+- Merged, not recorded: <F-IDs and branches>
+- Last stop: <the line>
+- Inconsistencies: <one item per line>
+- Leftovers: <one item and its suggested command per line>
+- Next: <one command, both forms>
+
+## Index parts
+
+| Index | Part | Plan when | Met | Command |
+|---|---|---|---|---|
+| `<index path>` | <K> | <Plan when> | <yes · no: why> | `/wave-plan <index> part <K>`<br>`$wave-plan <index> part <K>` |
+
+Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
+````
+
+- One `## ` block per plan: plan folders under `plans/` first, then plans found only on their tracking branch.
+  `<flow>` is `manual`, or `autonomous · target: integration/<name>` followed by ` · manual review: <F-IDs>` when
+  that list is not empty.
+- Always printed: the plan header, `Tracking branch`, `Features`, the table, `Waves`, `Next`, the times line.
+  `Merged, not in <main branch>:` and `Integration:`: autonomous flow only, always there (`none`, `not created
+  yet`). `Ready for review:`: when a feature is `👀 review`. `Merged, not recorded`, `Last stop`,
+  `Inconsistencies`, `Leftovers`: only when they have content. `## Index parts`: when an index has a part
+  without a plan folder.
+- Labels and column names are written exactly as the template writes them; when the user's language is not
+  English, they are translated, and statuses, IDs, branch names, paths and commands stay as written.
+- A merged block and a review block are printed in full, never retold as one line.
+
 ### Suggested commands
 
 The commands in this subsection are suggestions for the user's report only. Do not execute them.
@@ -128,6 +183,13 @@ The commands in this subsection are suggestions for the user's report only. Do n
   the user has reviewed it; for `main-dirty`, once `<main checkout>` is ready (`layout.md`, "Main readiness").
 - A finished plan that has not been archived: suggest the applicable `git mv` command from
   `layout.md`, "Archive". For an index part, the whole index folder is eligible only when every part is merged.
+
+### Before sending
+
+Compare the report with "Template": every plan has its header, `Tracking branch`, `Features`, the table, `Waves`
+and `Next` lines, in this order. In autonomous flow the `Merged, not in <main branch>:` label appears exactly once
+per plan, with the branch name alone (`Merged, not in main:`), followed by one full merged block per feature or
+`none`. If something is missing, merged into prose, or the label differs, rewrite the report before sending it.
 
 ## Next-command rules
 
