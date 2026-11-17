@@ -20,7 +20,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D | ⚠️ I1, I2 → task H (wave 3) |
 | 2 | `waves/w02.md` | E, F (after E) | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | G, H, I (after G, H) | ⬜ |
+| 3 | `waves/w03.md` | G, H, I (after G, H) | 🔄 since 2026-11-17 16:15 |
 
 ## Tasks
 
@@ -32,9 +32,9 @@ Merged: short hash of the merge commit into the main branch.
 | D | `status-plan-flow-pointers` | F1 | 1 | low | ✅ |
 | E | `wave-run-flow-pointers` | F1 | 2 | medium | ➖ superseded by G |
 | F | `flow-consistency-pass` | F1 | 2 | medium | ➖ superseded by I |
-| G | `wave-run-flow-wiring` | F1 | 3 | medium | ⬜ |
-| H | `main-dirty-name-wording` | F1 | 3 | low | ⬜ |
-| I | `flow-closing-check` | F1 | 3 | medium | ⬜ |
+| G | `wave-run-flow-wiring` | F1 | 3 | medium | 🔄 |
+| H | `main-dirty-name-wording` | F1 | 3 | low | 🔄 |
+| I | `flow-closing-check` | F1 | 3 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p1` and reach the
