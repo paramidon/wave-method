@@ -181,6 +181,7 @@ I set `claim=refs/wave-method/claims/integration/todo`. I used `printf '%s\n' 't
 - Seen: `Stop wave-running: integration/todo is claimed by todo-p1 wave 2 2026-11-17 03:00 — next: wait`. `git rev-parse "$claim"` still returned the held OID. `git show-ref --verify --quiet refs/heads/plan/todo-p3` failed. `cmp` found identical before and after snapshots from `git for-each-ref --format="%(refname) %(objectname)"` and `git worktree list --porcelain`.
 - Seen: I computed the contender OID with `git hash-object --stdin` and confirmed `git cat-file -e "$candidate"` failed before the attempt. After the rejected `git update-ref`, `git cat-file -t "$candidate"` returned `blob` and `git cat-file -p "$candidate"` printed `todo-p3 planning 2026-11-17 20:51`. The attempt had written the blob with `git hash-object -w --stdin` before trying to update the ref.
 - Result: defect: the failed claim writes an unreferenced contender blob despite the instruction saying “nothing written” — `skills/wave-plan/layout.md:375`
+- Follow-up: the claim text now states this ("Nothing written"); see Scenario 8.
 
 ### Held claim during wave execution
 
@@ -189,6 +190,7 @@ I set `claim=refs/wave-method/claims/integration/todo`. I used `printf '%s\n' 't
 - Seen: Git located the README on `plan/todo-p2`. The integration worktree was on `integration/todo`, with no tracked changes or unfinished merge. The claim attempt returned `Stop wave-running: integration/todo is claimed by todo-p1 wave 2 2026-11-17 03:00 — next: wait`. `git show plan/todo-p2:plans/2026-11-17-todo/plan-2/README.md` still showed wave 1 as ⬜. `git branch --list 'feat/todo-p2/*'` and `git log --grep='wave 1 started' plan/todo-p2` returned nothing. Both snapshots and the held OID were unchanged.
 - Seen: The same before and after object check with `git cat-file -e` and `git cat-file -t` found a newly written blob. `git cat-file -p "$candidate"` printed `todo-p2 wave 1 2026-11-17 20:51`.
 - Result: defect: the failed claim writes an unreferenced contender blob despite the instruction saying “nothing written” — `skills/wave-run/autonomous.md:46–47`
+- Follow-up: the claim text now states this ("Nothing written"); see Scenario 8.
 
 ### Guarded release
 
@@ -205,3 +207,65 @@ I set `claim=refs/wave-method/claims/integration/todo`. I used `printf '%s\n' 't
 - Result: holds
 
 Race: 1 1 1 1 1 1 1 1 1 1
+
+## Scenario 7. Claim handoff
+2026-11-17 · `git version 2.52.0.windows.1` · skill texts at `0f5e15f`
+
+I ran `git init -b main repo` in `<scratch>` and committed `git commit --allow-empty -m init` in `<scratch>/repo`. In Git Bash, `R=refs/wave-method/claims/integration/todo`. Each new run generated its token with `od -An -N4 -tx1 /dev/urandom | tr -d ' \n'`. Each Bash holder line was stored with `printf '%s\n' "$line" | git hash-object -w --stdin`. The command `git update-ref "$R" "$oid" 0000000000000000000000000000000000000000` took an absent claim.
+
+### 7.1 Wait
+
+- Run: Take the claim for `todo-p2 wave 1 2026-11-17 03:00`, keeping its OID in `A`. Store the same run's `todo-p2 wave 1 waiting 2026-11-17 03:20` line in `W` and run `git update-ref "$R" "$W" "$A"`. Read the holder with `git cat-file -p "$R"`, try `git update-ref -d "$R" "$A"`, and read `git rev-parse "$R"`.
+- Expected: Wait exits 0 and the holder gains `waiting`. Release using `A` fails and the ref stays at `W`.
+- Seen: Wait exited 0. The holder was `todo-p2 wave 1 waiting 2026-11-17 03:20 run cfbd3f58`. Deleting with `A` exited 1 with `is at 85be345 but expected 5e42cc8`. The ref still resolved to `85be345`.
+- Result: holds
+
+### 7.2 Two simultaneous resumes
+
+- Run: Each round started with `git update-ref "$R" "$W"`. Two background subshells each read `cur=$(git rev-parse -q --verify "$R")` and `git cat-file -p "$cur"`, verified the matching waiting line, and wrote their own `todo-p2 wave 1 2026-11-17 03:30` holder blobs. Scratch markers ensured both had read the waiting OID before either ran `git update-ref "$R" "$oid" "$cur"`. Each wrote its OID and exit code to a scratch file. The losing process read the holder again with `git cat-file -p "$R"`. After `wait` on both PIDs, I ran `git rev-parse "$R"` before and after `git update-ref -d "$R" "$loser"`.
+- Expected: Each round gives two distinct OIDs and one success. The ref resolves to the winner, and the loser's guarded release fails.
+- Seen: Each round had one exit 0 and one exit 128. The failed update reported `is at <winner> but expected 85be345`. The losing resume read and reported the winner's running line with `wave-running`. Each attempted release with the loser's OID exited 1 and reported `is at <winner> but expected <loser>`. The ref resolved to the listed winner before and after every release attempt.
+- Result: holds
+
+| Round | Winner | Loser |
+|---|---|---|
+| 1 | `19a26b9` | `5dea874` |
+| 2 | `dfcecb2` | `bfaaa7c` |
+| 3 | `47eabfd` | `b9a8a4b` |
+| 4 | `275d3f6` | `90c42b9` |
+| 5 | `a99cf36` | `6b8e669` |
+| 6 | `ff6307f` | `340a348` |
+| 7 | `45f134d` | `ce3994c` |
+| 8 | `d1419f4` | `96cd300` |
+| 9 | `c0c0f57` | `f0c310b` |
+| 10 | `2438f43` | `865242c` |
+
+Takeover race: 1 1 1 1 1 1 1 1 1 1
+
+### 7.3 Resume while the winner runs
+
+- Run: With the round 10 holder in place, a third resume read the ref with `git rev-parse -q --verify "$R"` and read its holder with `git cat-file -p "$cur"`. I checked the ref with `git rev-parse "$R"` after the `wave-running` stop.
+- Expected: The stop names the running holder and leaves the ref at the winner's OID.
+- Seen: The resume reported `wave-running: todo-p2 wave 1 2026-11-17 03:30 run 99d7130d`. The ref still resolved to `2438f43`.
+- Result: holds
+
+### 7.4 Wait after losing the claim
+
+- Run: The original run stored its waiting line again and attempted `git update-ref "$R" "$wait" "$A"` using its old active OID. I read the current holder with `git cat-file -p "$R"` and the ref with `git rev-parse "$R"` after the failure.
+- Expected: Wait fails, reports `wave-running` with the current holder, and leaves the ref at the winner's OID.
+- Seen: The update exited 128 with `is at 2438f43 but expected 5e42cc8`. The run reported `wave-running: todo-p2 wave 1 2026-11-17 03:30 run 99d7130d`. The ref still resolved to `2438f43`.
+- Result: holds
+
+### 7.5 PowerShell
+
+- Run: After `git update-ref -d "$R" "$winner"` in Bash, I used PowerShell 7.6.9. I set `$token = [guid]::NewGuid().ToString('N').Substring(0, 8)` and `$oid = "todo-p2 wave 1 2026-11-17 03:00 run $token" | git hash-object -w --stdin`. I took the claim using the 40-zero expected OID, ran `git cat-file -p $R`, and inspected the raw bytes with `od -An -tx1` in Git Bash. Then I ran `git update-ref -d $R $oid` and `git for-each-ref $R`.
+- Expected: Take and guarded release succeed. Git prints the ASCII holder line. The byte check shows its line ending.
+- Seen: Take and release both exited 0. The holder blob `35c7b9c` printed `todo-p2 wave 1 2026-11-17 03:00 run ea84a8fd` and ended in `0d 0a` (CRLF). `git for-each-ref $R` printed nothing after release.
+- Result: holds
+
+## Scenario 8. Refused-claim objects
+
+- Run: In Git Bash I took the claim for `todo-p1 wave 2 2026-11-17 03:00` (`H`). A second run tried Take with `todo-p3 planning 2026-11-17 03:05` (`C`). Before and after the attempt I captured `git for-each-ref --format="%(refname) %(objectname)"`, `git worktree list --porcelain`, and `git status --porcelain`, then compared each pair with `cmp`. I compared the unreachable objects from `git fsck --unreachable --no-reflogs` before and after the attempt, ran `git -c gc.pruneExpire=now gc`, and checked both blobs with `git cat-file -e` and the ref with `git rev-parse "$R"`.
+- Expected: Take is refused with exit 128 and `reference already exists`. The three snapshots match. `C` becomes an unreachable blob, and garbage collection removes it. `H` and its ref survive.
+- Seen: Take exited 128 with `reference already exists`. `git cat-file -p "$R"` printed `todo-p1 wave 2 2026-11-17 03:00 run 4a83a54e`. All three comparisons exited 0. The additional `git fsck` line was `unreachable blob d879af6`. Garbage collection exited 0. `git cat-file -e` exited 1 for `d879af6` and 0 for `22f44d2`. The ref still resolved to `22f44d2`.
+- Result: holds
