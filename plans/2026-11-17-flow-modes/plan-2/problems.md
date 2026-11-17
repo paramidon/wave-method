@@ -1,7 +1,10 @@
 # Open problems
-Next ID: I5
+Next ID: I7
 
 - **[I1 · wave 1 / task A / feature F1] Chaining misses a manual predecessor without a tracking ref** — where: `skills/wave-plan/layout.md:439`; the chain check should find the predecessor's README when it exists only on the real main branch, but the fallback reads the integration branch before main is imported; proposal: specify the real main branch as a README source for this case; status: → tasks I, J (wave 3)
 - **[I2 · wave 1 / task E / feature F1] Planning can write before stopping with plan-exists** — where: `skills/wave-plan/layout.md:409`, `skills/wave-plan/layout.md:452`, `skills/wave-plan/SKILL.md:240`; an existing plan should stop the run without writes, but integration preparation can already create or update the target; proposal: move the existence check ahead of the first write; status: → tasks I, J (wave 3)
 - **[I3 · wave 1 / task E / feature F1] Concurrent starts can pass the same integration target check** — where: `skills/wave-run/autonomous.md:44`, `skills/wave-plan/layout.md:437`; a shared target should have a single writer, but two starts can both see no running wave before either records its status; proposal: design an atomic claim for the shared target; status: → tasks I, J, K (wave 3)
 - **[I4 · wave 1 / task E / feature F1] Live autonomous index runs remain unverified** — where: `waves/w01.md`, task E; the audit covered instruction walkthroughs and repository checks; no live index workflow was run; proposal: exercise an autonomous index in a scratch repository after resolving the design issues; status: → tasks L, M (wave 3)
+
+- **[I5 · wave 2 / task H / feature F3] Print-mode validation covers wave-status only** — where: `docs/claude-print-mode.md`, Open points; full print-mode runs of wave-triage, wave-plan, and wave-run, the auto and dontAsk modes, and PowerShell quoting were not exercised; proposal: verify the driver on real print-mode runs and record any platform or permission limits; status: open
+- **[I6 · wave 2 / task H / feature F3] Autonomous driver prompt arguments depend on F1** — where: `docs/claude-print-mode.md`, Prompt form for the driver; the suggested wave-triage and wave-plan prompts use the planned argument forms; proposal: verify the forms against F1 once it is merged and correct the examples if needed; status: open
