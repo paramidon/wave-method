@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I9
+Next ID: I11
 
-- **[I5 · wave 2 / task H / feature F3] Print-mode validation covers wave-status only** — where: `docs/claude-print-mode.md`, Open points; full print-mode runs of wave-triage, wave-plan, and wave-run, the auto and dontAsk modes, and PowerShell quoting were not exercised; proposal: verify the driver on real print-mode runs and record any platform or permission limits; status: → tasks S, T (wave 6)
-- **[I6 · wave 2 / task H / feature F3] Autonomous driver prompt arguments depend on F1** — where: `docs/claude-print-mode.md`, Prompt form for the driver; the suggested wave-triage and wave-plan prompts use the planned argument forms; proposal: verify the forms against F1 once it is merged and correct the examples if needed; status: → tasks S, T (wave 6)
+- **[I9 · wave 6 / task S, T / feature F3] The merged-feature heading varies in wave-status output** — where: `docs/rehearsals/print-mode-chain.md:71`; R6 returned the full merged-feature block with a duplicated and rewritten heading instead of `Merged, not in main:`; proposal: verify reports with several merged features and use the Git refs to confirm feature state if parsing depends on a heading; status: open
+- **[I10 · wave 6 / task S, T / feature F3] Multi-wave and background-agent timing remains unmeasured** — where: `docs/claude-print-mode.md:359`; R3 completed the toy plan's only wave and both Agent results arrived before the final event, so R4/R5 and background wait behavior were not exercised; proposal: measure a larger multi-wave plan with background subagents through process exit and validate the caps; status: open
