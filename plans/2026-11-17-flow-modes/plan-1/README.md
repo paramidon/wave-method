@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5 | A (1), B (1), C (1), D (1), E (2), F (2) | task F's four scenario walkthroughs hold and the check command is green | ⬜ | wave 1 | | |
+| F1 | `autonomous-flow` | Autonomous flow with an integration branch | P1, P2, P3, P5 | A (1), B (1), C (1), D (1), E (2), F (2) | task F's four scenario walkthroughs hold and the check command is green | 🔄 | wave 1 | | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -17,17 +17,17 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D | 🔄 since 2026-11-17 15:47 |
 | 2 | `waves/w02.md` | E, F (after E) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `layout-flow-section` | F1 | 1 | medium | ⬜ |
-| B | `autonomous-procedures` | F1 | 1 | medium | ⬜ |
-| C | `report-flow-lines` | F1 | 1 | low | ⬜ |
-| D | `status-plan-flow-pointers` | F1 | 1 | low | ⬜ |
+| A | `layout-flow-section` | F1 | 1 | medium | 🔄 |
+| B | `autonomous-procedures` | F1 | 1 | medium | 🔄 |
+| C | `report-flow-lines` | F1 | 1 | low | 🔄 |
+| D | `status-plan-flow-pointers` | F1 | 1 | low | 🔄 |
 | E | `wave-run-flow-pointers` | F1 | 2 | medium | ⬜ |
 | F | `flow-consistency-pass` | F1 | 2 | medium | ⬜ |
 
