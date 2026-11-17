@@ -31,6 +31,9 @@ real runs. It is the input for the part 3 driver, which runs the skills unattend
 - Second chain rehearsal (2026-11-17) used `claude --version` `2.1.326 (Claude Code)` and project skills
   installed from the F4 feature branch at `bb08040`. See the [rehearsal record](rehearsals/print-mode-multiwave.md).
 
+- Fixture chain rehearsal (2026-11-17) used `claude --version` `2.1.326 (Claude Code)` and project skills
+  installed from the F4 feature branch. See the [fixture rehearsal record](rehearsals/print-mode-fixture-chain.md).
+
 ## What the docs say
 
 All pages were read on 2026-11-17.
@@ -299,6 +302,25 @@ The [multi-wave rehearsal](rehearsals/print-mode-multiwave.md) produced one wave
 M3 ran two foreground subagents sequentially, and both returned before the `result` event.
 For all five calls, refs, worktree listings and the Claude process count at 120 seconds passed the post-exit checks.
 
+### Fixture chain runs (C1–C8)
+
+The [fixture rehearsal](rehearsals/print-mode-fixture-chain.md) used a fixed two-wave plan.
+The table totals turns and stream minutes across a call's results and uses its highest reported cost.
+
+| Run | Skill | Exit | Subtype | Turns | Cost (USD) | Minutes | Denials | Stop line |
+|---|---|---:|---|---:|---:|---:|---:|---|
+| C1 | wave-run | 0 | success | 7 | 0.2366536 | 0.230 | 0 | none |
+| C2 | wave-run | 0 | success | 25 | 0.63740612 | 1.631 | 0 | none |
+| C3 | wave-run | 0 | success | 34 | 0.734344065 | 2.345 | 0 | none |
+| C4 | probe | 0 | success | 5 | 0.1096771 | 0.093 | 0 | none |
+| C5 | wave-status | 0 | success | 11 | 0.01627296 | 0.700 | 0 | none |
+| C6 | wave-status | 0 | success | 6 | 0.01219479 | 0.369 | 0 | none |
+| C7 | wave-status | 0 | success | 11 | 0.01356698 | 0.587 | 0 | none |
+| C8 | wave-status | 0 | success | 5 | 0.01207341 | 0.501 | 0 | none |
+
+C2 and C3 each launched two tasks in parallel in one assistant message.
+C4 met outcome (c) because it exited after 18 seconds and neither marker appeared within 120 seconds after exit.
+
 ## Result
 
 All four wave skills ran via leading slash commands in print mode. The rehearsal created an autonomous index,
@@ -307,6 +329,12 @@ before the final stream event. The merged feature and passing tests were verifie
 
 The second rehearsal also ran one wave. The observed `wave-run` call exited after both foreground subagents
 returned, and the repository refs and worktree listings were identical at exit and 120 seconds later.
+
+The fixture rehearsal completed waves 1 and 2 in separate calls, C2 and C3, with parallel launches in both.
+Each call emitted an intermediate and a final `result` event with distinct turn counters. Read the last
+`result` after process exit for the full wave report. The 110-turn cap counts both measured segments per call.
+In C4, Claude Code stopped the nested Bash jobs at shutdown after both background Agent calls had returned.
+Refs and worktree lists matched at process exit and 120 seconds later for every fixture call.
 
 Use `MSYS_NO_PATHCONV=1` in Git Bash to preserve the leading slash. PowerShell passed the slash intact and
 `$null | claude` closed stdin without a timeout warning in both versions. For a plugin install, grant access
@@ -329,15 +357,16 @@ that passed Q-a on this account. Check tool denials and repository state after e
 does not read the subscription login.
 
 Start the prompt with the slash command and invoke one skill per call. Caps for the first three skills are three
-times the largest measurements across the first chain (R1–R3 and R6) and the second chain (M1–M3, M9 and M10),
-rounded up to tens of turns and whole dollars. `wave-status` retains its prior 60-turn and $0.50 caps, which
-cover three times its observed maxima across both chains.
+times the largest measurements across the first chain (R1–R3 and R6), the multi-wave chain (M1–M3, M9 and M10),
+and the fixture chain (C1–C8, excluding the standalone C4 probe), rounded up to tens of turns and whole dollars.
+`wave-status` retains its 60-turn and $0.50 caps, which cover three times its observed maxima across all three
+chains.
 
 | Skill | Prompt | Model | Turns | USD | Rehearsal |
 |---|---|---|---:|---:|---|
 | `wave-triage` | `/wave-triage flow autonomous <list>` | `opus` | 30 | 2 | R1 used an inline numbered list. |
 | `wave-plan` | `/wave-plan flow autonomous <index path> part <K>` | `opus` | 50 | 4 | R2 and M2. |
-| `wave-run` | `/wave-run <plan folder> <N>` or `/wave-run <plan folder>` for the next ⬜ or ❌ wave | `sonnet` or higher | 70 | 3 | R3 and M3 used next-wave selection for their single-wave plans. |
+| `wave-run` | `/wave-run <plan folder> <N>` or `/wave-run <plan folder>` for the next ⬜ or ❌ wave | `sonnet` or higher | 110 | 3 | R3 and M3 selected the next wave. C2 and C3 ran the two fixture waves. |
 | `wave-status` | `/wave-status` or `/wave-status <plan folder>` | `haiku` | 60 | 0.50 | R6 and M9 reported all plans. M10 scoped the report to one plan folder. |
 
 Use `/wave-run <plan folder> flow autonomous [review <F-IDs>]` only to switch a manual plan into autonomous flow
@@ -363,14 +392,13 @@ Reading the result:
 
 1. A non-zero exit code means the run failed. Read `subtype` and `errors` where JSON is available. A turn or budget
    cap, API or authentication error, or termination can leave no `result` field.
-2. If the exit code is 0, `is_error` is false and `subtype` is `success`, the report is in `result`. For
-   `wave-triage`, `wave-plan` and `wave-run`, expect `Started: <time>` on the first line. Parse an immediately
-   following `Stop <code>:` line by splitting it at the first ` — next: `. The `wave-status` template puts the
-   plan header first and the timing line at the end.
+2. If the exit code is 0, `is_error` is false and `subtype` is `success`, the report is in `result`. Expect
+   `Started: <time>` on the first line for all four skills. Parse an immediately following `Stop <code>:` line by
+   splitting it at the first ` — next: `.
 3. Treat unexpected output as a failed check even on exit 0. A nonempty `permission_denials` array can mean skipped
-   checks or guessed output. A missing opening `Started:` in `wave-triage`, `wave-plan` or `wave-run` calls for
-   inspecting whether the skill loaded and followed its report format. A closing question requires attention
-   because autonomous flow does not ask.
+   checks or guessed output. A missing opening `Started:` in any skill's result calls for checking whether the
+   skill loaded and followed its report format. A closing question requires attention because autonomous flow
+   does not ask.
 4. Before continuing, read the state from git, never from report headings: the labels of a report follow the
    user's language and can vary. For each plan of the run, read its README from the tracking branch
    (`git show plan/<plan>:<plan folder>/README.md`) and its `Flow:` line. A Features row `✅ merged` with hash `<h>`
@@ -384,13 +412,5 @@ Reading the result:
 
 - P-c completed with 12 reported turns under a cap of 10, while P-e and Q-d failed at the one-turn cap. Repeated
   runs near the cap would help relate CLI turn enforcement to `num_turns`.
-- Both chains reached one wave each. Rehearse a plan with several waves and a parallel launch group that uses
-  background subagents. Check final agent output against the stream's `result` event, compare refs and worktrees
-  at exit and after 120 seconds, and compare the measured turns and costs with the driver caps.
-- M9 printed the expected merged heading with the full feature block. M10 put the block under the wrong branch
-  name and appended a second heading that referred back to it. Re-run both forms of `wave-status` on autonomous
-  plans with several merged features. Check that each plan prints one heading with the actual main branch name
-  followed by every full merged-feature block, and compare the blocks with the tracking and integration refs.
-- M9 and M10 opened with the plan heading as the `wave-status` template specifies. The shared run-times rule
-  in `wave-plan/layout.md` requires `Started:` first. Reconcile the two instructions, then rerun `wave-status`
-  with and without a plan folder and verify the agreed first line and final timing line in both reports.
+- C2 and C3 emitted intermediate and final results in `stream-json`. Run the same two fixture waves with
+  `--output-format json` and compare the report after process exit with each complete final wave report.
