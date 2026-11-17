@@ -140,6 +140,8 @@ What each skill does when one is missing is in that skill.
   always use `<main branch>`.
 - `<main checkout>` — the checkout where those merges are made: the repository's main checkout in manual flow, the
   integration worktree in autonomous flow.
+- `<name>` — the name of the plan's integration branch after `integration/`: from `target:` of the README `Flow:`
+  line, else `<plan>` ("Flow"). Used in autonomous flow only.
 - `<plan>` — the plan slug from the README header (`slug: …`).
 - `<plan folder>` — the plan folder's path relative to the repository root (`plans/2026-11-02-hop-tuning`).
 - `<feature>` — `<feature-id>-<feature-slug>` from the "Features" table (e.g. `F1-cheap-interbody-omega`).
@@ -174,7 +176,7 @@ finished but not in `<main>` yet. A README written by v2.1.0 may still say `✅ 
 next commit that touches the row writes `👀 review`. In autonomous flow `✅ merged` means merged into the integration
 branch.
 
-Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, the main checkout was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
+Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N>` (its next tasks), `I<n>` (an open entry), `review` (ready, waits for the user's review and approval), `main-dirty` (approved, `<main checkout>` was not ready for the merge), `user: <question>`. The cell is empty once the feature is merged.
 
 **A status shows the current outcome, not the history.**
 

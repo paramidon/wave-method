@@ -30,7 +30,8 @@ Read only the following, according to `layout.md`, "Who reads what":
   `| ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |` and Waves
   columns `| Wave | File | Tasks | Status |`, and its Tasks columns `| ID | Slug | Feature | Wave | Complexity | Status |`.
   Also its `Flow:` header line (`layout.md`, "Flow"). For a plan in autonomous flow, `<main>` below is its
-  integration branch (`layout.md`, "Names"); also read `git rev-list --count <main branch>..integration/<name>`
+  integration branch and `<main checkout>` its integration worktree (`layout.md`, "Names"); also read
+  `git rev-list --count <main branch>..integration/<name>`
   when that branch exists.
 - Each plan's `problems.md`: entry headers only (`**[I<n> · …] essence**`).
 - The wave file of a wave that is 🔄, ❌ or ⚠️: only its "Execution" section, for the last
@@ -104,7 +105,7 @@ The commands in this subsection are suggestions for the user's report only. Do n
 - Leftover task, feature or tracking branch: `git branch -d <branch>`; suggest removing an attached worktree
   first. Do not suggest forced deletion.
 - A ready feature: `/wave-run <plan folder> merge <F-ID>` · `$wave-run <plan folder> merge <F-ID>`, for use after
-  the user has reviewed it; for `main-dirty`, once the main checkout is ready (`layout.md`, "Main readiness").
+  the user has reviewed it; for `main-dirty`, once `<main checkout>` is ready (`layout.md`, "Main readiness").
 - A finished plan that has not been archived: suggest the applicable `git mv` command from
   `layout.md`, "Archive". For an index part, the whole index folder is eligible only when every part is merged.
 
