@@ -21,6 +21,13 @@ suggested as commands for the user in the report; never execute those commands.
 The argument is an optional plan folder. Without it, inspect every plan folder under `plans/` except
 `plans/archive/`, plus every index (`plans/<date>-<topic>/index.md`).
 
+Also inspect every plan that exists only on its
+tracking branch (a plan of autonomous flow lives on the integration branch until the user merges it, `layout.md`,
+"Planning in autonomous flow"): for each branch `plan/<slug>` of `git branch --list "plan/*"` whose plan is not
+among those folders, its README is the path of
+``git grep -l -F 'slug: `<slug>`' plan/<slug> -- "plans/*README.md" ":!plans/archive"``;
+read it and its files from that branch.
+
 ## What to read
 
 Read only the following, according to `layout.md`, "Who reads what":
@@ -40,6 +47,9 @@ Read only the following, according to `layout.md`, "Who reads what":
   "User problems" lines of its P and its "How to try" line, its commit subjects
   (`git log --oneline --no-merges <main>..<branch>`), and the "Execution" section of the wave file of its last wave
   (the last wave in its "Tasks (wave)" cell), for what was checked by hand.
+- Autonomous flow: for each `✅ merged` feature whose `Merged` hash is not in `<main branch>`
+  (`git merge-base --is-ancestor <hash> <main branch>` fails): its brief, from the tracking branch. If it has no
+  brief, read the same fallback sources listed above for a feature under review.
 - Each index's "Parts" table.
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
@@ -66,6 +76,11 @@ comes first: the user reads it before anything about waves.
   (`2/4 · ⚠️ B`).
 - `Waves:` the wave statuses on one line (`1 ✅ · 2 🔄 since <date time> · 3 ⬜`); the 🔄 wave is the running one.
   `none running` when no wave is 🔄.
+- `Merged, not in <main branch>:` autonomous flow only ("Results of an autonomous run" of `layout.md`): the
+  merged block of `layout.md`, "Feature review", for every `✅ merged` feature whose `Merged` hash is not in
+  `<main branch>` yet, from its brief, in full. These are what the user tests before merging `integration/<name>`.
+  A feature without a brief gets the block built as `Ready for review:` builds one, with the merged block's header
+  and `Approved:` line.
 - `Ready for review:` the review block of `layout.md`, "Feature review", for every `👀 review` feature, with its
   `Merge:` line, from its brief; never shortened to the title and branch, and nothing else about the feature.
   For `main-dirty` add its reason (`not on <main>`, `staged changes`, or the overlapping paths); the three read-only
@@ -76,7 +91,9 @@ comes first: the user reads it before anything about waves.
   came from.
 - `Integration:` autonomous flow only: `integration/<name>` — `<N>` commits not in `<main branch>`; review
   `git diff <main branch>...integration/<name>`, then merge it yourself in the main checkout
-  (`git merge --no-ff integration/<name>`); or `in <main branch>` when N is 0, or `not created yet`.
+  (`git merge --no-ff integration/<name>`); or `in <main branch>` when N is 0, or `not created yet`. When
+  `refs/wave-method/claims/integration/<name>` exists, add `· claimed by <holder line>` (`git cat-file -p <that ref>`,
+  `layout.md`, "Target claim").
 - `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
   the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.
@@ -86,7 +103,8 @@ comes first: the user reads it before anything about waves.
 - `Leftovers:` task branches or worktrees of waves that are not 🔄; feature worktrees of merged features; a
   tracking branch of an archived plan. Give a suggested cleanup command for each, as described below. In autonomous
   flow the kept branches of auto-merged features are leftovers only once the integration branch is in
-  `<main branch>`.
+  `<main branch>`. A target claim whose holder line names a wave that is not 🔄 on that plan's tracking branch:
+  suggest `git update-ref -d refs/wave-method/claims/integration/<name>`, once the user is sure no run holds it.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
@@ -95,7 +113,9 @@ comes first: the user reads it before anything about waves.
 | F1 <Title> | <README status> | <done>/<total> | <README Waiting for> | <feature branch> | <README Merged> |
 
 Then report each index's parts without a plan folder, whether their "Plan when" condition is met, and their
-`/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands.
+`/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands. Also count a part as planned when its plan
+folder exists on its tracking branch `plan/<topic>-p<K>`. For an index with a `Flow: autonomous` line, use check 3 of
+`layout.md`, "Chained parts and the integration branch", to decide whether the condition is met.
 
 ### Suggested commands
 

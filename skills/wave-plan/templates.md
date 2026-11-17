@@ -8,7 +8,7 @@
 - Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · planned <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 - Index: `plans/<date>-<topic>/index.md` part <K> (omit when planned from a raw list)
 - Re-plans: none (later one sub-item each: `<date> at <hash>, <start HH:MM> – <end HH:MM>: <what>`; details in `history.md`)
-- Flow: (omit for manual flow; `autonomous · target: integration/<slug> · manual review: <F-IDs>` only when the user asks for it: `layout.md`, "Flow")
+- Flow: (omit for manual flow; `autonomous · target: integration/<name>` when the flow of planning is autonomous, `<name>` = the index topic or the plan slug; `manual review: <F-IDs>` only when the user asks: `layout.md`, "Flow", "Planning in autonomous flow")
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
 
 ## Features
@@ -53,6 +53,8 @@ main branch with each feature merge.
 ## Assumptions
 
 - …
+- Assumed (autonomous, not asked) · F<k>: <question> → <chosen reading>; not chosen: <other reading> (autonomous flow only: `layout.md`, "Assumed readings")
+
 ````
 
 ### `solutions/P<n>-<slug>.md`
@@ -114,12 +116,15 @@ Written by `wave-run` (`wave-run/SKILL.md` steps 7 and 8), in English like every
 progress the file holds only the header, "Tasks" and the tasks' `Try:` lines; the other sections are written when it
 becomes `👀 review` and rewritten when it becomes `👀 review` again after a rejection. The user sees only the review
 block made from it (`layout.md`, "Feature review"): the header line, "Essence", "How to test" and "Worth a look".
+A feature merged into an integration branch is
+shown with the merged block instead (`layout.md`, "Feature review").
 
 ````markdown
 # F1 · <Title>
 
 - Branch: `feat/<plan>/<feature>` · worktree: `<absolute feature worktree path>`
 - 👀 review since <YYYY-MM-DD HH:MM>
+- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, <auto-approved | approved by the user> (autonomous flow only)
 
 ## Essence
 

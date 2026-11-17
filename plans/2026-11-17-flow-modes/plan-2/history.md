@@ -18,3 +18,41 @@ solution, `solutions/P12-chain-safety.md`, and one new wave of F1 fix tasks.
 
 Nothing of waves 1 and 2 changes: wave 2 (F2, F3) does not touch F1's branch and runs first. Task A and task E stay
 ⚠️ until wave 3 closes their entries.
+
+## Re-plan 2026-11-17 (at 855d09b): I5–I6
+
+Wave 2 left F3 ⚠️ blocked with two open entries from task H: its probes covered `wave-status` only (I5), and its
+prompt table used F1's argument forms before F1 was merged (I6). Both concern `docs/claude-print-mode.md` and the
+driver form, so they are one new solution, `solutions/P13-print-mode-runs.md`, and one new wave of F3 tasks.
+
+- I6 was checked against F1's branch at 1c65676 during the re-plan: the `flow autonomous` forms of `wave-triage` and
+  `wave-plan` match; the table's "Once per plan: `/wave-run <plan folder> flow autonomous`" does not, because a plan
+  of an autonomous index already carries its `Flow:` line. Task O corrects the table; task N runs the forms on the
+  merged texts, since wave 3 may still change them.
+- I5 → task N runs one real chain (triage, plan, `wave-run`, status) under `claude -p` in a scratch toy repository
+  and records it in `docs/rehearsals/print-mode-chain.md`; task O probes `auto`, `dontAsk`,
+  `--permission-prompts none` and PowerShell, then rewrites the doc's result, prompt form and open points.
+- Wave 4 waits for `F1 merged`: the installer must install skill texts that contain F1. F2 was merged into `main`
+  (47d69de) before this re-plan; nothing of F2 changes.
+
+Task H and wave 2 stay ⚠️ until wave 4 closes I5 and I6.
+
+## Re-plan 2026-11-17 (at 06e0731): I7–I8
+
+Wave 3 closed I1–I4 but left F1 ⚠️ blocked with two open entries about the target claim. Both concern the
+"Target claim" subsection of `skills/wave-plan/layout.md` on the F1 branch, so they are one new solution,
+`solutions/P14-claim-handoff.md`, and one new wave of F1 fix tasks.
+
+- I7 (two resumes adopt one claim) → a waiting form of the claim, written by compare-and-swap when a wave ends with
+  `Waiting: task mode …`, and a takeover by compare-and-swap from that waiting oid; a run token in every holder line,
+  because two runs of one plan and wave in the same minute stored the same blob and so shared one oid (task P).
+  Measured on git 2.52.0.windows.1: 10 rounds of two concurrent takeovers → one success each round.
+- I8 (a refused claim writes a blob) → the guarantee is stated for refs, worktrees and commits; the unreachable blob
+  is documented (git refuses a ref to a missing object, so the blob cannot be avoided) (task P).
+- Task Q rehearses both and appends scenarios 7 and 8 to `docs/rehearsals/chained-parts-safety.md`.
+
+Wave order: wave 4 (F3) depends on `F1 merged`, and `wave-run` refuses a wave while an earlier one is ⬜
+(`earlier-wave-open`), so a wave 5 of F1 fixes could never start. Wave 4 is ➖ dropped; its tasks N and O run
+unchanged as S and T in wave 6, after wave 5 and F1's merge. I5 and I6 now point to S and T.
+
+Tasks I and M and wave 3 stay ⚠️ until wave 5 closes I7 and I8.
