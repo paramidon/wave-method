@@ -27,7 +27,7 @@ Merged: short hash of the merge commit into the main branch.
 | 3 | `waves/w03.md` | I, J, K, L (after I, J, K), M (after I, J, K) | ✅ (fixed by P, Q, wave 5) |
 | 4 | `waves/w04.md` | N, O (after N) | ➖ dropped (tasks → wave 6) |
 | 5 | `waves/w05.md` | P, Q (after P) | ✅ |
-| 6 | `waves/w06.md` | S, T (after S) | ⬜ |
+| 6 | `waves/w06.md` | S, T (after S) | 🔄 since 2026-11-17 21:35 |
 
 ## Tasks
 
@@ -50,8 +50,8 @@ Merged: short hash of the merge commit into the main branch.
 | O | `print-mode-doc-update` | F3 | 4 | medium | ➖ superseded by T |
 | P | `claim-handoff-texts` | F1 | 5 | low | ✅ |
 | Q | `claim-handoff-rehearsal` | F1 | 5 | medium | ✅ |
-| S | `print-mode-chain-runs` | F3 | 6 | medium | ⬜ |
-| T | `print-mode-doc-update` | F3 | 6 | medium | ⬜ |
+| S | `print-mode-chain-runs` | F3 | 6 | medium | 🔄 |
+| T | `print-mode-doc-update` | F3 | 6 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p2` and reach the
