@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10 | A (1), B (1), C (1), D (1), E (1) | task E's 12 walkthroughs hold and the check command is green | ⬜ | wave 1 | | |
+| F1 | `autonomous-planning` | Triage and planning in autonomous flow, chained parts on one integration branch | P4, P10 | A (1), B (1), C (1), D (1), E (1) | task E's 12 walkthroughs hold and the check command is green | 🔄 | wave 1 | `feat/flow-modes-p2/F1-autonomous-planning` | |
 | F2 | `merged-review-blocks` | Merged features shown with their review block | P11 | F (2), G (2) | task G's 4 walkthroughs hold and the check command is green | ⬜ | wave 2 | | |
 | F3 | `headless-skill-probe` | Print-mode findings for the driver | P7 | H (2) | `docs/claude-print-mode.md` has all six sections and every probe P-a…P-f recorded | ⬜ | wave 2 | | |
 
@@ -19,18 +19,18 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | 🔄 since 2026-11-17 17:26 |
 | 2 | `waves/w02.md` | F, G (after F), H | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `layout-planning-rules` | F1 | 1 | medium | ⬜ |
-| B | `wave-plan-autonomous` | F1 | 1 | medium | ⬜ |
-| C | `triage-status-autonomous` | F1 | 1 | medium | ⬜ |
-| D | `wave-run-plan-lookup` | F1 | 1 | low | ⬜ |
-| E | `planning-closing-check` | F1 | 1 | medium | ⬜ |
+| A | `layout-planning-rules` | F1 | 1 | medium | 🔄 |
+| B | `wave-plan-autonomous` | F1 | 1 | medium | 🔄 |
+| C | `triage-status-autonomous` | F1 | 1 | medium | 🔄 |
+| D | `wave-run-plan-lookup` | F1 | 1 | low | 🔄 |
+| E | `planning-closing-check` | F1 | 1 | medium | 🔄 |
 | F | `merged-block-layout` | F2 | 2 | medium | ⬜ |
 | G | `merged-block-readers` | F2 | 2 | medium | ⬜ |
 | H | `print-mode-probe` | F3 | 2 | medium | ⬜ |
