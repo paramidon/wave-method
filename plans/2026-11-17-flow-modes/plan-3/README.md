@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | 🔄 | wave 1 | | |
+| F1 | `overnight-driver` | Overnight driver with rails and a morning report | P6 | A (1), B (1), C (1), D (1), E (2), F (2), G (3), H (3) | the tests of acceptance items A–G pass, including the nine end-to-end scenarios of task G against the fake claude; `docs/wave-driver.md` has its nine sections; the check command is green | ⚠️ blocked (I1) | I1 | `feat/flow-modes-p3/F1-overnight-driver` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -17,7 +17,7 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D | 🔄 since 2026-11-18 00:05 |
+| 1 | `waves/w01.md` | A, B, C, D | ❌ I1 (re-run after baseline fix) |
 | 2 | `waves/w02.md` | E, F | ⬜ |
 | 3 | `waves/w03.md` | G, H | ⬜ |
 
@@ -25,10 +25,10 @@ Merged: short hash of the merge commit into the main branch.
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `driver-git-state` | F1 | 1 | medium | 🔄 |
-| B | `claude-call-runner` | F1 | 1 | medium | 🔄 |
-| C | `driver-rails-guard` | F1 | 1 | medium | 🔄 |
-| D | `fake-claude-stub` | F1 | 1 | medium | 🔄 |
+| A | `driver-git-state` | F1 | 1 | medium | ❌ I1 |
+| B | `claude-call-runner` | F1 | 1 | medium | ❌ I1 |
+| C | `driver-rails-guard` | F1 | 1 | medium | ❌ I1 |
+| D | `fake-claude-stub` | F1 | 1 | medium | ❌ I1 |
 | E | `next-action-choice` | F1 | 2 | medium | ⬜ |
 | F | `morning-report-render` | F1 | 2 | medium | ⬜ |
 | G | `driver-loop-cli` | F1 | 3 | medium | ⬜ |
