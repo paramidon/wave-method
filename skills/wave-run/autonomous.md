@@ -29,7 +29,8 @@ the closest code of `SKILL.md`, "Stops"; its `next:` says what the user must dec
 
 ## Integration target
 
-Step 1, read-only, right after the README is read. `<name>` comes from `target:`, else it is `<plan>`. Stop
+Step 1, right after the README is read; it writes nothing but the target claim.
+`<name>` comes from `target:`, else it is `<plan>`. Stop
 `target-unsafe` (nothing written), naming the check that failed, when:
 
 1. `target:` is present and is not `integration/<name>` with a kebab-case `<name>`;
@@ -40,6 +41,14 @@ Step 1, read-only, right after the README is read. `<name>` comes from `target:`
    (`git -C <integration worktree> branch --show-current`), or has tracked changes
    (`git -C <integration worktree> status --porcelain --untracked-files=no`), or an unfinished merge
    (`git -C <integration worktree> rev-parse -q --verify MERGE_HEAD` succeeds).
+
+Then take the target claim (`layout.md`, "Target claim"), holder line `<plan> wave <N> <YYYY-MM-DD HH:MM>`, or
+`<plan> merge <YYYY-MM-DD HH:MM>` in the merge form; refused → stop `wave-running`, naming the holder, nothing
+written. A resume of a wave waiting for task mode takes the claim over instead (`layout.md`, "Target claim",
+"Take over"). The flow form runs the checks above and takes no claim. Then:
+another plan of the same target (`layout.md`, "Integration target") has a 🔄
+wave on its tracking branch → stop `wave-running`, naming that plan and wave. From the claim on, every stop
+releases the claim before its report.
 
 For the merge-record check of `SKILL.md` step 1, read `<main>` as `integration/<name>`, or as `<main branch>`
 if that branch is missing and will be created at its head.
@@ -52,6 +61,11 @@ Step 2, before the tracking worktree and the "wave started" commit:
    `git -C <integration worktree> merge --no-ff <main branch> -m "Integration <name>: bring in <main branch>"`. A
    conflict → `git -C <integration worktree> merge --abort`, stop `target-conflict`; the wave stays ⬜.
 3. From here on `<main>` is `integration/<name>` and `<main checkout>` the integration worktree, in every step.
+
+Step 3, release: right after the run's last write to the integration worktree (the end of "Auto-approval", in a
+wave and in the merge form), release the target claim (`layout.md`, "Target claim"). A run that ends with
+`Waiting: task mode …` keeps it and marks it as waiting right after its "waiting for task mode" commit
+(`layout.md`, "Target claim", "Wait"); the resume takes it over.
 
 ## Skipped tasks
 

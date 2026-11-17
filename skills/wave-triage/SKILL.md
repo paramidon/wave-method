@@ -19,6 +19,12 @@ Each skill ends by telling the user the exact next command(s).
 Command form: `/wave-triage`, `/wave-plan`, `/wave-run` in Claude Code; `$wave-triage`, `$wave-plan`, `$wave-run`
 in Codex. Print every command in both forms (`layout.md`, "Commands").
 
+## Flow of planning
+`flow autonomous` or `flow manual` as the first two words of the arguments sets the flow of planning
+(`layout.md`, "Planning in autonomous flow"); without them it is manual and every step below applies as written.
+In autonomous flow write `- Flow: autonomous · target: integration/<topic>` into the index header, right after the
+`- Index:` line, and never ask the user: each question of the steps below gets the answer of that subsection.
+
 ## What triage does and does not do
 - Does: restate, clarify, locate, judge difficulty, find dependencies, split into parts, write the index.
 - Does not: design solutions, write API signatures, slice into tasks, change project code. That is wave-plan.
@@ -68,6 +74,10 @@ under cluster headings; problems without questions are not mentioned. Decide sma
 them as assumptions. Write the answers into the problem records (in `triage/P<n>.md` for more than 8 problems,
 or inline in the index for at most 8).
 
+Autonomous flow: ask nothing; choose by "Assumed readings" of
+`layout.md` and record each choice as an `Assumed (autonomous, not asked) · P<n>: …` line under "Assumptions";
+"Open questions" stays `none` unless step 5 adds a line.
+
 ### 4. Pass 2 — shallow analysis per cluster
 Read `wave-triage/difficulty.md` before judging the first problem. For each problem, record:
 - **Where**: files/classes/functions involved (`file:line` when cheap to get), what already exists to reuse.
@@ -112,7 +122,11 @@ table.
 A part = one wave-plan run in a fresh session = one plan folder. Every part stays within the
 "Part budget" of `wave-triage/difficulty.md` (points, `high` limits, expected features and tasks).
 
+In autonomous flow, first leave out each problem that alone exceeds the part budget. Add its "Open questions"
+line as specified in `layout.md`, "Planning in autonomous flow", and split the remaining problems into parts.
+
 Use this deterministic procedure:
+
 1. Dependency groups = connected components of confirmed dependencies.
 2. Sort groups: groups containing a `high` problem first (by number of `high`, then points, descending), then
    by points descending.
@@ -135,6 +149,7 @@ For at most 8 problems, keep full problem records in the index:
 # <Topic> — index
 
 - Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · triaged <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
+- Flow: autonomous · target: integration/<topic> (autonomous flow of planning only; omit otherwise)
 
 ## Problems
 ### P1. <one-line restatement>
@@ -170,6 +185,7 @@ has exactly one overview row. Reuse the Parts table and the Assumptions and Open
 # <Topic> — index
 
 - Index: `plans/<date>-<topic>/index.md` · created <date> · base: <git short hash> · triaged <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
+- Flow: autonomous · target: integration/<topic> (autonomous flow of planning only; omit otherwise)
 
 ## Problems
 
@@ -208,7 +224,9 @@ Each `triage/P<n>.md` uses the full problem-record format:
 ````
 
 ### 7. Self-check
-- Every problem is in exactly one part; every part is within budget.
+
+- Every problem is in exactly one part (in autonomous flow, except a problem left out by step 5 with its
+  "Open questions" line); every part is within budget.
 - Every dependency between parts is either inside one part or marked "after part K is merged".
 - Every problem has Where, Difficulty, Size, Depends on — enough for wave-plan to start without re-searching.
 - More than 8 problems → every problem has a record file and one overview row; the index has no full records.
@@ -223,6 +241,7 @@ Each `triage/P<n>.md` uses the full problem-record format:
 - **Stop.** Do not start planning. Answer the user:
   - the parts table: problems, difficulty, points, why they are grouped this way;
   - assumptions and anything you were unsure about;
+  - autonomous flow: every `Assumed (autonomous, not asked)` line first, then the stops, if any;
   - **the next commands**, one per line in both forms (`layout.md`, "Commands"), each to be run in a
     **fresh session**; say which can be run now (in parallel, in any order) and which only after a given part
     is merged;

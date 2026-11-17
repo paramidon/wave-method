@@ -18,6 +18,12 @@ rules. It is the single source of truth; this skill does not repeat it.
 
 ## Input
 Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) → `wave-run`.
+
+- **Flow of planning** (`layout.md`, "Planning in autonomous flow"): `flow autonomous` or `flow manual` as the first
+  two words of the arguments, else the index header's `Flow:` line for an index part, else manual. Read it first and
+  keep it for the run. Manual: every step below as written. Autonomous: the answers of that subsection replace every
+  question below; never ask the user. A stop is the first line after `Started:`:
+  `Stop <code>: <one line> — next: <command or action>`.
 - **A part of an index** — both forms (`layout.md`, "Commands"):
   `/wave-plan plans/<date>-<topic>/index.md part <K>` · `$wave-plan plans/<date>-<topic>/index.md part <K>`.
   Read `index.md` and, when they exist, the records `triage/P<n>.md` of part K's problems only. The index and
@@ -25,6 +31,9 @@ Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) �
   start from them, verify them, do not re-ask answered questions. The plan slug is the one in the index's
   "Parts" table; the plan folder is `plans/<date>-<topic>/plan-<K>/`. If the part is marked "plan after part J
   is merged" and part J's features are not all `✅ merged` on the main branch, stop and tell the user.
+  In autonomous flow of planning run checks 0 to 4 of `layout.md`, "Chained parts and the integration branch", before
+  step 1 instead (stops `plan-exists`, `wave-running`, `target-unsafe`, `part-unmerged`, `target-conflict`); they take
+  the target claim, which step 9 releases.
 - **A raw list** from the user — allowed without `wave-triage` when it fits one part. First read
   `wave-triage/difficulty.md` (difficulty scale and part budget; the single source of truth, do
   not guess the numbers). Judge each problem's difficulty from a quick look at the code (find where it lives,
@@ -32,6 +41,9 @@ Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) �
   list is too big for one plan and give both forms of the command:
   `/wave-triage <the list>` · `$wave-triage <the list>`. Otherwise go on with step 1.
   The plan folder is `plans/<YYYY-MM-DD>-<slug>/`.
+  In autonomous flow of planning, before step 1: choose the plan slug so that check 0 of `layout.md`, "Chained parts
+  and the integration branch", finds nothing, then run its checks 1, 2 and 4; they take the target claim, which step 9
+  releases.
 - **An existing plan folder** with open entries in its `problems.md` — re-planning (see below).
 
 ## Output
@@ -45,9 +57,10 @@ The plan slug (`<slug>`, 2–4 kebab-case words) must differ from every other pl
 branch `plan/<slug>`, which lives as long as the plan; it reaches the main branch only by merges (step 9).
 Do not edit files in the main checkout.
 
-The flow (`layout.md`, "Flow") is a README header line: write `- Flow: autonomous · target: integration/<slug>` only
-when the user asks for autonomous flow; otherwise write none (manual). A re-plan keeps the line as it is. A plan is
-always created from, and merged into, the main branch, whatever its flow.
+The flow (`layout.md`, "Flow") is a README header line: in autonomous flow of planning write
+`- Flow: autonomous · target: integration/<name>` (`<name>`: the index topic for an index part, else the plan slug;
+`layout.md`, "Planning in autonomous flow"); in manual flow write none. A re-plan keeps the line as it is. A plan is
+created from, and merged into, `<main>`: the main branch in manual flow, the integration branch in autonomous flow.
 
 Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL). They implement
 a given solution well and design poorly. So every design decision is made here and written into the plan.
@@ -58,9 +71,13 @@ tasks are spread over several waves, and only after the user reviewed and approv
 review"). A wave is only a scheduling unit.
 
 **Re-planning.** If the input is a plan folder with open entries in `problems.md`, do not create a new plan.
+Its flow is the README `Flow:` line; a `flow` argument that differs stops `flow-mismatch` (`layout.md`,
+"Planning in autonomous flow").
 Before writing, check the lock: if a wave of the plan is 🔄 on the tracking branch (`layout.md`, "Running
 waves"), report `Stop wave-running: wave <N> is running — next: wait, or the user releases the lock` and stop
-without writing. Read only what `layout.md` allows for a re-plan. In its tracking worktree add new solutions
+without writing. Autonomous flow: then take the target claim, holder line `<plan> planning <YYYY-MM-DD HH:MM>`
+(`layout.md`, "Target claim"); refused → stop `wave-running`, naming the holder, without writing; step 9 releases it.
+Read only what `layout.md` allows for a re-plan. In its tracking worktree add new solutions
 (next P numbers: new files, new sections of `lite.md`), new tasks (IDs continue) and new wave files after the
 last one; add them to the README tables and add one line to the README header (`re-planned <date> at <hash>:
 <what>`); put the longer re-plan notes into `history.md` (create it at the first re-plan). Mark the entries `→
@@ -82,6 +99,10 @@ Never leave `Known failures: none` in a task that starts from a red branch.
   to the user's words (in English).
 - If a problem can be read two ways that lead to different work, ask all such questions once, as one list,
   before designing. Decide small things yourself and record them as assumptions.
+  Autonomous flow: no question; choose by "Assumed readings" (`layout.md`) and record each choice in README
+  "Assumptions"; the index's "Open questions" of this part are handled the same way. Copy the index's
+  `Assumed (autonomous, not asked)` lines of this part's problems into README "Assumptions", with the feature ID
+  in place of the P.
 
 ### 2. Analyse the code (per problem)
 - Find where the behaviour lives and the cause of the problem. Cite `file:line`.
@@ -90,6 +111,8 @@ Never leave `Known failures: none` in a task that starts from a red branch.
 - Run the tests once and record which ones already fail (known failures). At a re-plan, also run them on the
   branch of every affected feature that exists, and record its failures by test name: tasks of that feature start
   from that branch, not from `<main>`.
+- Autonomous flow: read the code and run the tests in the integration worktree (`<main checkout>`), which holds
+  the parts merged before this one; record known failures for it.
 
 ### 3. Architecture (the most important step)
 For each `medium` or `high` problem write its solution file `solutions/P<n>-<slug>.md`:
@@ -210,19 +233,28 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 - Re-plan: the status check (script, `layout.md`, "Statuses") passes.
 
 ### 9. Write, commit on the tracking branch, merge
-1. Tracking worktree from the main branch (`<main>` = `master` or `main`):
+1. Tracking worktree from `<main>` (`master` or `main`; the integration branch in autonomous flow):
+
    ```bash
    git worktree add -b plan/<slug> ../<repo-folder>.worktrees/<slug>-plan <main>
    ```
+
    If the branch or the folder already exists for a new plan, ask the user. For a re-plan, use the existing
    tracking worktree (create it from the existing `plan/<slug>` branch if the folder is gone; if the branch is
    gone too, create it from `<main>` with `-b plan/<slug>`; merge `<main>` into it first).
+   Autonomous flow: a new plan already passed check 0 of `layout.md`, "Chained parts and the integration branch",
+   before step 1 (stop `plan-exists`, nothing written).
 2. Write the plan folder from `templates.md` and commit only that folder: `Plan <slug>: <short>`
    (or `Plan <slug>: re-plan`).
 3. Merge into the main branch so the plan is visible there: the main checkout must be ready for the merge of
    `plan/<slug>` (`layout.md`, "Main readiness"); then
    `git -C <main checkout> merge --no-ff plan/<slug> -m "Plan <slug>: <short>"`.
    If the main checkout is not ready, do not touch it: give the user the merge command.
+   Autonomous flow: the run still holds its target claim
+   (`git rev-parse refs/wave-method/claims/integration/<name>` prints this run's oid; otherwise stop
+   `wave-running`, the plan stays on its tracking branch); merge into `<main checkout>`, the integration worktree,
+   with the same readiness rule, never into the main checkout; then release the claim (`layout.md`, "Target
+   claim"), also when the integration worktree was not ready and the user got the merge command.
 4. **Keep** the tracking branch and its worktree: `wave-run` records statuses there and deletes them when
    every feature is merged. Never push.
 
@@ -234,5 +266,8 @@ in both forms (`layout.md`, "Commands"):
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which
 wait for a merge. End with the `Started: … · Finished: …` line (`layout.md`, "Run times").
+
+In autonomous flow include every `Assumed (autonomous, not asked)` line, with no remaining questions. Say that the
+plan is on `integration/<name>` until the user merges that branch, and mark the other parts by the chain check.
 
 Templates: `wave-plan/templates.md` — read it when writing the plan folder (step 9).
