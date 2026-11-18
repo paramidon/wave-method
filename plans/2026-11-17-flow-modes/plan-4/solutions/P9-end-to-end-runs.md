@@ -11,10 +11,10 @@ compared manual flow with the release before flow modes (`v2.12.0`).
 **Approach:** two independent runs, one task each, each in its own scratch folder outside every repository, each
 writing one record in `docs/rehearsals/`:
 
-- **Manual (task E)** runs `examples/01-greenfield-todo-cli/` by hand-typed `claude -p` calls, the way a user
+- **Manual (task I)** runs `examples/01-greenfield-todo-cli/` by hand-typed `claude -p` calls, the way a user
   works in manual flow, twice: with the skills of the task's working folder ("current") and with the skills of tag
   `v2.12.0` ("baseline"), and compares the observable results step by step.
-- **Autonomous (task F)** runs `examples/03-autonomous-night-run/` (F1 of this plan) with the real driver,
+- **Autonomous (task J)** runs `examples/03-autonomous-night-run/` (F1 of this plan) with the real driver,
   `scripts/wave_driver.py`, after seeding a forced failure that makes task D red, then plays the user's morning.
 
 A step whose result differs from the expectation below is a **finding**, not a failure of the task: record it with
@@ -44,7 +44,7 @@ make a step pass; its report lists every finding as a problem for the coordinato
   minutes, the first and the last line of the last result's text, its stop line if any, and a snapshot before and
   after: `git -C "$scratch/<repo>" for-each-ref --format='%(refname) %(objectname)'` and
   `git -C "$scratch/<repo>" worktree list --porcelain`.
-- **Costs.** Sum the last `total_cost_usd` of every call. Task E stops starting calls at 20 USD, task F at 25 USD
+- **Costs.** Sum the last `total_cost_usd` of every call. Task I stops starting calls at 20 USD, task J at 25 USD
   (the driver's own `--max-usd` included); a step not run for this reason is recorded as not run.
 - **Seeding a repository** `<repo>` from a plan folder `<example>` with skills from `<skills source>`:
 
@@ -64,7 +64,7 @@ make a step pass; its report lists every finding as a problem for the coordinato
 - **Python for the projects:** `python -m venv "$scratch/venv"`, then `"$scratch/venv/Scripts/python" -m pip install
   pytest pyyaml` (`bin/` instead of `Scripts/` outside Windows); prepend that folder to `PATH` for every call.
 
-## Manual run (task E)
+## Manual run (task I)
 
 Plan: `examples/01-greenfield-todo-cli/` → `plans/2026-11-02-todo-cli`, slug `todo-cli`, no `Flow:` line. Two
 repositories, seeded as above: `cur` with skills source = the task's working folder, `base` with skills source =
@@ -105,10 +105,10 @@ Expectations (each a Pass or a Finding in the record):
   likely cause only when the differing cell is a choice the skills leave to the model (wording, order of tasks in a
   launch group).
 
-## Autonomous run (task F)
+## Autonomous run (task J)
 
-Plan: `examples/03-autonomous-night-run/` → `plans/2026-11-04-wordstat`, slug `wordstat`,
-`- Flow: autonomous · target: integration/wordstat · manual review: F3`. One repository `night`, seeded as above
+Plan: `examples/03-autonomous-night-run/` → `plans/2026-11-04-wordstat-cli`, slug `wordstat-cli`,
+`- Flow: autonomous · target: integration/wordstat-cli · manual review: F3`. One repository `night`, seeded as above
 from the task's working folder, then:
 
 1. **Forced failure.** Commit on `main` the file `tests/test_forced_red.py`:
@@ -134,12 +134,12 @@ from the task's working folder, then:
 
 | Step | Command | Model, caps |
 |---|---|---|
-| A1 | `python <working folder>/scripts/wave_driver.py plans/2026-11-04-wordstat --repo "$scratch/night" --dry-run --claude-arg=--setting-sources --claude-arg=project,local` | — |
+| A1 | `python <working folder>/scripts/wave_driver.py plans/2026-11-04-wordstat-cli --repo "$scratch/night" --dry-run --claude-arg=--setting-sources --claude-arg=project,local` | — |
 | A2 | the same without `--dry-run`, plus `--max-usd 20 --max-calls 12` | driver defaults |
-| A3 | `/wave-run plans/2026-11-04-wordstat merge F3` (the user approves the manual-review feature) | sonnet, 100, 3 |
-| A4 | in `$scratch/night`: `git merge --no-ff integration/wordstat -m "Merge integration/wordstat"`, then `python -m pytest -q` | — |
+| A3 | `/wave-run plans/2026-11-04-wordstat-cli merge F3` (the user approves the manual-review feature) | sonnet, 100, 3 |
+| A4 | in `$scratch/night`: `git merge --no-ff integration/wordstat-cli -m "Merge integration/wordstat-cli"`, then `python -m pytest -q` | — |
 | A5 | A1 again | — |
-| A6 | `/wave-status plans/2026-11-04-wordstat` | haiku, 60, 0.5 |
+| A6 | `/wave-status plans/2026-11-04-wordstat-cli` | haiku, 60, 0.5 |
 
 A2 uses the driver's default permission mode `auto`. If its report or a call log shows permission denials that kept
 a wave from finishing, record that as a finding, seed a fresh repository `night2` the same way and repeat A1–A6 there
@@ -147,24 +147,24 @@ with `--permission-mode bypassPermissions`; both runs go into the record.
 
 Expectations:
 
-- A1: exit 0; the line `next: wave plans/2026-11-04-wordstat — wave 1 is ready` and a `claude` command line with
-  `/wave-run plans/2026-11-04-wordstat 1`, `--model sonnet` and `--setting-sources project,local`.
+- A1: exit 0; the line `next: wave plans/2026-11-04-wordstat-cli — wave 1 is ready` and a `claude` command line with
+  `/wave-run plans/2026-11-04-wordstat-cli 1`, `--model sonnet` and `--setting-sources project,local`.
 - A2: the driver prints `Report: <path>` and exits 0 (nothing left to run) or 1 (a rail), and its calls are: wave 1,
   wave 2, possibly resumes or task-mode calls, and the final `wave-status`. After it:
-  - F1 `✅ merged` and F2 `✅ merged`, their `Merged` hashes ancestors of `integration/wordstat`, their briefs saying
+  - F1 `✅ merged` and F2 `✅ merged`, their `Merged` hashes ancestors of `integration/wordstat-cli`, their briefs saying
     `auto-approved`; wave 2 started without a `feature-unmerged` stop (auto-approval of F1 unblocked it);
-  - F3 `👀 review`, `Waiting for: review`, not in `integration/wordstat`;
-  - F4 ⚠️ blocked with `Waiting for: I<n>`, task D ⚠️, entry I<n> open in `problems.md` on `plan/wordstat`, and
-    `git merge-base --is-ancestor feat/wordstat/F4-csv-export integration/wordstat` fails (or the branch does not
+  - F3 `👀 review`, `Waiting for: review`, not in `integration/wordstat-cli`;
+  - F4 ⚠️ blocked with `Waiting for: I<n>`, task D ⚠️, entry I<n> open in `problems.md` on `plan/wordstat-cli`, and
+    `git merge-base --is-ancestor feat/wordstat-cli/F4-csv-export integration/wordstat-cli` fails (or the branch does not
     exist). Which path led there (red after two attempts, an out-of-scope edit, the executor's stop) is recorded,
     not judged;
   - `main` and `refs/remotes/origin/main` at their seed commits; the bare remote's refs unchanged; no
     `refs/wave-method/claims/*` ref; no `wave-driver.lock` in `git rev-parse --git-common-dir`;
-  - `report.md` names `integration/wordstat`; shows F1 and F2 under "Merged, not in `main`" with their blocks, F3
-    under "Ready for review" with `/wave-run plans/2026-11-04-wordstat merge F3` and `$wave-run … merge F3`, F4
-    under "Blocked and waiting" as `F4 … — ⚠️ I<n>: …`; "Next" gives `git diff main...integration/wordstat` and
-    `git merge --no-ff integration/wordstat`; "Calls" lists every call with its cost.
-- A3: F3 `✅ merged` into `integration/wordstat`, its brief `approved by the user`; `main` unchanged.
+  - `report.md` names `integration/wordstat-cli`; shows F1 and F2 under "Merged, not in `main`" with their blocks, F3
+    under "Ready for review" with `/wave-run plans/2026-11-04-wordstat-cli merge F3` and `$wave-run … merge F3`, F4
+    under "Blocked and waiting" as `F4 … — ⚠️ I<n>: …`; "Next" gives `git diff main...integration/wordstat-cli` and
+    `git merge --no-ff integration/wordstat-cli`; "Calls" lists every call with its cost.
+- A3: F3 `✅ merged` into `integration/wordstat-cli`, its brief `approved by the user`; `main` unchanged.
 - A4: the merge succeeds; `python -m pytest -q` → `12 passed, 1 skipped` (7 + 5 cases; the forced test is skipped
   because F4 never reached `main`).
 - A5: exit 0, `next: nothing — …` naming no call for the blocked F4: the blocked feature stays blocked.
@@ -174,7 +174,7 @@ Paste the driver's `report.md` of A2 into the record in a fenced block, unchange
 
 ## Record format
 
-`docs/rehearsals/end-to-end-manual.md` (task E) and `docs/rehearsals/end-to-end-autonomous.md` (task F), in the
+`docs/rehearsals/end-to-end-manual.md` (task I) and `docs/rehearsals/end-to-end-autonomous.md` (task J), in the
 style of `docs/rehearsals/print-mode-fixture-chain.md`:
 
 1. `# Rehearsal: <manual flow end to end | autonomous flow end to end>`, then one line: date, `claude --version`,
@@ -182,7 +182,7 @@ style of `docs/rehearsals/print-mode-fixture-chain.md`:
 2. `## Setup` — every command of the seeding, with `<scratch>` in place of the real temporary path.
 3. `## Runs` — one `### <step>` per step: the command in a fenced block, then bullet lines `Pass. …` or
    `Finding. Expected … Observed … (<log, commit or line>)`.
-4. `## Results` — a table: expectation, result (Pass / Finding / Not run), evidence. Task E adds the comparison table.
+4. `## Results` — a table: expectation, result (Pass / Finding / Not run), evidence. Task I adds the comparison table.
 5. `## Not verified` — every expectation that could not be checked, and why (a cap reached, a step not run, a value
    the logs do not show). Write `nothing` only when every expectation has a result.
 6. `## Repeat` — the shortest command list that repeats the run from an empty scratch folder.
@@ -205,7 +205,7 @@ limits and are not billed.
 
 1. Each record exists and has the six sections; every expectation above appears in its "Results" table as Pass,
    Finding or Not run.
-2. Task E's comparison table covers M2–M5 for `cur` and `base`.
-3. Task F's record contains the A2 `report.md` and the final statuses of F1–F4.
+2. Task I's comparison table covers M2–M5 for `cur` and `base`.
+3. Task J's record contains the A2 `report.md` and the final statuses of F1–F4.
 4. `git diff --check` is clean, and the working folder's refs (except the task's own branch) are unchanged by the
    task.
