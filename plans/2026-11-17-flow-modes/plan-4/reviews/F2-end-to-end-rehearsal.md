@@ -23,3 +23,4 @@
 - R (wave 7) — Complete the isolated autonomous rehearsal and verify that the scope gate reverts out-of-scope work and holds the feature back.
 - S (wave 8) — Make example 01's CI independent of the application package so F3 can pass in isolation.
 - T (wave 8) — Take Merged entry times from their merge commits in manual and autonomous flow.
+- U (wave 8) — Preserve the isolated manual run through M4. V verified the continuation from that state.

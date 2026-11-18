@@ -160,3 +160,30 @@
     one-shot version, I16). `CLAUDE_ENV_FILE` isolation passed P0 in both second runs.
   - Known test failures: none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 942c4b1 (fourth re-plan, 2026-11-18:
     33 status-check tests and 59 driver tests OK, all three examples pass, `git diff --check` clean).
+
+## Re-plan 2026-11-19 at 566fbdf
+
+- Input: open entries I24, I25, I26 (wave 9, task V). Wave 9 ⚠️, no wave 🔄. `main` (883838b, the merge of the fifth
+  re-plan, no file change) was merged into the tracking branch first (566fbdf).
+- Checked on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 23d15d1: 33 status-check tests and 59 driver tests OK, all
+  three examples pass `status_check.py`, `git diff --check` clean. Wave 10 starts with no known failures.
+- Read in task V's scratch folder (`tmp.10B4rFz0kw`), with git only: both repositories are at their M6 state (`main`
+  `c0b79e7` and `93291f0`, clean). The current archive's `waves/w02.md` has its `Merged` lines as list items, `w01.md`
+  a plain line; `grep -E '^(- )?Merged '` finds all of them on both sides, every line time equal to its commit time
+  except the baseline's M3 line (22:15 against 22:14, already `intended (P25)`).
+- All three entries are errors of P26's expectations, not of the skills (`solutions/lite.md`, P28): the list-item form
+  follows the Markdown rules, the example fixes 11 acceptance tests but not the number of extra tests, and
+  `wave-status` does not read `plans/archive/` in either version (P9 itself allowed either answer).
+- I24, I25, I26 → task W (wave 10). V stays ⚠️ until W corrects the record; F2 is 🔄, waiting for wave 10.
+- Wave 10 has one low task, an exception to "no solo low wave": nothing else in the plan is open, and the three
+  corrections share one record file. W makes no Claude call and needs no network, only the scratch folder.
+- To keep the README within its size goal, these assumptions moved here from it:
+
+  - I18 is a defect of example 01, not of the skills: its CI feature needed a file of F1 (a hidden dependency), and
+    only one executor reported it. P24 fixes the example; `merge.md` stopping `not-ready` on a blocked feature (I20)
+    is its rule. I19 is a plan error (`wave-run/report.md` asks one question per ready feature) and is closed.
+  - Only the manual run is repeated: task R's autonomous record met every expectation, and P25 changes the
+    autonomous `Merged` lines only by reference to `merge.md`.
+  - I23 is a usage stop, not a defect: P27 continues task U's run from the M4 state that its scratch folder kept
+    (checked at the re-plan), so wave 9 must run on the machine that ran wave 8. U stays ⚠️ I23 until V completes the
+    record.
