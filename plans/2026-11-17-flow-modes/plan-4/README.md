@@ -11,7 +11,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8, P17 | A (1), B (1) ➖, C (1), D (1), G (3), H (3) | the six acceptance tests of `solutions/P8-flow-docs.md` and of `solutions/P17-example-03-fixes.md` hold (task H): 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve, example 03 has slug `wordstat-cli`, its check passes on an empty baseline and its package builds | ✅ merged | | `feat/flow-modes-p4/F1-flow-docs-and-checks` | 1fc60af |
-| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories | P9 | E (2) ➖, F (2) ➖, I (4), J (4) | `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` have the six sections of `solutions/P9-end-to-end-runs.md` "Record format", every expectation is Pass, Finding or Not run, and the check command is green | 🔄 in progress | wave 4 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
+| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories | P9 | E (2) ➖, F (2) ➖, I (4), J (4) | `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` have the six sections of `solutions/P9-end-to-end-runs.md` "Record format", every expectation is Pass, Finding or Not run, and the check command is green | ⚠️ blocked I5, I6, I7, I8, I9 | I5, I6, I7, I8, I9 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -22,7 +22,7 @@ Merged: short hash of the merge commit into the main branch.
 | 1 | `waves/w01.md` | A, B, C, D | ✅ (fixed by G and H, wave 3) |
 | 2 | `waves/w02.md` | E, F | ➖ dropped (tasks → wave 4) |
 | 3 | `waves/w03.md` | G, H (after G) | ✅ |
-| 4 | `waves/w04.md` | I, J | 🔄 since 2026-11-18 17:21 |
+| 4 | `waves/w04.md` | I, J | ⚠️ I5, I6, I7, I8, I9 |
 
 ## Tasks
 
@@ -36,8 +36,8 @@ Merged: short hash of the merge commit into the main branch.
 | F | `autonomous-flow-run` | F2 | 2 | medium | ➖ superseded by J |
 | G | `night-example-plan` | F1 | 3 | medium | ✅ |
 | H | `example-index-check` | F1 | 3 | low | ✅ |
-| I | `manual-flow-rehearsal` | F2 | 4 | medium | 🔄 |
-| J | `autonomous-flow-rehearsal` | F2 | 4 | medium | 🔄 |
+| I | `manual-flow-rehearsal` | F2 | 4 | medium | ⚠️ I5, I6, I7 |
+| J | `autonomous-flow-rehearsal` | F2 | 4 | medium | ⚠️ I8, I9 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p4` and reach the
