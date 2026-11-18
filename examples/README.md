@@ -1,12 +1,13 @@
 # Examples
 
-Two small plans, exactly as `/wave-plan` writes them before any wave has run. They show what you review between
-planning and execution. Both are fictional projects; the file paths and line numbers are illustrative.
+Three small plans, exactly as `/wave-plan` writes them before any wave has run. They show what you review between
+planning and execution. All three are fictional projects; the file paths and line numbers are illustrative.
 
 | Example | Starts from | What it shows |
 |---|---|---|
 | [`01-greenfield-todo-cli/`](01-greenfield-todo-cli/) | an empty repository | design files for `medium` problems, a contract between two waves, a feature spread over two waves |
 | [`02-bugfix-batch/`](02-bugfix-batch/) | an existing web app | the smallest useful plan: three `low` fixes, three features, one wave |
+| [`03-autonomous-night-run/`](03-autonomous-night-run/) | an empty repository, autonomous flow | the `Flow:` line, assumed readings, a feature under manual review, a wave that waits for an auto-merged feature |
 
 ## 01 — a new tool from an empty repository
 
@@ -54,11 +55,53 @@ All three tasks run at once; each feature is offered for review on its own branc
 green, and merged when you approve it. A known failing test that needs network access is listed in the README and
 does not block the features.
 
+## 03 — a night run in autonomous flow
+
+```
+/wave-plan flow autonomous a Python package "wordstat" that counts the words of a text file, case-insensitive; a
+command "wordstat <file> --top N" that prints the most frequent words; a README with install and usage, which I want
+to read myself before it lands; export the counts as CSV for spreadsheets
+```
+
+`wave-plan` writes `plans/2026-11-04-wordstat-cli/` with four features and two waves:
+
+- `Flow: autonomous · target: integration/wordstat-cli · manual review: F3`
+- `Assumed (autonomous, not asked) · F1: do digits count as words? → yes: a word is a run of Unicode letters and digits with inner apostrophes; not chosen: letters only`
+- `Assumed (autonomous, not asked) · F2: what does --top default to? → 10; not chosen: every word`
+
+For the night run, preview the driver calls and then start the run with a $10 limit:
+
+```bash
+python <wave-method>/scripts/wave_driver.py plans/2026-11-04-wordstat-cli --repo . --dry-run
+python <wave-method>/scripts/wave_driver.py plans/2026-11-04-wordstat-cli --repo . --max-usd 10
+```
+
+Wave 1 runs A and C. `wave-run` auto-approves F1 and merges it into `integration/wordstat-cli`. F3 waits for your
+review. The F1 merge unlocks wave 2, which runs B and D and then auto-merges F2 and F4. `main` stays at its
+starting commit.
+
+In the morning, `report.md` shows review blocks for the merged F1, F2, and F4 and a merge command for F3. After
+reviewing F3, run its merge command, inspect the integration diff, and merge the branch from `main`:
+
+```
+/wave-run plans/2026-11-04-wordstat-cli merge F3
+git diff main...integration/wordstat-cli
+git merge --no-ff integration/wordstat-cli
+```
+
+To run without the driver, enter each command in a fresh session. The waves run without prompting for approval.
+
+```
+/wave-run plans/2026-11-04-wordstat-cli 1
+/wave-run plans/2026-11-04-wordstat-cli 2
+```
+
 ## Checking an example
 
-Both plans pass the status check:
+All three plans pass the status check:
 
 ```bash
 python skills/wave-plan/scripts/status_check.py examples/01-greenfield-todo-cli
 python skills/wave-plan/scripts/status_check.py examples/02-bugfix-batch
+python skills/wave-plan/scripts/status_check.py examples/03-autonomous-night-run
 ```

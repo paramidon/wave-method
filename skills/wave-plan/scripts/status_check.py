@@ -5,6 +5,8 @@ from pathlib import Path
 
 MARK = re.compile(r"⬜|🔄|👀|✅|⚠️|❌|➖")
 ENTRY = re.compile(r"^- \*\*\[(I\d+) · ([^\]]*)\]")
+FLOW = re.compile(r"- Flow: (manual|autonomous(?: · target: (integration/[A-Za-z0-9][A-Za-z0-9._-]*))?"
+                  r"(?: · manual review: (F\d+(?:, F\d+)*))?)")
 COLUMNS = {
     "Features": ("ID", "Status", "Merged"),
     "Waves": ("Wave", "Status"),
@@ -58,6 +60,32 @@ def tables(lines, report):
     return result
 
 
+def flow(lines, report):
+    """Return (flow, target, manual_review, line) of the README header; report malformed Flow lines."""
+    first_line = 0
+    first_text = ""
+    for line, text in enumerate(lines, 1):
+        if text.startswith("## "):
+            break
+        text = text.rstrip()
+        if not text.startswith("- Flow:"):
+            continue
+        if first_line:
+            report(line, "flow-line", "more than one Flow line")
+        else:
+            first_line, first_text = line, text
+
+    if first_line:
+        match = FLOW.fullmatch(first_text)
+        if match is None:
+            report(first_line, "flow-line",
+                   "expected '- Flow: manual' or '- Flow: autonomous · target: "
+                   f"integration/<name> · manual review: <F-IDs>', found '{first_text}'")
+        elif match[1] != "manual":
+            return "autonomous", match[2], match[3].split(", ") if match[3] else [], first_line
+    return "manual", None, [], first_line
+
+
 def problems(lines):
     entries = {}
     starts = [(i, ENTRY.match(line)) for i, line in enumerate(lines) if ENTRY.match(line)]
@@ -83,13 +111,20 @@ def check(folder):
     def report(file, line, rule, detail):
         violations.append(f"{file}:{line}: {rule}: {detail}")
 
+    report_readme = lambda line, rule, detail: report(readme, line, rule, detail)
     try:
-        parsed = tables(readme.read_text(encoding="utf-8").splitlines(),
-                        lambda line, rule, detail: report(readme, line, rule, detail))
+        readme_lines = readme.read_text(encoding="utf-8").splitlines()
+        parsed = tables(readme_lines, report_readme)
+        _, _, manual_review, flow_line = flow(readme_lines, report_readme)
         lines = problem_file.read_text(encoding="utf-8").splitlines() if problem_file.exists() else []
     except (OSError, UnicodeError, ValueError) as error:
         print(f"{readme}:1: {error}", file=sys.stderr)
         return 2
+    feature_ids = {row["ID"] for _, row in parsed["Features"]}
+    for feature_id in manual_review:
+        if feature_id not in feature_ids:
+            report(readme, flow_line, "flow-review-unknown",
+                   "manual review names missing feature " + feature_id)
     entries = problems(lines)
     items = {}
     for name, kind, key in (("Features", "feature", "ID"),
