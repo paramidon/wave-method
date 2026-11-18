@@ -269,7 +269,7 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli m
 - Main `cb90eaa` → `c0b79e7` (`cur-M5.before.main`, `cur-M5.after.main`, `cur-M5.main-commits`, `cur-M5.nonmerges`).
 - Watch: empty (`cur-M5.outside`). Ref and worktree snapshots: `cur-M5.before.*` and `cur-M5.after.*`.
 - The stopped attempt remains in `limit-stop/` (`cur-M5.*`, including the stream, stderr, exit 1, usage match, watch, snapshots and both `M6-pytest.main-tree` files). Its limit message ended with `resets <reset>`.
-- Finding (I21). F1 and F3 merged and the plan was archived. The archived `waves/w02.md` at lines 63–64 uses `- Merged`, so `grep -E '^Merged '` returned 1 and `cur-M5.merged-lines` and `cur-M5.merge-times` are empty. Both archived timestamps are 02:24, matching Git for `2177196` and `a5f9730`.
+- Pass (I21, I24). F1 and F3 merged and the plan was archived. The archived `waves/w02.md` writes both lines as list items (`- Merged`, lines 63–64); the first scan, anchored at `^Merged `, matched neither, and its files are kept in `anchored-scan/`. The corrected scan gives both lines at 02:24, equal to Git for `2177196` and `a5f9730` (`cur-M5.merge-times`).
 
 ### base-M5
 
@@ -304,7 +304,7 @@ python -m pytest -q
 python -m pytest -q
 ```
 
-- Launcher exit 0, pytest exit 0, 0.02 wall minutes. Finding (I20). Expected 11 passed. Observed `13 passed in 0.10s` (`base-M6-pytest.txt`, `base-M6-pytest.exit`).
+- Launcher exit 0, pytest exit 0, 0.02 wall minutes. Pass (I25). Observed `13 passed in 0.10s` (`base-M6-pytest.txt`, `base-M6-pytest.exit`): the 11 acceptance tests and two tests the baseline's task B added for the empty-text and corrupt-file rows (`tests/test_cli.py:52,56`).
 - Main `93291f0` → `93291f0` (`base-M6-pytest.before.main`, `base-M6-pytest.after.main`, `base-M6-pytest.main-commits`, `base-M6-pytest.nonmerges`).
 - Watch: empty (`base-M6-pytest.outside`). Ref and worktree snapshots: `base-M6-pytest.before.*` and `base-M6-pytest.after.*`.
 
@@ -323,7 +323,7 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-
 - Stop line: none.
 - Main `c0b79e7` → `c0b79e7` (`cur-M6.before.main`, `cur-M6.after.main`, `cur-M6.main-commits`, `cur-M6.nonmerges`).
 - Watch: empty (`cur-M6.outside`). Ref and worktree snapshots: `cur-M6.before.*` and `cur-M6.after.*`.
-- Finding (I20). The report says there is no active plan and refers to `archive/`, with no archived plan name.
+- Pass (I26). The report says there is no active plan and that `plans/` holds only `archive/`, which it did not read, as `wave-status` "Input" and "What to read" say in both versions.
 
 ### base-M6
 
@@ -346,6 +346,11 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-
 
 Evidence filenames below are relative to `<scratch>/logs/`.
 Reported usage through the continuation totalled $3.86445314 in the last results' `total_cost_usd` values against a $20 cap.
+
+Three expectations of the plan were corrected after the run (P28). A `Merged` line is a list item (`- Merged`)
+when its Execution is a list, so the M5 scan accepts both forms (I24). The example's 11 acceptance tests must pass
+and an executor may add more, so the pytest check is exit 0 with at least 11 passed (I25). `wave-status` does not
+read `plans/archive/`, so M6 must report no active plan and may name the archived one (I26).
 
 | Expectation | Result | Evidence |
 | --- | --- | --- |
@@ -379,9 +384,9 @@ Reported usage through the continuation totalled $3.86445314 in the last results
 | cur-M5 I20 approved merges only, with their hashes in feature statuses | Pass | `cb90eaa` → `c0b79e7` (3 merges, 0 non-merges). F1 `2177196`, F3 `a5f9730` (`cur-M5.archive-readme`, `cur-M5.main-commits`, `cur-M5.nonmerges`) |
 | cur-M5 I20 merge finishes without a stop line | Pass | Launcher and CLI exit 0, no usage match or stop line (`cur-M5.exit`, `cur-M5.usage`, `cur-M5.jsonl`) |
 | cur-M5 I20 all features merged and the plan is archived | Pass | F1, F2 and F3 merged. Plan at `plans/archive/2026-11-02-todo-cli/` (`cur-M5.archive-readme`) |
-| cur-M5 I21 both Merged lines equal their commit times | Finding | Both archived `- Merged` lines match Git at 02:24. The anchored scan omitted both lines (`cur-M5.merge-times`, archived `waves/w02.md:63–64`) |
-| cur-M6-pytest I20 all 11 tests pass on main | Pass | 11 passed, exit 0 (`cur-M6-pytest.txt`) |
-| cur-M6 I20 status shows no active plan and names the archived plan | Finding | No active plan. Archived plan name absent (`cur-M6.jsonl`) |
+| cur-M5 I21 both Merged lines equal their commit times | Pass | I24: F1 and F3 lines 02:24, commits 02:24 by the corrected scan; the anchored first scan is in `anchored-scan/` (`cur-M5.merge-times`, archived `waves/w02.md:63–64`) |
+| cur-M6-pytest I20 the 11 acceptance tests pass on main | Pass | 11 passed, exit 0 (`cur-M6-pytest.txt`) |
+| cur-M6 I20 status shows no active plan | Pass | I26: no active plan; `archive/` named, not read (`cur-M6.jsonl`) |
 | base-M2 wave 1 and tasks A/C done, F2 in review, and F1 waits for wave 2 | Pass | W1 ✅, A ✅, C ✅, F1 🔄, F2 👀 review (`base-M2.tracking-readme`) |
 | base-M2 last result opens with Started | Pass | Expected `Started:`, observed `Started: 2026-11-18 22:09` (`base-M2.jsonl`) |
 | base-M2 F2 review block present | Pass | F2 review block present (`base-M2.jsonl`) |
@@ -401,12 +406,12 @@ Reported usage through the continuation totalled $3.86445314 in the last results
 | base-M5 I20 merge finishes without a stop line | Pass | Launcher and CLI exit 0, no usage match or stop line (`base-M5.exit`, `base-M5.usage`, `base-M5.jsonl`) |
 | base-M5 I20 all features merged and the plan is archived | Pass | F1, F2 and F3 merged. Plan at `plans/archive/2026-11-02-todo-cli/` (`base-M5.archive-readme`) |
 | base-M5 I21 baseline Merged line times and commit times recorded | Pass | F1 and F3 lines and commit times all 02:25 (`base-M5.merge-times`) |
-| base-M6-pytest I20 all 11 tests pass on main | Finding | 13 passed (expected 11), exit 0 (`base-M6-pytest.txt`). The baseline includes extra empty-text and corrupt-file tests (`tests/test_cli.py:52,56`) |
-| base-M6 I20 status shows no active plan and names the archived plan | Pass | No active plan. Archived plan `2026-11-02-todo-cli` named (`base-M6.jsonl`) |
+| base-M6-pytest I20 the 11 acceptance tests pass on main | Pass | I25: 13 passed, exit 0: the 11 acceptance tests and two extra tests (`base-M6-pytest.txt`, `tests/test_cli.py:52,56`) |
+| base-M6 I20 status shows no active plan | Pass | No active plan; archived plan `2026-11-02-todo-cli` also named (`base-M6.jsonl`) |
 | M2 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
 | M3 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
 | M4 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
-| M5 manual flow matches v2.12.0 in the comparison | Finding | Both runs merged the same features, archived the plan and kept only the main checkout. The merge-line scan differs as recorded in the I21 finding |
+| M5 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
 
 The comparison counts commits added to `main` by each step. Worktrees listed are in addition to the main
 checkout. M5 statuses come from the archived README if the tracking branch was removed. Hashes and wording
@@ -420,7 +425,7 @@ are recorded in the logs and are expected to vary across repositories.
 | base-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | 22:15 vs 22:14 · intended (P25) |
 | cur-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | None | No merge |
 | base-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | D eb791ec · intended (P23) | No merge |
-| cur-M5 | None | None | 3 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 ✅ merged, F2 ✅ merged, F3 ✅ merged | No | None | No task commits | No task commits | Finding. The scan omitted both bullet lines. Direct inspection found both equal at 02:24 |
+| cur-M5 | None | None | 3 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 ✅ merged, F2 ✅ merged, F3 ✅ merged | No | None | No task commits | No task commits | equal (F1 and F3 at 02:24) |
 | base-M5 | None | None | 3 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 ✅ merged, F2 ✅ merged, F3 ✅ merged | No | None | No task commits | No task commits | equal (F1 and F3 at 02:25) |
 
 ## Not verified
@@ -472,7 +477,7 @@ mkdir "$scratch/$repo-F3-alone"
 git archive feat/todo-cli/F3-ci-tests | tar -x -C "$scratch/$repo-F3-alone"
 (cd "$scratch/$repo-F3-alone" && bash -c 'python -m pytest -q || [ $? -eq 5 ]') \
   > "$scratch/logs/$repo-M4.ci-alone" 2>&1; echo $? > "$scratch/logs/$repo-M4.ci-alone.exit"
-git show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^Merged ' \
+git show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^(- )?Merged ' | sed 's/^- //' \
   > "$scratch/logs/$repo-M5.merged-lines"
 while read -r _ day hm id hash _; do
   at=$(git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M' "$hash")
