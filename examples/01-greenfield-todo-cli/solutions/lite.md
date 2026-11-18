@@ -10,6 +10,9 @@ appears verbatim in the P2 "Behaviour" table or in its "Example session" block.
 ## P4. Tests on every push
 User problem: run the tests on every push · feature F3
 **Edit:** new `.github/workflows/test.yml`: on `push` and `pull_request`; matrix Python `3.10` and `3.12`;
-steps `actions/checkout@v4`, `actions/setup-python@v5`, `pip install -e . pytest`, `pytest -q` · **Check:**
+steps `actions/checkout@v4`, `actions/setup-python@v5`, `python -m pip install pytest`,
+`python -m pytest -q || [ $? -eq 5 ]`; no install of the project: `python -m` puts the checkout on `sys.path`, and
+exit 5 ("no tests collected") passes while F1 is not merged, so the workflow needs no file of another feature
+· **Check:**
 `python -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" .github/workflows/test.yml` succeeds (or any YAML
-linter), and the file names both Python versions.
+linter), and the file names both Python versions; the file contains neither `-e .` nor `pyproject`.

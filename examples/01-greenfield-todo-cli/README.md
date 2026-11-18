@@ -10,7 +10,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `todo-store-and-cli` | Tasks stored in `todo.json`, commands `add`, `list`, `done` | P1, P2 | A (1), B (2) | `pytest` green: `test_store.py` (5 cases), `test_cli.py` (6 cases) | ⬜ | wave 1 | | |
 | F2 | `usage-readme` | README with install and usage | P3 | C (1) | README shows install, the three commands and an example session | ⬜ | wave 1 | | |
-| F3 | `ci-tests` | Tests run on every push | P4 | D (2) | the workflow file is valid YAML and runs `pytest` on Python 3.10 and 3.12 | ⬜ | wave 2 | | |
+| F3 | `ci-tests` | Tests run on every push | P4 | D (2) | the workflow file is valid YAML, runs `pytest` on Python 3.10 and 3.12 and needs no file of F1 | ⬜ | wave 2 | | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -57,4 +57,7 @@ main branch with each feature merge.
 - Python 3.10+, standard library only at run time; `pytest` for tests.
 - The data file is `todo.json` in the current working folder; a missing file means an empty list.
 - P1 and P2 are one feature: a store without commands, or commands without a store, is useless on `main`.
+- F3's workflow installs only `pytest` and runs `python -m pytest` from the checkout,
+  so it needs no file of F1 and can be merged before or after it; with no tests yet, pytest's exit 5 counts as a
+  pass.
 - B needs A's API, so it runs in wave 2; F2 is ready for review after wave 1, F1 and F3 after wave 2.
