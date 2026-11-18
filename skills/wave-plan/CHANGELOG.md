@@ -4,6 +4,22 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
+- Unreleased — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A README line
+  `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>` lets `wave-run` approve a ready
+  feature itself when all its tasks are done, its check is green after merging the target, no open entry
+  concerns it, its commits pass the tier gate and it is not under manual review, and merge it into the
+  integration branch `integration/<name>` instead of the main branch, which autonomous flow never changes. Every
+  question of `wave-run` has a fixed answer (new `wave-run/autonomous.md`); the flow form
+  `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` switches it between waves. `wave-triage`
+  and `wave-plan` take `flow autonomous` as their first words and record assumed readings instead of asking; the
+  parts of an index share one integration branch, a later part is planned against it, and a claim ref
+  `refs/wave-method/claims/integration/<name>` lets one run at a time write it. Reports and `wave-status` show
+  the flow and every merged feature with its review block until the integration branch is merged. New
+  `scripts/wave_driver.py` (Python 3.9+, standard library only) runs an index or a plan overnight as headless
+  Claude Code sessions with rails, a lock and a guard, never pushes, and writes a morning report
+  (`docs/wave-driver.md`; print-mode findings in `docs/claude-print-mode.md`). `status_check.py` checks the
+  `Flow:` line (`flow-line`, `flow-review-unknown`); new example `examples/03-autonomous-night-run/`; release
+  archives include `scripts/`. A plan without a `Flow:` line behaves as before.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has

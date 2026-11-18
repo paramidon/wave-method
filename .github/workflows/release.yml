@@ -45,7 +45,7 @@ jobs:
         run: |
           name="wave-method-v${VERSION}"
           mkdir -p build dist
-          paths="skills install.sh install.ps1 LICENSE README.md docs .claude-plugin"
+          paths="skills scripts install.sh install.ps1 LICENSE README.md docs .claude-plugin"
           git archive --prefix="$name/" "$GITHUB_REF_NAME" $paths | tar -x -C build
           python .github/scripts/set_plugin_version.py "build/$name/.claude-plugin/plugin.json" "$VERSION"
           (cd build && zip -qr "../dist/$name.zip" "$name" && tar -czf "../dist/$name.tar.gz" "$name")
