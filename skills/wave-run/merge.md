@@ -66,6 +66,9 @@ In the tracking worktree, after the merges and rejections of this run:
   never with a replacement that can match another row; afterwards `git diff` of README.md changes no other row.
 - The Execution of the wave file of the feature's last wave (the last wave in its "Tasks (wave)" cell) gets one line
   per feature: `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash>` or `Rejected <YYYY-MM-DD HH:MM>: <feature-id> → I<n>`.
+  The time of a `Merged` line is the committer time of the commit its hash names, from
+  `git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M" <hash>`, never a clock reading or an estimate;
+  the time of a `Rejected` line is read from the clock (`layout.md`, "Run times").
 - New entries: as `SKILL.md` step 8 ("New problems").
 - Run the status check (`layout.md`, "Statuses"); archive if eligible (`layout.md`, "Archive").
 - Make **one** commit `Plan <plan>: merge — <parts>`, where `<parts>` joins with `; ` only the parts that apply,

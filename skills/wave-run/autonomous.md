@@ -124,10 +124,12 @@ earlier ones):
 
 Then `merge.md`, "Record", with these differences:
 
-- the Execution line is `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)`; a feature left unmerged gets
+- the Execution line is `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)`
+  (its time from the merge commit, as in `merge.md`, "Record"); a feature left unmerged gets
   `Not merged <YYYY-MM-DD HH:MM>: <feature-id> — <manual review · I<n> · main-dirty>`;
 - the brief `reviews/<feature>.md` of every merged feature gets the header line
-  ``- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, auto-approved`` after its `👀 review since` line;
+  ``- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, auto-approved`` after its `👀 review since` line,
+  with the same time;
 - remove the worktree of a merged feature but keep its branch; `wave-status` lists it as a leftover once the
   integration branch is in `<main branch>`;
 - no archive: the tracking branch and its worktree stay (`layout.md`, "Archive");
