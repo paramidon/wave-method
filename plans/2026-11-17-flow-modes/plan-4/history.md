@@ -128,3 +128,35 @@
     `main`. Review F1 after wave 3.
   - I13 and I14 are errors of the expectations, not of the skills: the timing line is last by `layout.md`, and
     `v2.12.0`'s cleanup commit is what P18 replaced. I13 is closed; I14 stays open until the third run marks it intended.
+
+## Re-plan 2026-11-19 at 5f4bbc3
+
+- Input: open entries I20, I21 (wave 7) and I23 (wave 8, task U). Wave 8 ⚠️, no wave 🔄. `main` (11d24b5, the merge of
+  the fourth re-plan, no file change) was merged into the tracking branch first (5f4bbc3).
+- Checked on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 6aece72: 33 status-check tests and 59 driver tests OK, all
+  three examples pass `status_check.py`, `git diff --check` clean. Wave 9 starts with no known failures.
+- I23 is a usage stop, not a defect: `cur-M5` exited 1 with the 5-hour limit message after 8 turns and changed no ref;
+  no later call started, as P22 says. Task U's scratch folder is still on the machine; both repositories are exactly
+  at their M4 snapshots (refs, worktrees, clean main checkouts, installed skills equal to F2's `skills/` and to
+  `v2.12.0`'s). So P27 continues the run from M4 instead of a fifth full run (about 3 USD and most of a usage window
+  just to reach the same state, with the same risk of a stop).
+- Read from the scratch repositories: `cur`'s M3 `Merged` line (22:11) equals its merge commit's time; `base`'s says
+  22:15 for a commit at 22:14. P27 records this before M5 deletes the tracking branch, so I21 is verified on `cur` even
+  if M5 stops again.
+- I20, I21 and I23 → task V (wave 9). U stays ⚠️ I23: V completes U's record, it does not replace it. Wave 7 stays ⚠️
+  until V closes I20 and I21. F2 is 🔄, waiting for wave 9.
+- Wave 9 has one medium task, an exception to "no solo medium wave": nothing else in the plan is open, and the
+  continuation's steps share one record file and one scratch state, so no split gives tasks with disjoint files.
+- To keep the README within its size goal, these assumptions moved here from it:
+
+  - The forced red is a test that skips until `wordstat/export.py` exists, so the run reaches wave 2 and only F4 turns
+    red; F4 staying ⚠️ after the night, after the user's merge and after a second dry run of the driver is "the
+    feature that must stay blocked".
+  - I8's fix enforces the existing rule (entry, revert, blocked feature) instead of letting the coordinator delete
+    generated files: a cleanup commit hides history from the review. The cause, `git add -A` in a project without a
+    `.gitignore`, is closed in the task header; auto-approval gets the same scope test as a second gate.
+  - The forced out-of-scope edit is a git hook in the scratch repository, not a prompt instruction an executor may
+    refuse; since wave 7 it re-adds `stray.txt` to every commit of task B whose parent lacks it (B amended away P21's
+    one-shot version, I16). `CLAUDE_ENV_FILE` isolation passed P0 in both second runs.
+  - Known test failures: none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 942c4b1 (fourth re-plan, 2026-11-18:
+    33 status-check tests and 59 driver tests OK, all three examples pass, `git diff --check` clean).
