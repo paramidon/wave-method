@@ -49,3 +49,29 @@
 - Tasks I and J are ➖ superseded by N and O, which rewrite the same records. All five entries stay open with `→`
   tasks of waves 5 and 6; wave 4 stays ⚠️ until wave 6 closes them. F2 is 🔄, waiting for wave 5. All fixes are F2
   tasks: the entries block F2, and F2's records are only meaningful with the fixes in place.
+
+## Re-plan 2026-11-18 at e3cf9f7
+
+- Input: open entries I7, I8 (wave 4) and I12–I17 (wave 6, tasks N and O). Wave 6 ⚠️, no wave 🔄. `main` (8c69f63, the
+  merge of the second re-plan, no file change) was merged into the tracking branch first (e3cf9f7).
+- Checked on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 30dc1db: 33 status-check tests and 59 driver tests OK, all
+  three examples pass `status_check.py`, `git diff --check` clean. Wave 7 starts with no known failures.
+- I12 and I7: base M4 ended at Claude's 5-hour usage message; cur had run its whole chain first, so nothing after M3 is
+  comparable. P22 makes a usage limit a recorded `Not run (usage limit)` and interleaves `cur` and `base` step by step.
+- I13 confirmed as a plan error (closed in wave 6's "Closed problems"), like I4: `layout.md` "Run times" puts the timing
+  line last, and both versions did so.
+- I14: `v2.12.0` cleaning up task A's bytecode is the behaviour P18 replaced; the third run marks such a difference
+  `intended (P18)`. It stays open until that record exists.
+- I15 confirmed with git here: `-m x -m "Wave-Model: m" -m "Co-Authored-By: …"` gives an empty
+  `%(trailers:key=Wave-Model,valueonly)`; the same two trailers in one paragraph give `m`. The `Co-Authored-By`
+  paragraph comes from Claude Code's commit attribution. The header allowed it, and step 5 did not name the git command
+  that `layout.md` gives → P23 (low, task P).
+- I16: instead of injecting after the executor's last amend (no hook point for that in git), the hook now fires on every
+  commit of task B whose parent lacks `stray.txt`. Tried here in a throwaway repository: the first commit gets the file
+  with its message unchanged; an amend that drops it gets it back; a new commit of B that deletes it is kept and the
+  scope command still lists the file; another subject adds nothing; `git revert --no-edit H..HEAD` exits 0 and leaves
+  no net change. P21's one-shot marker version is replaced in P22.
+- I17: P22 makes `mktemp -d` the first command and every file of the run start under scratch; the watch is unchanged
+  (watching the whole system temp folder would catch other processes' files).
+- Tasks N and O are ➖ superseded by Q and R, which rewrite the same records. Q and R both run after P, in parallel; the
+  entries stay open with `→` wave 7 tasks; waves 4 and 6 stay ⚠️ until wave 7 closes them. F2 is 🔄, waiting for wave 7.
