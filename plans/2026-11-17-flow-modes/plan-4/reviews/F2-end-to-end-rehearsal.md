@@ -11,6 +11,9 @@
 - P: Use Git to read the model from a task commit with a contiguous trailer block.
 - R: In the autonomous rehearsal record, follow the scope finding for stray.txt to the revert and the empty merge cells of the blocked features.
 
+- S: Run example 01's CI command from F3 before F1 merges. CI passes when pytest collects no tests.
+- T: Compare the time in a Merged entry with the merge commit's committer time in Git. The two values match.
+
 ## Tasks
 
 - K (wave 5) — Check every task commit for out-of-scope files and require clean scope for auto-approval.
@@ -18,3 +21,5 @@
 - M (wave 5) — Supply the full README session for example 01 and record the fixes in the changelog.
 - P (wave 7) — Require a single trailer block and verify the model with Git.
 - R (wave 7) — Complete the isolated autonomous rehearsal and verify that the scope gate reverts out-of-scope work and holds the feature back.
+- S (wave 8) — Make example 01's CI independent of the application package so F3 can pass in isolation.
+- T (wave 8) — Take Merged entry times from their merge commits in manual and autonomous flow.
