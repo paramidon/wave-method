@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8 | A (1), B (1), C (1), D (1) | the six acceptance tests of `solutions/P8-flow-docs.md` hold: 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve | ⬜ | wave 1 | | |
+| F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8 | A (1), B (1), C (1), D (1) | the six acceptance tests of `solutions/P8-flow-docs.md` hold: 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve | 🔄 in progress | wave 1 | `feat/flow-modes-p4/F1-flow-docs-and-checks` | |
 | F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories | P9 | E (2), F (2) | `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` have the six sections of `solutions/P9-end-to-end-runs.md` "Record format", every expectation is Pass, Finding or Not run, and the check command is green | ⬜ | wave 2 | | |
 
 Merged: short hash of the merge commit into the main branch.
@@ -18,17 +18,17 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D | 🔄 since 2026-11-18 15:19 |
 | 2 | `waves/w02.md` | E, F | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `readme-flow-sections` | F1 | 1 | medium | ⬜ |
-| B | `autonomous-example` | F1 | 1 | medium | ⬜ |
-| C | `status-check-flow` | F1 | 1 | medium | ⬜ |
-| D | `changelog-release-files` | F1 | 1 | low | ⬜ |
+| A | `readme-flow-sections` | F1 | 1 | medium | 🔄 |
+| B | `autonomous-example` | F1 | 1 | medium | 🔄 |
+| C | `status-check-flow` | F1 | 1 | medium | 🔄 |
+| D | `changelog-release-files` | F1 | 1 | low | 🔄 |
 | E | `manual-flow-run` | F2 | 2 | medium | ⬜ |
 | F | `autonomous-flow-run` | F2 | 2 | medium | ⬜ |
 
