@@ -33,7 +33,7 @@ Merged: short hash of the merge commit into the main branch.
 | 6 | `waves/w06.md` | N, O | ✅ (verified by P, Q and R, wave 7) |
 | 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I20, I21 |
 | 8 | `waves/w08.md` | S, T, U (after S, T) | ⚠️ I23 |
-| 9 | `waves/w09.md` | V | ⬜ |
+| 9 | `waves/w09.md` | V | 🔄 since 2026-11-19 02:20 |
 
 ## Tasks
 
@@ -60,7 +60,7 @@ Merged: short hash of the merge commit into the main branch.
 | S | `example-ci-independence` | F2 | 8 | low | ✅ |
 | T | `merge-time-from-git` | F2 | 8 | low | ✅ |
 | U | `manual-flow-fourth-run` | F2 | 8 | medium | ⚠️ I23 |
-| V | `manual-run-continuation` | F2 | 9 | medium | ⬜ |
+| V | `manual-run-continuation` | F2 | 9 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p4` and reach the
