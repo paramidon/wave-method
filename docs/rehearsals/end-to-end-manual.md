@@ -1,15 +1,28 @@
 # Rehearsal: manual flow end to end
 
-2026-11-18 · Claude Code 2.1.326 · source `47e212d` · baseline `v2.12.0`.
+2026-11-18 · Claude Code 2.1.326 · source `c07cbe7`
 
 ## Setup
 
-Git Bash created the scratch folder first. Claude Code reported 2.1.326. The shared scratch venv installed pytest 9.2.0 and PyYAML 6.0.3.
+The two scratch repositories used the same corrected example, with no `Flow:` line. Current skills came from
+`<working folder>` and baseline skills came from the `v2.12.0` archive.
 
-~~~bash
+The first attempt was stopped immediately after `cur-M2`. The shell launcher lost a continuation while passing
+the command through the tool transport. Claude returned a result, but Bash did not write the exit code. Its scratch
+evidence was kept in the first scratch directory. Its P0 exited 0, and both Claude usage tests and all five watches
+were empty. A fresh `<scratch>` was created for the documented run. Its Bash launcher passed `bash -n` and captured
+17 from a dummy process. The $20 cap includes the first attempt's $0.517246515.
+
+Before the retry's `env.sh` existed, the launcher ran `mktemp -d`, printed the scratch location, and ran the
+setup lines through creation of `env.sh`. The first attempt also resolved the scratch path with `cygpath -am`
+and read the specified plan sections before creating its environment. Neither attempt ran a source check before
+sourcing `env.sh`.
+
+```bash
 scratch=$(mktemp -d)
+printf '%s\n' "$scratch"
 ws=$(cygpath -m "$scratch" 2>/dev/null || printf '%s' "$scratch")
-mkdir -p "$scratch/logs" "$scratch/tmp" "$scratch/userbase" "$scratch/pip-cache" "$scratch/launch"
+mkdir -p "$scratch/logs" "$scratch/tmp" "$scratch/userbase" "$scratch/pip-cache"
 gpy=$(command -v python); usersite=$("$gpy" -m site --user-site)
 python -m venv "$scratch/venv"
 bin="$scratch/venv/Scripts"; [ -d "$bin" ] || bin="$scratch/venv/bin"
@@ -23,15 +36,15 @@ export TMPDIR="$ws/tmp" TMP="$ws/tmp" TEMP="$ws/tmp"
 EOF
 . "$scratch/env.sh"
 export CLAUDE_ENV_FILE="$ws/env.sh"
-"$bin/python" -m pip install pytest pyyaml
+"$bin/python" -m pip install pytest pyyaml > "$scratch/logs/setup-pip.txt" 2>&1
+pip_status=$?
 touch "$scratch/logs/start.stamp"
-~~~
+printf '%s\n' "$pip_status" > "$scratch/logs/setup-pip.exit"
+printf '%s\n%s\n' "$gpy" "$usersite" > "$scratch/logs/setup-host.txt"
+claude --version > "$scratch/logs/claude-version.txt"
 
-Both repositories used the current example 01. The baseline used the release's skills and installer.
-
-~~~bash
 working='<working folder>'
-mkdir "$scratch/v2120"
+mkdir -p "$scratch/v2120" "$scratch/launch"
 git -C "$working" archive v2.12.0 skills install.sh | tar -x -C "$scratch/v2120"
 for repo in cur base; do
   source="$working"; [ "$repo" = cur ] || source="$scratch/v2120"
@@ -51,332 +64,412 @@ for repo in cur base; do
   git -C "$scratch/$repo" branch plan/todo-cli
 done
 git -C "$working" for-each-ref --format='%(refname) %(objectname)' > "$scratch/logs/working-before.refs"
-~~~
+```
 
-Every fresh step shell sourced the same env file and exported `CLAUDE_ENV_FILE`. The M-step launchers also inherited PYTHONDONTWRITEBYTECODE=1 on both sides. The scratch repositories, their worktrees, the tag archive, venv, temp directory, userbase and pip cache were created directly under <scratch>. The step and inspection launchers were created in <scratch>/launch. Setup output, notes, exit codes, usage checks, snapshots, reports and other evidence were created in <scratch>/logs. The only file written in the working folder was this record.
+The venv, dependencies, Python temp and user base, and pip cache lived under `<scratch>/venv`, `tmp`, `userbase`
+and `pip-cache`. The baseline source archive was extracted to `<scratch>/v2120`. The rehearsal repositories,
+installed skills, plans, linked worktrees and any extracted F3 trees lived directly under `<scratch>`. The launcher,
+log reader and record generator lived in `<scratch>/launch`. Session streams, exit codes, elapsed times, watch,
+usage, snapshots, Git and test evidence lived in `<scratch>/logs`. The public record is the only changed source
+file. The watch covers the global Python user site and `/c/tmp`. The source checks also set `PYTHONDONTWRITEBYTECODE=1`.
 
-The early supplemental source checks used the host's default temporary directory under `<home>` for their transient test fixtures. The final source check rerun used `<scratch>/tmp` for `TMPDIR`, `TMP` and `TEMP`. The preliminary test output and the final check logs were both written directly to `<scratch>/logs`.
-
-Before and after each step the launcher captured refs, worktrees and main in <tag>.<before|after>.refs, <tag>.<before|after>.worktrees and <tag>.<before|after>.main using git for-each-ref, git worktree list --porcelain and git rev-parse main. The <tag>.<before|after>.readme files came from the tracking branch. M3 and M5 were user approvals, and their first-parent records came from git log --merges --first-parent and git rev-list --no-merges --first-parent <before>..main. After each Claude call the usage test ran before the after-snapshots. Every executed step then ran the watch.
-
-~~~bash
-grep -l -i -E 'hit your .*limit|usage limit' "$scratch/logs/$tag.jsonl" "$scratch/logs/$tag.err"
-{ find "$usersite" -maxdepth 1 -newer "$scratch/logs/start.stamp" 2>/dev/null
-  [ -d /c/tmp ] && find /c/tmp -maxdepth 1 -newer "$scratch/logs/start.stamp"; } > "$scratch/logs/$tag.outside"
-~~~
-
-After M2 and M4, each repository produced its task commit evidence with these commands.
-
-~~~bash
-git -C "$scratch/$repo" log --all --no-merges --grep="^todo-cli F[0-9]* / [A-Z]*:" \
-  --format="%h %s | %(trailers:key=Wave-Model,valueonly,separator=%x2C)" > "$scratch/logs/$tag.trailers"
-git -C "$scratch/$repo" log --all --no-merges --grep="^todo-cli F[0-9]* / [A-Z]*:" --name-only \
-  --format="== %h %s" > "$scratch/logs/$tag.paths"
-~~~
+On Git Bash, the M4 workflow read initially exited 128 in each repository. MSYS rewrote the Git revision
+and file argument `feat/todo-cli/F3-ci-tests:.github/workflows/test.yml` as a Windows path list. The original
+files and errors are retained as `cur-M4.workflow*.msys-original` and `base-M4.workflow*.msys-original` in
+`<scratch>/logs`. A command-scoped `MSYS2_ARG_CONV_EXCL='feat/todo-cli/F3-ci-tests:'` passed the argument to Git
+intact. Both workflow reads then exited 0 and produced content. The Claude calls and standalone CI checks had
+already completed and were not repeated.
 
 ## Runs
 
 ### P0
 
-~~~bash
-cd "$scratch/cur"
+```bash
 probe='Run this one command with the Bash tool: command -v python; python -c "import sys, tempfile; print(sys.prefix); print(tempfile.gettempdir())"; echo "pathconv=${MSYS_NO_PATHCONV-unset}". Then launch one subagent and have it run the same command with its Bash tool. Reply with both outputs verbatim.'
 MSYS_NO_PATHCONV=1 timeout 600 claude -p "$probe" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model haiku \
   --max-turns 8 --max-budget-usd 0.3 < /dev/null > "$scratch/logs/P0.jsonl" 2> "$scratch/logs/P0.err"; \
   echo $? > "$scratch/logs/P0.exit"
-~~~
+```
 
-- Exit 0, wall 0.15 min, `P0.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-haiku-5-5`, 1 turns, $0.00634888. First line: `The subagent finished and its output matches mine:`. Last line: ```` ``` ````. No stop line.
-- Pass. The coordinator and subagent Bash `tool_result` events show `<scratch>/venv/Scripts/python`, prefix `<scratch>/venv`, temp `<scratch>/tmp` and `pathconv=unset`.
+- Exit 0. Usage test: no match. Model `claude-haiku-5-5`, 1 turns, `total_cost_usd` 0.00493779, 0.15 wall minutes (`P0.jsonl`, `P0.err`, `P0.exit`, `P0.usage`).
+- First non-empty line: The subagent finished. Its output, verbatim:
+- Last non-empty line: It matches my own run above.
+- Stop line: none.
+- Watch: empty (`P0.outside`). Ref and worktree snapshots: `P0.before.*` and `P0.after.*`.
+- Pass. The main session and subagent used the scratch venv and temp directory.
 
 ### cur-M0
 
-~~~bash
-cd "$scratch/cur"
-python "$working/skills/wave-plan/scripts/status_check.py" plans/2026-11-02-todo-cli > "$scratch/logs/cur-M0.out" 2> "$scratch/logs/cur-M0.err"; \
-  echo $? > "$scratch/logs/cur-M0.exit"
-~~~
+```bash
+python "<working folder>/skills/wave-plan/scripts/status_check.py" plans/2026-11-02-todo-cli
+```
 
-- Exit 0, wall 0.00 min, `cur-M0.outside` empty. Usage test does not apply to Python steps.
-- Pass. `cur-M0.out` and `cur-M0.err` were empty.
+- Exit 0, 0.00 wall minutes. No output (`cur-M0.txt`, `cur-M0.exit`).
+- Watch: empty (`cur-M0.outside`). Ref and worktree snapshots: `cur-M0.before.*` and `cur-M0.after.*`.
+- Pass. The status check was silent.
 
 ### base-M0
 
-~~~bash
-cd "$scratch/base"
-python "$working/skills/wave-plan/scripts/status_check.py" plans/2026-11-02-todo-cli > "$scratch/logs/base-M0.out" 2> "$scratch/logs/base-M0.err"; \
-  echo $? > "$scratch/logs/base-M0.exit"
-~~~
+```bash
+python "<working folder>/skills/wave-plan/scripts/status_check.py" plans/2026-11-02-todo-cli
+```
 
-- Exit 0, wall 0.00 min, `base-M0.outside` empty. Usage test does not apply to Python steps.
-- Pass. `base-M0.out` and `base-M0.err` were empty.
+- Exit 0, 0.00 wall minutes. No output (`base-M0.txt`, `base-M0.exit`).
+- Watch: empty (`base-M0.outside`). Ref and worktree snapshots: `base-M0.before.*` and `base-M0.after.*`.
+- Pass. The status check was silent.
 
 ### cur-M1
 
-~~~bash
-cd "$scratch/cur"
-python "$working/scripts/wave_driver.py" plans/2026-11-02-todo-cli --repo . --dry-run > "$scratch/logs/cur-M1.out" 2> "$scratch/logs/cur-M1.err"; \
-  echo $? > "$scratch/logs/cur-M1.exit"
-~~~
+```bash
+python "<working folder>/scripts/wave_driver.py" plans/2026-11-02-todo-cli --repo . --dry-run
+```
 
-- Exit 0, wall 0.00 min, `cur-M1.outside` empty. Usage test does not apply to Python steps.
-- Pass. `cur-M1.out` contained the single line `next: nothing — plans/2026-11-02-todo-cli: manual flow: the driver runs autonomous plans only`. `cur-M1.driver-dir` recorded that `<scratch>/cur.wave-driver` was absent.
+- Exit 0, 0.00 wall minutes. next: nothing — plans/2026-11-02-todo-cli: manual flow: the driver runs autonomous plans only (`cur-M1.txt`, `cur-M1.exit`).
+- Watch: empty (`cur-M1.outside`). Ref and worktree snapshots: `cur-M1.before.*` and `cur-M1.after.*`.
+- Pass. The driver skipped the manual plan and left no driver folder.
 
 ### cur-M2
 
-~~~bash
-cd "$scratch/cur"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli 1" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 400 --max-budget-usd 8 < /dev/null > "$scratch/logs/cur-M2.jsonl" 2> "$scratch/logs/cur-M2.err"; \
   echo $? > "$scratch/logs/cur-M2.exit"
-~~~
+```
 
-- Exit 0, wall 1.73 min, `cur-M2.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 9 turns, $0.537097135. First line: `Started: 2026-11-18 20:53`. Last line: `Started: 2026-11-18 20:53 · Finished: 2026-11-18 20:54 (1 min)`. No stop line. Penultimate non-empty line: `Merge F2 "README with install and usage" — adds the user README (feat/todo-cli/F2-usage-readme) into main? Answer: merge F2 · later · problems F2: <what is wrong>`.
-- Pass. Wave 1 and tasks A and C completed, F1 waited for wave 2, and F2 entered review with a merge question. The report showed `Flow: manual`.
-- Pass. `main` stayed at `d619577`. No integration branch or claim ref appeared and the tracking README had no `Flow:` line.
-- Pass. Task A `d146338` recorded `claude-sonnet-5-5` and task C `1a87ba3` recorded `claude-haiku-5-5`. Their changed files matched the task scopes.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 10 turns, `total_cost_usd` 0.51191196, 1.60 wall minutes (`cur-M2.jsonl`, `cur-M2.err`, `cur-M2.exit`, `cur-M2.usage`).
+- First non-empty line: Started: 2026-11-18 22:07
+- Last non-empty line: Started: 2026-11-18 22:07 · Finished: 2026-11-18 22:09 (2 min)
+- Stop line: none.
+- Watch: empty (`cur-M2.outside`). Ref and worktree snapshots: `cur-M2.before.*` and `cur-M2.after.*`.
+- Pass. Wave 1 completed and F2 was offered for review.
+
+```text
+Merge F2 "README with install and usage" — adds the user README (`feat/todo-cli/F2-usage-readme`) into main? Answer: merge F2 · later · problems F2: <what is wrong>
+Started: 2026-11-18 22:07 · Finished: 2026-11-18 22:09 (2 min)
+```
 
 ### base-M2
 
-~~~bash
-cd "$scratch/base"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli 1" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 400 --max-budget-usd 8 < /dev/null > "$scratch/logs/base-M2.jsonl" 2> "$scratch/logs/base-M2.err"; \
   echo $? > "$scratch/logs/base-M2.exit"
-~~~
+```
 
-- Exit 0, wall 1.52 min, `base-M2.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 7 turns, $0.41255662. First line: `Started: 2026-11-18 20:55`. Last line: `Started: 2026-11-18 20:55 · Finished: 2026-11-18 20:56 (1 min)`. No stop line. Penultimate non-empty line: `Merge F2 "README with install and usage" — adds a README with install steps and an example session (feat/todo-cli/F2-usage-readme) into main? Answer: merge F2 · later · problems F2: <what is wrong>`.
-- Pass. Wave 1 and tasks A and C completed, F1 waited for wave 2, and F2 entered review with a merge question.
-- Pass. `main` stayed at `7903881`. No integration branch or claim ref appeared and the tracking README had no `Flow:` line.
-- Baseline evidence. Task A `8aa3ed0` recorded `claude-sonnet-5-5` and task C `7c9bc9b` recorded `claude-haiku-5-5`. Their changed files matched the task scopes.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 6 turns, `total_cost_usd` 0.41872633, 1.52 wall minutes (`base-M2.jsonl`, `base-M2.err`, `base-M2.exit`, `base-M2.usage`).
+- First non-empty line: Started: 2026-11-18 22:09
+- Last non-empty line: Started: 2026-11-18 22:09 · Finished: 2026-11-18 22:10 (1 min)
+- Stop line: none.
+- Watch: empty (`base-M2.outside`). Ref and worktree snapshots: `base-M2.before.*` and `base-M2.after.*`.
+- Pass. Wave 1 completed and F2 was offered for review.
+
+```text
+Merge F2 "README with install and usage" — adds a README with install steps, the three commands and an example session (feat/todo-cli/F2-usage-readme) into main? Answer: merge F2 · later · problems F2: <what is wrong>
+Started: 2026-11-18 22:09 · Finished: 2026-11-18 22:10 (1 min)
+```
 
 ### cur-M3
 
-~~~bash
-cd "$scratch/cur"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli merge F2" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 100 --max-budget-usd 3 < /dev/null > "$scratch/logs/cur-M3.jsonl" 2> "$scratch/logs/cur-M3.err"; \
   echo $? > "$scratch/logs/cur-M3.exit"
-~~~
+```
 
-- Exit 0, wall 0.62 min, `cur-M3.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 11 turns, $0.2862987. First line: `Started: 2026-11-18 20:57`. Last line: `Started: 2026-11-18 20:57 · Finished: 2026-11-18 20:57 (under 1 min)`. No stop line.
-- Pass. Main advanced from d619577 to 1d4c550. The F2 merge was b16f4d0 and the tracking status merge was 1d4c550. There were no first-parent non-merges. The tracking README records F2 as merged at b16f4d0.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 14 turns, `total_cost_usd` 0.31501240, 0.73 wall minutes (`cur-M3.jsonl`, `cur-M3.err`, `cur-M3.exit`, `cur-M3.usage`).
+- First non-empty line: Started: 2026-11-18 22:11
+- Last non-empty line: Started: 2026-11-18 22:11 · Finished: 2026-11-18 22:13 (2 min)
+- Stop line: none.
+- Watch: empty (`cur-M3.outside`). Ref and worktree snapshots: `cur-M3.before.*` and `cur-M3.after.*`.
+- Pass. F2 merged with its tracking status update.
 
 ### base-M3
 
-~~~bash
-cd "$scratch/base"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli merge F2" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 100 --max-budget-usd 3 < /dev/null > "$scratch/logs/base-M3.jsonl" 2> "$scratch/logs/base-M3.err"; \
   echo $? > "$scratch/logs/base-M3.exit"
-~~~
+```
 
-- Exit 0, wall 0.53 min, `base-M3.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 10 turns, $0.2149266. First line: `## Merge · todo-cli`. Last line: `Started: 2026-11-18 20:58 · Finished: 2026-11-18 20:58 (under 1 min)`. No stop line.
-- Pass. Main advanced from 7903881 to 671ea48. The F2 merge was 8cddee5 and the tracking status merge was 671ea48. There were no first-parent non-merges. The tracking README records F2 as merged at 8cddee5.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 12 turns, `total_cost_usd` 0.21804060, 0.57 wall minutes (`base-M3.jsonl`, `base-M3.err`, `base-M3.exit`, `base-M3.usage`).
+- First non-empty line: Started: 2026-11-18 22:14
+- Last non-empty line: One correction: the `Merged 2026-11-18 22:15` line in `waves/w01.md` Execution has a time one minute later than the clock at the end of the run. I typed the time by hand instead of reading it from the clock.
+- Stop line: none.
+- Watch: empty (`base-M3.outside`). Ref and worktree snapshots: `base-M3.before.*` and `base-M3.after.*`.
+- Pass. F2 merged with its tracking status update.
 
 ### cur-M4
 
-~~~bash
-cd "$scratch/cur"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli 2" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 400 --max-budget-usd 8 < /dev/null > "$scratch/logs/cur-M4.jsonl" 2> "$scratch/logs/cur-M4.err"; \
   echo $? > "$scratch/logs/cur-M4.exit"
-~~~
+```
 
-- Exit 0, wall 1.75 min, `cur-M4.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 8 turns, $0.527655285. First line: `Started: 2026-11-18 20:59`. Last line: `Started: 2026-11-18 20:59 · Finished: 2026-11-18 21:00 (1 min)`. No stop line. Penultimate non-empty line: ``Merge F1 "Tasks stored in `todo.json`, commands `add`, `list`, `done`" — adds the `todo` command with `add`, `list` and `done` (feat/todo-cli/F1-todo-store-and-cli) into main? Answer: merge F1 · later · problems F1: <what is wrong>``.
-- Finding. Expected wave 2 and B/D complete, F1 and F3 in review and a question about both approvals. B completed and F1 entered review. The report asked only about F1 and marked wave 2, D and F3 with I1. Task D's workflow at fc205c8 requires an editable install, and that branch has no pyproject.toml. The coordinator's entry is in cur-M4.problems (tracking commit 50ed7ad).
-- Pass. Main stayed at 1d4c550. All four task commits had readable model trailers and only their declared files. The P4 YAML and version check passed and the F1 worktree's pytest run reported 11 passed.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 6 turns, `total_cost_usd` 0.55906840, 1.73 wall minutes (`cur-M4.jsonl`, `cur-M4.err`, `cur-M4.exit`, `cur-M4.usage`).
+- First non-empty line: Started: 2026-11-18 22:15
+- Last non-empty line: Started: 2026-11-18 22:15 · Finished: 2026-11-18 22:17 (2 min)
+- Stop line: none.
+- Watch: empty (`cur-M4.outside`). Ref and worktree snapshots: `cur-M4.before.*` and `cur-M4.after.*`.
+- Pass. Wave 2 completed and F1 and F3 were offered for review.
+
+```text
+Merge F1 "Tasks stored in todo.json, commands add, list, done" — adds the `todo` tool with `add`, `list` and `done` (feat/todo-cli/F1-todo-store-and-cli) into main? Answer: merge F1 · later · problems F1: <what is wrong>
+Merge F3 "Tests run on every push" — adds a GitHub Actions workflow that runs pytest on Python 3.10 and 3.12 (feat/todo-cli/F3-ci-tests) into main? Answer: merge F3 · later · problems F3: <what is wrong>
+Started: 2026-11-18 22:15 · Finished: 2026-11-18 22:17 (2 min)
+```
 
 ### base-M4
 
-~~~bash
-cd "$scratch/base"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli 2" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 400 --max-budget-usd 8 < /dev/null > "$scratch/logs/base-M4.jsonl" 2> "$scratch/logs/base-M4.err"; \
   echo $? > "$scratch/logs/base-M4.exit"
-~~~
+```
 
-- Exit 0, wall 1.40 min, `base-M4.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 7 turns, $0.403701265. First line: `Started: 2026-11-18 21:01`. Last line: `Started: 2026-11-18 21:01 · Finished: 2026-11-18 21:02 (1 min)`. No stop line. Penultimate non-empty line: ``Merge F3 "Tests run on every push" — adds the GitHub Actions workflow that runs `pytest` on Python 3.10 and 3.12 (feat/todo-cli/F3-ci-tests) into main? Answer: merge F3 · later · problems F3: <what is wrong>``. Immediately preceding F1 question: ``Merge F1 "Tasks stored in `todo.json`, commands `add`, `list`, `done`" — adds the `todo` command with `add`, `list` and `done` (feat/todo-cli/F1-todo-store-and-cli) into main? Answer: merge F1 · later · problems F1: <what is wrong>``.
-- Pass. Wave 2 and B/D completed, both F1 and F3 entered review and main stayed at 671ea48. The review brief acknowledged that the editable CI install needs F1's pyproject.toml.
-- Finding. Expected the penultimate non-empty line to ask about both merges. The report put the F1 and F3 questions on consecutive lines, with F3 immediately before the footer. Runs quotes both questions from the same last result.
-- Baseline evidence. Four task commits carried readable models and changed only their declared paths. The P4 YAML and version check passed and the F1 worktree's pytest run reported 11 passed.
+- Exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 7 turns, `total_cost_usd` 0.43396740, 1.55 wall minutes (`base-M4.jsonl`, `base-M4.err`, `base-M4.exit`, `base-M4.usage`).
+- First non-empty line: Started: 2026-11-18 22:18
+- Last non-empty line: Started: 2026-11-18 22:18 · Finished: 2026-11-18 22:19 (1 min)
+- Stop line: none.
+- Watch: empty (`base-M4.outside`). Ref and worktree snapshots: `base-M4.before.*` and `base-M4.after.*`.
+- Pass. Wave 2 completed and F1 and F3 were offered for review.
+
+```text
+Merge F1 "Tasks stored in `todo.json`, commands `add`, `list`, `done`" — adds the `todo` command with `add`, `list` and `done` (feat/todo-cli/F1-todo-store-and-cli) into main? Answer: merge F1 · later · problems F1: <what is wrong>
+Merge F3 "Tests run on every push" — adds the CI workflow for Python 3.10 and 3.12 (feat/todo-cli/F3-ci-tests) into main? Answer: merge F3 · later · problems F3: <what is wrong>
+Started: 2026-11-18 22:18 · Finished: 2026-11-18 22:19 (1 min)
+```
 
 ### cur-M5
 
-~~~bash
-cd "$scratch/cur"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli merge F1 F3" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 100 --max-budget-usd 3 < /dev/null > "$scratch/logs/cur-M5.jsonl" 2> "$scratch/logs/cur-M5.err"; \
   echo $? > "$scratch/logs/cur-M5.exit"
-~~~
+```
 
-- Exit 0, wall 0.28 min, `cur-M5.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 6 turns, $0.2185975. First line: `Started: 2026-11-18 21:03`. Last line: `Started: 2026-11-18 21:03 · Finished: 2026-11-18 21:03 (under 1 min)`. Stop line: `` Stop not-ready: F3 is ⚠️ blocked (I1), not 👀 review, so nothing was merged, F1 included — next: `/wave-run plans/2026-11-02-todo-cli merge F1` · `$wave-run plans/2026-11-02-todo-cli merge F1` ``.
-- Finding. Expected the approval to merge F1 and F3 and archive the plan. The command stopped at not-ready because F3 was blocked by I1. Neither feature merged. Main stayed at 1d4c550 and both first-parent lists were empty. F1 stayed in review and the plan remained active.
+- Exit 1. Usage test: match. Model `claude-sonnet-5-5`, 8 turns, `total_cost_usd` 0.23071250, 0.33 wall minutes (`cur-M5.jsonl`, `cur-M5.err`, `cur-M5.exit`, `cur-M5.usage`).
+- Not run (usage limit). You've hit your 5-hour limit · resets <reset>
+- Stop line: none.
+- Main cb90eaa → cb90eaa. No first-parent commits were added (`cur-M5.before.main`, `cur-M5.after.main`, `cur-M5.main-commits`, `cur-M5.nonmerges`).
+- Watch: empty (`cur-M5.outside`). Ref and worktree snapshots: `cur-M5.before.*` and `cur-M5.after.*`.
 
 ### base-M5
 
-~~~bash
-cd "$scratch/base"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli merge F1 F3" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model sonnet \
   --max-turns 100 --max-budget-usd 3 < /dev/null > "$scratch/logs/base-M5.jsonl" 2> "$scratch/logs/base-M5.err"; \
   echo $? > "$scratch/logs/base-M5.exit"
-~~~
+```
 
-- Exit 0, wall 0.85 min, `base-M5.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-sonnet-5-5`, 18 turns, $0.28554029999999997. First line: `Started: 2026-11-18 21:05`. Last line: `Started: 2026-11-18 21:05 · Finished: 2026-11-18 21:05 (0 min)`. No stop line.
-- Pass. Main advanced from 671ea48 to 35a75d8 through F1 1ca1b3e, F3 b04b69b and the tracking status merge. The first-parent non-merge list was empty. Base-M5 archived the plan and left just the main checkout.
-- Finding. The archived wave 2 merge lines record 21:08 while both merge commits show 21:05. The run also reports the discrepancy. See base-M5.archive-wave2, lines 60-61, and base-M5.merge-times.
+- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
 
 ### cur-M6-pytest
 
-~~~bash
-cd "$scratch/cur"
-python -m pytest -q > "$scratch/logs/cur-M6-pytest.out" 2> "$scratch/logs/cur-M6-pytest.err"; \
-  echo $? > "$scratch/logs/cur-M6-pytest.exit"
-~~~
+```bash
+python -m pytest -q
+```
 
-- Exit 5, wall 0.02 min, `cur-M6-pytest.outside` empty. Usage test does not apply to Python steps.
-- Finding. Expected 11 passing tests on main. Pytest collected no tests because cur-M5 left F1 unmerged. The same suite passed in the F1 worktree during cur-M4.
+- Not run. The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`).
 
 ### base-M6-pytest
 
-~~~bash
-cd "$scratch/base"
-python -m pytest -q > "$scratch/logs/base-M6-pytest.out" 2> "$scratch/logs/base-M6-pytest.err"; \
-  echo $? > "$scratch/logs/base-M6-pytest.exit"
-~~~
+```bash
+python -m pytest -q
+```
 
-- Exit 0, wall 0.00 min, `base-M6-pytest.outside` empty. Usage test does not apply to Python steps.
-- Pass. Pytest reported 11 passed on main.
+- Not run. The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`).
 
 ### cur-M6
 
-~~~bash
-cd "$scratch/cur"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model haiku \
   --max-turns 60 --max-budget-usd 0.5 < /dev/null > "$scratch/logs/cur-M6.jsonl" 2> "$scratch/logs/cur-M6.err"; \
   echo $? > "$scratch/logs/cur-M6.exit"
-~~~
+```
 
-- Exit 0, wall 0.55 min, `cur-M6.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-haiku-5-5`, 7 turns, $0.0129501. First line: `Started: 2026-11-18 21:06`. Last line: `Started: 2026-11-18 21:06 · Finished: 2026-11-18 21:06 (under 1 min)`. No stop line.
-- Finding. Expected a finished or archived plan. The status still lists the active todo-cli plan with F1 in review, F2 merged and F3 blocked by I1.
+- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
 
 ### base-M6
 
-~~~bash
-cd "$scratch/base"
+```bash
 MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-json --verbose \
   --permission-mode bypassPermissions --setting-sources project,local --model haiku \
   --max-turns 60 --max-budget-usd 0.5 < /dev/null > "$scratch/logs/base-M6.jsonl" 2> "$scratch/logs/base-M6.err"; \
   echo $? > "$scratch/logs/base-M6.exit"
-~~~
+```
 
-- Exit 0, wall 0.23 min, `base-M6.outside` empty. Usage test exit 1, no match.
-- Last result: `claude-haiku-5-5`, 5 turns, $0.00546584. First line: `Started: 2026-11-18 21:07`. Last line: `Started: 2026-11-18 21:07 · Finished: 2026-11-18 21:07 (under 1 min)`. No stop line.
-- Pass. The status reports no active plans and names the archived todo-cli plan.
-
-The sum of the last reported costs was $2.91113822499999997. The launch threshold was $20.
+- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
 
 ## Results
 
+Evidence filenames below are relative to `<scratch>/logs/`.
+Reported usage for both attempts totalled $3.20962390 in the last results' `total_cost_usd` values against a $20 cap.
+The usage limit stopped the last Claude call at cur-M5.
+
 | Expectation | Result | Evidence |
-|---|---|---|
-| Scratch-first setup and one foreground command per step in interleaved order | Pass | Both copies of the current example are under `<scratch>`. `cur` uses `47e212d`. `base` uses the `v2.12.0` archive. The commands, `.exit` files and `.elapsed` files cover the order in Runs. |
-| P0 isolates the coordinator and subagent Bash environments | Pass | Both Bash `tool_result` events in `P0.jsonl` resolve Python, prefix and temp under `<scratch>` and report `pathconv=unset`. |
-| M0 exits 0 without output in both repositories | Pass | `cur-M0.exit` and `base-M0.exit` are 0. Both stdout and stderr pairs are empty. |
-| cur-M1 declines the manual plan without producing a driver directory | Pass | Exit 0 and the expected one-line explanation in `cur-M1.out`. `cur-M1.driver-dir` says `absent`. |
-| M2 opens with `Started:`, completes wave 1 and A/C, and gives F1 the wave 2 wait and F2 a review block | Pass | `cur-M2.jsonl`, `base-M2.jsonl` and the tracking READMEs. The current report also shows `Flow: manual`. |
-| M2 asks to merge F2 immediately before the run-time footer | Pass | Both lines from each report are quoted in Runs. |
-| M2 leaves `main` fixed and does not create integration or claim refs or a `Flow:` line | Pass | `.before.main`, `.after.main`, `.after.refs` and `.after.readme` for both M2 steps. |
-| M2 task scope and readable models in current | Pass | `cur-M2.paths` and `.trailers` show only declared paths and readable models for A `d146338` and C `1a87ba3`. The baseline evidence is in `base-M2.paths` and `.trailers`. |
-| M3 applies user approval for F2 and records the merge-only increment on `main` | Pass | Current `d619577` to `1d4c550` via F2 `b16f4d0`. Baseline `7903881` to `671ea48` via F2 `8cddee5`. Both `.main-non-merges` files are empty. |
-| M3 tracks F2 as merged at the feature merge hash | Pass | Both `.after.readme` files have F2 ✅ merged with the matching hash. |
-| M4 completes wave 2 and B/D and puts F1 and F3 in review | Finding | In `cur-M4.jsonl` and `cur-M4.after.readme`, B completed and F1 entered review. Wave 2, D and F3 carried I1. `base-M4.jsonl` and `base-M4.after.readme` show wave 2 and both tasks complete and both features in review. |
-| M4 asks about F1 and F3 on the penultimate non-empty line and ends with the run-time footer | Finding | Both reports end with the timing footer. Current asks only about F1. Baseline asks about F1 and F3 on consecutive lines and ends the question block with F3. Runs quotes the lines from both logs. |
-| M4 leaves `main` fixed | Pass | `.before.main` and `.after.main` match at `1d4c550` for `cur` and `671ea48` for `base`. |
-| M4 current tasks have readable model trailers and remain within scope | Pass | `cur-M4.trailers` reports Sonnet for A `d146338` and B `00cda05`, Haiku for C `1a87ba3` and D `fc205c8`. `cur-M4.paths` lists only declared files. Both baseline files are retained and show the same scope and trailer outcomes. |
-| cur-M5 merges F1 and F3 on first-parent `main` under the user approval | Finding | `cur-M5.jsonl` gives `Stop not-ready` for F3 (I1). `main` stayed at `1d4c550` and both first-parent lists are empty. |
-| cur-M5 leaves all features merged and archives the plan | Finding | `cur-M5.after.readme` keeps F1 in review and F3 blocked. `cur-M5.main-plans` still has the active plan folder. |
-| base-M5 merges F1 and F3 as first-parent merges only under the user approval | Pass | `main` advanced from `671ea48` to `35a75d8` via F1 `1ca1b3e`, F3 `b04b69b` and the tracking status merge. `base-M5.main-non-merges` is empty. |
-| base-M5 leaves all features merged and archives the plan | Pass | `base-M5.archive` is the final README at `main:plans/archive/2026-11-02-todo-cli/README.md` and shows all features merged. `base-M5.after.worktrees` lists only the main checkout. |
-| base-M5 archive records the actual merge time | Finding | The two archived wave log entries say `21:08` in `base-M5.archive-wave2`, lines 60–61. Both merge commits are at `21:05` in `base-M5.merge-times`. The last result reports the discrepancy. |
-| No merge into `main` outside the authorized steps | Pass | Every other step has matching `.before.main` and `.after.main`. |
-| cur-M6-pytest passes all 11 P1/P2 tests on `main` | Finding | `cur-M6-pytest.out` says `no tests ran` and `.exit` is 5. `cur-M5` never merged the test files from F1. The `cur-M4` F1 worktree run passed all 11 tests. |
-| base-M6-pytest passes all 11 P1/P2 tests on `main` | Pass | `base-M6-pytest.out` says `11 passed` and `.exit` is 0. |
-| cur-M6 status shows no plan in progress | Finding | `cur-M6.jsonl` lists `todo-cli` as active, with F1 in review, F2 merged, and F3 blocked by I1. |
-| base-M6 status shows no plan in progress | Pass | `base-M6.jsonl` says `No active plans.` and names the archived plan. |
-| M2 and M3 manual flow parity | Pass | All comparison cells agree. The current report includes `Flow: manual`. |
-| M4 manual flow parity | Finding | The README statuses differ. Both F3 worktrees used the same dependency on F1 for the editable install. Current opened I1 while baseline kept it as a review caveat. |
-| M5 manual flow parity | Finding | Current returned `Stop not-ready` and kept the review and tracking worktrees. Baseline made three merges, archived the plan and removed those worktrees. |
-| Watch after every executed step | Pass | All 16 `.outside` files are empty. |
-| Usage test and cost limit | Pass | All 11 `.usage.exit` files are 1. The sum reported in Runs stayed below the $20 launch limit. |
-| All transient run and verification files in scratch | Finding | The early source suite ran with the host's temporary directory for its temporary test fixtures. The final scoped rerun used `<scratch>/tmp`. Launchers, retained evidence, snapshots and scratch repositories were created directly in scratch. |
-| Source refs and objects match before and after the chain | Pass | `working-before.refs` and `working-after.refs` each contain 60 identical ref/object pairs. `diff -u` exited 0. The task branch pointed to `47e212d` in both snapshots, before the record commit. |
-| Source wave checks | Pass | `final-check-status.txt`: 33 tests. `final-check-driver.txt`: 59 tests. All three example status checks exited 0. `git diff --check` exited 0. |
+| --- | --- | --- |
+| P0 isolates the session and subagent | Pass | `P0.jsonl` has 2 matching Bash tool results: venv Python, prefix and temp under `<scratch>`, `pathconv=unset`. `P0.exit` is 0 |
+| P21 watch after every executed step | Pass | All 11 `.outside` files are empty |
+| P22 usage scan, snapshots and exit result for each Claude command | Pass | 8 calls have `.exit`, `.usage`, `.before.*` and `.after.*` evidence; usage matches: cur-M5 |
+| P22 usage stop prevents every later Claude call | Pass | `cur-M5.usage`, `cur-M5.exit`, `cur-M5.after.refs`, `cur-M5.outside`. Later Claude steps have no call logs |
+| I22 scratch isolation for source checks and generated files | Pass | `env.sh` was sourced before source checks; final check files in `<scratch>/logs`; see Setup |
+| Working folder refs unchanged across the calls | Pass | `working-before.refs` and `working-after.refs` |
+| Final wave check passes under the scratch environment | Pass | Exit codes for `final-check-status-suite.txt` = 0, `final-check-unit-suite.txt` = 0, `final-check-examples.txt` = 0, `final-check-diff.txt` = 0 |
+| cur-M0 status check is silent and exits 0 | Pass | Exit 0, output empty (`cur-M0.exit`, `cur-M0.txt`) |
+| base-M0 status check is silent and exits 0 | Pass | Exit 0, output empty (`base-M0.exit`, `base-M0.txt`) |
+| cur-M1 driver skips manual flow and creates no driver folder | Pass | `next: nothing — plans/2026-11-02-todo-cli: manual flow: the driver runs autonomous plans only`, driver folder absent (`cur-M1.exit`, `cur-M1.txt`, `cur-M1.driver-dir`) |
+| cur-M2 wave 1 and tasks A/C done, F2 in review, and F1 waits for wave 2 | Pass | W1 ✅, A ✅, C ✅, F1 🔄, F2 👀 review (`cur-M2.tracking-readme`) |
+| cur-M2 last result opens with Started | Pass | Expected `Started:`, observed `Started: 2026-11-18 22:07` (`cur-M2.jsonl`) |
+| cur-M2 F2 review block present | Pass | F2 review block present (`cur-M2.jsonl`) |
+| cur-M2 no integration/claim refs or tracking Flow line | Pass | Integration/claims absent, tracking Flow absent (`cur-M2.after.refs`, `cur-M2.tracking-readme`) |
+| cur-M2 current report says Flow: manual | Pass | `Flow: manual` present (`cur-M2.jsonl`) |
+| cur-M2 main stays unchanged without approval | Pass | 2a6fae8 → 2a6fae8 (`cur-M2.before.main`, `cur-M2.after.main`) |
+| cur-M2 I19 report ends with questions for F2 then the footer | Pass | Observed F2. The lines are quoted above (`cur-M2.jsonl`) |
+| cur-M2 current task commits satisfy scope and Wave-Model checks | Pass | Commits A c3c5029, C 72198eb. Scope exceptions none. Unreadable trailers none (`cur-M2.trailers`, `cur-M2.paths`) |
+| cur-M4 I18 wave 2 and tasks B/D done and F1 and F3 in review | Pass | W2 ✅, B ✅, D ✅, F1 👀 review, F3 👀 review (`cur-M4.tracking-readme`) |
+| cur-M4 main stays unchanged without approval | Pass | cb90eaa → cb90eaa (`cur-M4.before.main`, `cur-M4.after.main`) |
+| cur-M4 I19 report ends with questions for F1, F3 then the footer | Pass | Observed F1, F3. The lines are quoted above (`cur-M4.jsonl`) |
+| cur-M4 current task commits satisfy scope and Wave-Model checks | Pass | Commits A c3c5029, B 7376142, C 72198eb, D baf06c8. Scope exceptions none. Unreadable trailers none (`cur-M4.trailers`, `cur-M4.paths`) |
+| cur-M4 I18 no open problem on plan/todo-cli | Pass | Open entries none (`cur-M4.tracking-problems`) |
+| cur-M4 I18 F3 runs its own test command and needs no F1 files | Pass | Workflow show exit 0, dependency count 0, F3 extract exit 0, CI command exit 0 (`cur-M4.workflow`, `cur-M4.workflow-deps`, `cur-M4.ci-alone`, `cur-M4.ci-alone.exit`) |
+| cur-M3 approved merges only, with their hashes in feature statuses | Pass | 2a6fae8 → cb90eaa. F2 e1cdad7. 2 first-parent commits, 0 non-merges (`cur-M3.main-commits`, `cur-M3.nonmerges`) |
+| cur-M5 I20 approved merges only, with their hashes in feature statuses | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| cur-M5 I20 merge finishes without a stop line | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| cur-M5 I20 all features merged and the plan is archived | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| cur-M5 I21 both Merged lines equal their commit times | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| cur-M6-pytest I20 all 11 tests pass on main | Not run | The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`) |
+| cur-M6 I20 status shows no active plan and names the archived plan | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M2 wave 1 and tasks A/C done, F2 in review, and F1 waits for wave 2 | Pass | W1 ✅, A ✅, C ✅, F1 🔄, F2 👀 review (`base-M2.tracking-readme`) |
+| base-M2 last result opens with Started | Pass | Expected `Started:`, observed `Started: 2026-11-18 22:09` (`base-M2.jsonl`) |
+| base-M2 F2 review block present | Pass | F2 review block present (`base-M2.jsonl`) |
+| base-M2 no integration/claim refs or tracking Flow line | Pass | Integration/claims absent, tracking Flow absent (`base-M2.after.refs`, `base-M2.tracking-readme`) |
+| base-M2 main stays unchanged without approval | Pass | 59df659 → 59df659 (`base-M2.before.main`, `base-M2.after.main`) |
+| base-M2 I19 report ends with questions for F2 then the footer | Pass | Observed F2. The lines are quoted above (`base-M2.jsonl`) |
+| base-M2 baseline task scope and trailer evidence recorded | Pass | Commits A f1781f0, C 051c25b. Scope exceptions none. Unreadable trailers none (`base-M2.trailers`, `base-M2.paths`) |
+| base-M4 I18 wave 2 and tasks B/D done and F1 and F3 in review | Pass | W2 ✅, B ✅, D ✅, F1 👀 review, F3 👀 review (`base-M4.tracking-readme`) |
+| base-M4 main stays unchanged without approval | Pass | 382347a → 382347a (`base-M4.before.main`, `base-M4.after.main`) |
+| base-M4 I19 report ends with questions for F1, F3 then the footer | Pass | Observed F1, F3. The lines are quoted above (`base-M4.jsonl`) |
+| base-M4 baseline task scope and trailer evidence recorded | Pass | Commits A f1781f0, B 21bf99d, C 051c25b, D eb791ec. Scope exceptions none. Unreadable trailers D eb791ec (`base-M4.trailers`, `base-M4.paths`) |
+| base-M4 I18 no open problem on plan/todo-cli | Pass | Open entries none (`base-M4.tracking-problems`) |
+| base-M4 I18 F3 runs its own test command and needs no F1 files | Pass | Workflow show exit 0, dependency count 0, F3 extract exit 0, CI command exit 0 (`base-M4.workflow`, `base-M4.workflow-deps`, `base-M4.ci-alone`, `base-M4.ci-alone.exit`) |
+| base-M3 approved merges only, with their hashes in feature statuses | Pass | 59df659 → 382347a. F2 591b296. 2 first-parent commits, 0 non-merges (`base-M3.main-commits`, `base-M3.nonmerges`) |
+| base-M5 I20 approved merges only, with their hashes in feature statuses | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M5 I20 merge finishes without a stop line | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M5 I20 all features merged and the plan is archived | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M5 I21 baseline Merged line times and commit times recorded | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M6-pytest I20 all 11 tests pass on main | Not run | The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`) |
+| base-M6 I20 status shows no active plan and names the archived plan | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| M2 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
+| M3 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
+| M4 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
+| M5 manual flow matches v2.12.0 in the comparison | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
 
-### Manual flow comparison
+The comparison counts commits added to `main` by each step. Worktrees listed are in addition to the main
+checkout. M5 statuses come from the archived README if the tracking branch was removed. Hashes and wording
+are recorded in the logs and are expected to vary across repositories.
 
-F1, F2 and F3 refer to `feat/todo-cli/F1-todo-store-and-cli`, `feat/todo-cli/F2-usage-readme`
-and `feat/todo-cli/F3-ci-tests`. The worktree list omits the main checkout, which was present
-throughout. Commit counts are first-parent only. The base-M5 statuses come from its archive.
-
-
-| Step | Repository | Branches created | Worktrees left | Commits on main (merge / non-merge) | README statuses | Report asked a question | Stop line | Task commits: out-of-scope paths and what happened | Task commits without a readable Wave-Model |
-|---|---|---|---|---|---|---|---|---|---|
-| M2 | cur | F1, F2 | F1, F2, plan/todo-cli | 0 / 0 | F1 🔄, F2 👀 review, F3 ⬜, A ✅, B ⬜, C ✅, D ⬜, 1 ✅, 2 ⬜ | Yes | None | None | None |
-| M2 | base | F1, F2 | F1, F2, plan/todo-cli | 0 / 0 | F1 🔄, F2 👀 review, F3 ⬜, A ✅, B ⬜, C ✅, D ⬜, 1 ✅, 2 ⬜ | Yes | None | None | None |
-| M3 | cur | None | F1, plan/todo-cli | 2 / 0 | F1 🔄, F2 ✅ merged, F3 ⬜, A ✅, B ⬜, C ✅, D ⬜, 1 ✅, 2 ⬜ | No | None | No task run | No task run |
-| M3 | base | None | F1, plan/todo-cli | 2 / 0 | F1 🔄, F2 ✅ merged, F3 ⬜, A ✅, B ⬜, C ✅, D ⬜, 1 ✅, 2 ⬜ | No | None | No task run | No task run |
-| M4 | cur | F3 | F1, F3, plan/todo-cli | 0 / 0 | F1 👀 review, F2 ✅ merged, F3 ⚠️ blocked I1, A ✅, B ✅, C ✅, D ⚠️ I1, 1 ✅, 2 ⚠️ I1 | Yes | None | None | None |
-| M4 | base | F3 | F1, F3, plan/todo-cli | 0 / 0 | F1 👀 review, F2 ✅ merged, F3 👀 review, A ✅, B ✅, C ✅, D ✅, 1 ✅, 2 ✅ | Yes | None | None | None |
-| M5 | cur | None | F1, F3, plan/todo-cli | 0 / 0 | F1 👀 review, F2 ✅ merged, F3 ⚠️ blocked I1, A ✅, B ✅, C ✅, D ⚠️ I1, 1 ✅, 2 ⚠️ I1 | No | Stop not-ready | No task run | No task run |
-| M5 | base | None | None | 3 / 0 | F1 ✅ merged, F2 ✅ merged, F3 ✅ merged, A ✅, B ✅, C ✅, D ✅, 1 ✅, 2 ✅ | No | None | No task run | No task run |
-
-Historical I14 is **intended (P18)**. In the second rehearsal, baseline task A committed three
-`__pycache__` files (`f1d10b6`), and the coordinator removed them in cleanup commit `1ac1aa5`.
-P18 introduced an explicit scope gate for such changes. In the third rehearsal, both sides
-inherited `PYTHONDONTWRITEBYTECODE=1` and their M2 and M4 `.paths` files listed only declared
-paths. Neither side exercised bytecode cleanup in this run.
-
-Manual flow differed from v2.12.0 at M4 and M5. The current runner recorded the missing
-packaging metadata as a blocking issue while the baseline flagged the same dependency in its
-review brief. The run shows how each report handled the dependency. It did not run CI on
-GitHub or isolate a runner change that caused the difference.
+| Step | Branches created | Worktrees left | Commits on main (merge / non-merge) | README statuses after the step | Report asked a merge question | Stop line | Task commits: out-of-scope paths and what happened | Task commits without a readable Wave-Model | Merged line times vs merge commits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| cur-M2 | feat/todo-cli/F1-todo-store-and-cli, feat/todo-cli/F2-usage-readme | todo-cli-F1, todo-cli-F2, todo-cli-plan | 0 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 👀 review, F3 ⬜ | F2 | None | None | None | No merge |
+| base-M2 | feat/todo-cli/F1-todo-store-and-cli, feat/todo-cli/F2-usage-readme | todo-cli-F1, todo-cli-F2, todo-cli-plan | 0 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 👀 review, F3 ⬜ | F2 | None | None | None | No merge |
+| cur-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | No merge |
+| base-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | No merge |
+| cur-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | None | No merge |
+| base-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | D eb791ec · intended (P23) | No merge |
+| cur-M5 | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run |
+| base-M5 | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run |
 
 ## Not verified
 
-The watch covered the Python user site and /c/tmp. Other host locations were outside its
-coverage. All planned commands ran. The current repository did not reach a post-merge test or
-archived state because M5 refused the combined approval. Neither scratch repository was pushed
-to GitHub, so CI checks were limited to YAML and version validation.
+- The watch checked the Python user site and `/c/tmp`. The run did not check other host paths or Claude Code's global application state.
+- F3's GitHub Actions job was exercised locally against its feature tree. It was not dispatched on GitHub.
+- The autonomous rehearsal was not repeated. The merge-time rule is shared with the autonomous flow.
+
+- Not run (usage limit). cur-M5 I20 approved merges only, with their hashes in feature statuses. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). cur-M5 I20 merge finishes without a stop line. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). cur-M5 I20 all features merged and the plan is archived. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). cur-M5 I21 both Merged lines equal their commit times. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run. cur-M6-pytest I20 all 11 tests pass on main. The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`).
+- Not run (usage limit). cur-M6 I20 status shows no active plan and names the archived plan. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). base-M5 I20 approved merges only, with their hashes in feature statuses. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). base-M5 I20 merge finishes without a stop line. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). base-M5 I20 all features merged and the plan is archived. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). base-M5 I21 baseline Merged line times and commit times recorded. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run. base-M6-pytest I20 all 11 tests pass on main. The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`).
+- Not run (usage limit). base-M6 I20 status shows no active plan and names the archived plan. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Not run (usage limit). M5 manual flow matches v2.12.0 in the comparison. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
 
 ## Repeat
 
-1. In Git Bash from the working folder, run Setup to create an empty scratch folder, set up the
-   venv, seed the repositories and take the source ref snapshot.
-2. Run P0 in cur and judge both Bash tool results, then check its watch.
-3. Run the remaining commands in Runs in order, one at a time. Check usage, capture snapshots
-   and run the watch before proceeding. Stop at the first non-empty watch. Stop Claude calls
-   after a usage match or before the next call once reported cost reaches $20. Run the remaining
-   non-Claude checks when their inputs exist.
-4. Read the task commit audits after M2 and M4. Compare the source refs against a fresh
-   working-after.refs snapshot taken after the last call and before committing the record.
+Use Git Bash. Run the setup commands above in an empty scratch directory. In each new shell, run the following
+before its command. Set `repo` to `cur` or `base` and `step` to the named run.
+
+```bash
+. "$scratch/env.sh"
+export CLAUDE_ENV_FILE="$(cygpath -m "$scratch")/env.sh"
+cd "$scratch/$repo"
+```
+
+Take `git for-each-ref --format='%(refname) %(objectname)'` and `git worktree list --porcelain` snapshots before
+and after each command. Run P0 first, then run the commands under **Runs** in order, one per foreground shell.
+After every Claude command, before the second snapshot, check usage. After the snapshot, run the watch.
+
+```bash
+grep -l -i -E "hit your .*limit|usage limit" "$scratch/logs/$step.jsonl" "$scratch/logs/$step.err"
+{ find "$usersite" -maxdepth 1 -newer "$scratch/logs/start.stamp" 2>/dev/null
+  [ -d /c/tmp ] && find /c/tmp -maxdepth 1 -newer "$scratch/logs/start.stamp"; } > "$scratch/logs/$step.outside"
+```
+
+Stop before the skill calls if P0 fails, after the first non-empty watch, or before the next Claude command at
+$20 summed `total_cost_usd`. A usage match ends subsequent Claude calls. Read the last `result` event of each
+stream. Verify the task commits after both M2 calls and after both M4 calls.
+
+```bash
+git log --all --no-merges --grep='^todo-cli F[0-9]* / [A-Z]*:' \
+  --format="%h %s | %(trailers:key=Wave-Model,valueonly,separator=%x2C)"
+git log --all --no-merges --grep='^todo-cli F[0-9]* / [A-Z]*:' --name-only --format='== %h %s'
+```
+
+At M3 and M5, record `git rev-parse main` before and after. Compare with
+`git rev-list --no-merges --first-parent <before>..main` and the first-parent merge log. At M4 inspect F3's
+workflow and run its test command against the F3 branch alone. At M5 compare recorded merge times against
+the merge commits.
+
+```bash
+MSYS2_ARG_CONV_EXCL='feat/todo-cli/F3-ci-tests:' git show feat/todo-cli/F3-ci-tests:.github/workflows/test.yml > "$scratch/logs/$repo-M4.workflow"
+grep -c -e '-e \.' -e 'pyproject' "$scratch/logs/$repo-M4.workflow" > "$scratch/logs/$repo-M4.workflow-deps"
+mkdir "$scratch/$repo-F3-alone"
+git archive feat/todo-cli/F3-ci-tests | tar -x -C "$scratch/$repo-F3-alone"
+(cd "$scratch/$repo-F3-alone" && bash -c 'python -m pytest -q || [ $? -eq 5 ]') \
+  > "$scratch/logs/$repo-M4.ci-alone" 2>&1; echo $? > "$scratch/logs/$repo-M4.ci-alone.exit"
+git show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^Merged ' \
+  > "$scratch/logs/$repo-M5.merged-lines"
+while read -r _ day hm id hash _; do
+  at=$(git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M' "$hash")
+  printf '%s line=%s %s commit=%s\n' "$id" "$day" "${hm%:}" "$at"
+done < "$scratch/logs/$repo-M5.merged-lines" > "$scratch/logs/$repo-M5.merge-times"
+```
+
+After the last call, compare the source ref snapshot with `working-before.refs`. Source the environment again
+and run the final check in `<working folder>` before committing the record.
+
+```bash
+. "$scratch/env.sh"
+cd "<working folder>"
+export PYTHONDONTWRITEBYTECODE=1
+python skills/wave-plan/scripts/test_status_check.py
+python -m unittest discover -s scripts/tests
+for p in examples/*/; do python skills/wave-plan/scripts/status_check.py "${p%/}"; done
+git diff --check
+```
