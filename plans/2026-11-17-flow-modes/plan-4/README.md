@@ -7,6 +7,7 @@
   - 2026-11-18 at 1e7214e, 17:45 – 17:56: I5–I9 → P18–P21; new K, L, M in wave 5 and N, O in wave 6; I → N, J → O
   - 2026-11-18 at e3cf9f7, 20:33 – 20:42: I7, I8, I12, I14–I17 → P22, P23; I13 closed (plan error); new P, Q, R in wave 7;
     N → Q, O → R
+  - 2026-11-18 at a257e9d, 21:16 – 21:23: I18, I20–I22 → P24–P26; I19 closed (plan error); new S, T, U in wave 8; Q → U
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
@@ -14,7 +15,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8, P17 | A (1), B (1) ➖, C (1), D (1), G (3), H (3) | the six acceptance tests of `solutions/P8-flow-docs.md` and of `solutions/P17-example-03-fixes.md` hold (task H): 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve, example 03 has slug `wordstat-cli`, its check passes on an empty baseline and its package builds | ✅ merged | | `feat/flow-modes-p4/F1-flow-docs-and-checks` | 1fc60af |
-| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P23 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6) ➖, O (6) ➖, P (7), Q (7), R (7) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19, P20 and P23 checks of `solutions/lite.md` (L, M, P) hold; `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` meet `solutions/P22-third-rehearsal-run.md` "Acceptance tests" (Q, R): P0 and the hook probe Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete through M5, readable `Wave-Model` trailers, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | ⚠️ blocked I18, I19, I20, I21, I22 | I18 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
+| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P26 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6) ➖, O (6) ➖, P (7), Q (7) ➖, R (7), S (8), T (8), U (8) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19, P20, P23, P24 and P25 checks of `solutions/lite.md` (L, M, P, S, T) hold; `docs/rehearsals/end-to-end-autonomous.md` meets `solutions/P22-third-rehearsal-run.md` "Acceptance tests" (R) and `end-to-end-manual.md` meets `solutions/P26-fourth-manual-run.md` "Acceptance tests" (U): P0 and the hook probe Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete through M6 with F1 and F3 merged and the plan archived on both, `cur`'s `Merged` times equal to its merge commits, readable `Wave-Model` trailers, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | 🔄 | wave 8 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -28,7 +29,8 @@ Merged: short hash of the merge commit into the main branch.
 | 4 | `waves/w04.md` | I, J | ✅ (verified by Q and R, wave 7) |
 | 5 | `waves/w05.md` | K, L, M | ✅ |
 | 6 | `waves/w06.md` | N, O | ✅ (verified by P, Q and R, wave 7) |
-| 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I18, I19, I20, I21, I22 |
+| 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I18, I20, I21, I22 |
+| 8 | `waves/w08.md` | S, T, U (after S, T) | ⬜ |
 
 ## Tasks
 
@@ -50,8 +52,11 @@ Merged: short hash of the merge commit into the main branch.
 | N | `manual-flow-rerun` | F2 | 6 | medium | ➖ superseded by Q |
 | O | `autonomous-flow-rerun` | F2 | 6 | medium | ➖ superseded by R |
 | P | `trailer-block-rule` | F2 | 7 | low | ✅ |
-| Q | `manual-flow-third-run` | F2 | 7 | medium | ⚠️ I18, I19, I20, I21, I22 |
+| Q | `manual-flow-third-run` | F2 | 7 | medium | ➖ superseded by U |
 | R | `autonomous-flow-third-run` | F2 | 7 | medium | ✅ |
+| S | `example-ci-independence` | F2 | 8 | low | ⬜ |
+| T | `merge-time-from-git` | F2 | 8 | low | ⬜ |
+| U | `manual-flow-fourth-run` | F2 | 8 | medium | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p4` and reach the
@@ -79,6 +84,13 @@ main branch with each feature merge.
   `solutions/P22-third-rehearsal-run.md`
 - P23 — (re-plan, I15) a `Wave-Model` trailer in its own paragraph is invisible to git and was accepted: one trailer
   block, and the tier gate reads it with git → F2 · `solutions/lite.md` (low)
+- P24 — (re-plan, I18, I20) example 01's CI feature needed F1's `pyproject.toml`, so the current version blocked F3 and
+  the user's `merge F1 F3` stopped → F2 · `solutions/lite.md` (low)
+- P25 — (re-plan, I21) an archived `Merged` line showed a time no merge commit has: it takes the merge commit's time →
+  F2 · `solutions/lite.md` (low)
+- P26 — (re-plan, I18–I22) run the manual rehearsal a fourth time with the fixed example, the corrected report
+  expectation, merge times checked against git and every command in the scratch environment → F2 ·
+  `solutions/P26-fourth-manual-run.md`
 
 ## How to try
 
@@ -89,39 +101,25 @@ main branch with each feature merge.
   `Flow:` line reads `- Flow: autonomus` → one `flow-line` line; the changelog starts with `- Unreleased — …`; before:
   the README and examples knew only manual flow and the check ignored the `Flow:` line.
 - F2 — open `docs/rehearsals/end-to-end-manual.md` → example 01 run in manual flow with the current skills and
-  with `v2.12.0`, step by step side by side through M6, all three features merged and the plan archived on both, scope
-  and trailer differences marked `intended (P18)` / `intended (P23)`, nothing written outside scratch; open
-  `docs/rehearsals/end-to-end-autonomous.md` → the driver's morning report of example 03: F1 merged into
+  with `v2.12.0`, step by step side by side through M6, F1 and F3 in review after M4 on both, all three features
+  merged and the plan archived on both, the current `Merged` times equal to `git log` of the merge commits, scope,
+  trailer and merge-time differences marked `intended (P18)` / `intended (P23)` / `intended (P25)`, nothing written
+  outside scratch; open `docs/rehearsals/end-to-end-autonomous.md` → the driver's morning report of example 03: F1 merged into
   `integration/wordstat-cli` with "scope clean", F2 blocked by its forced out-of-scope `stray.txt` (reverted, not
   cleaned up), F3 merged after approval, F4 blocked by the forced red test, the `Merged` cells of F2 and F4 empty;
   in `skills/wave-run/SKILL.md` the task header asks for one trailer block and step 5 reads `Wave-Model` with
-  `git log`; before: the runs never finished `v2.12.0`, auto-approved out-of-scope work and accepted a trailer git
-  could not read.
+  `git log`; example 01's P4 workflow installs only `pytest`; before: the runs never finished `v2.12.0`, auto-approved
+  out-of-scope work, accepted a trailer git could not read, and example 01's CI needed F1's file.
 
 ## Known test failures before start
 
-- none (`main` at a47af8a, 2026-11-18: `test_status_check.py` 20 tests OK, `python -m unittest discover -s
-  scripts/tests` 59 tests OK, both examples pass `status_check.py`, `git diff --check` clean)
-- none on `feat/flow-modes-p4/F1-flow-docs-and-checks` at 6a2931a (re-plan, 2026-11-18: 32 status-check tests and 59
-  driver tests OK, examples 01 and 02 pass, `git diff --check` clean); `main` at 71d1161 is green as at a47af8a
-- none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 1635ef1 (second re-plan, 2026-11-18: 32 status-check tests and
-  59 driver tests OK, all three examples pass, `git diff --check` clean); after task L, 33 status-check tests
-- none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 30dc1db (third re-plan, 2026-11-18: 33 status-check tests and
-  59 driver tests OK, all three examples pass, `git diff --check` clean)
+- none (`main` at a47af8a, 2026-11-18: 20 status-check tests and 59 driver tests OK, both examples pass, `git diff
+  --check` clean; `main` stayed green through F1's merge)
+- none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 942c4b1 (fourth re-plan, 2026-11-18: 33 status-check tests
+  and 59 driver tests OK, all three examples pass, `git diff --check` clean); earlier checks of F1 and F2: `history.md`
 
 ## Assumptions
 
-- P8 is one feature: the changelog line names the Flow checks and example 03, and the README links the example, so
-  none of the four edits is complete on `main` without the others.
-- `status_check.py` requires the exact `Flow:` form that `wave-plan` and the flow form write, because
-  `layout.md` finds the plans of a target with `git grep` on that form; the driver keeps its own parser.
-- The release archive gains `scripts/` (one word in `.github/workflows/release.yml`), so a release ships the driver
-  that its README documents; plugin installs already get the whole repository.
-- Example 03 is runnable, not only illustrative: task J of wave 4 runs it in a scratch repository; its fictional
-  dates and hashes stay fictional.
-- Example 03's target is `integration/wordstat-cli`, not the `integration/wordstat` of I3's proposal: `wave-plan`
-  names the target of a raw-list plan after its slug, and the example must look as `wave-plan` writes it.
-- The re-plan's new solution is P17, above every P number of the index's plans (plan 2 uses up to P16).
 - P9 is `high` in the index; its design (fixture, forced failure, expectations, record format) is fixed in
   `solutions/P9-end-to-end-runs.md`, so its two tasks are `medium`: they run fixed commands and record.
 - "Behave as before" in manual flow is checked by running the same chain with the skills of tag `v2.12.0` (the last
@@ -130,12 +128,10 @@ main branch with each feature merge.
 - The forced red is a test that skips until `wordstat/export.py` exists, so the run reaches wave 2 and only F4 turns
   red; F4 staying ⚠️ after the night, after the user's merge and after a second dry run of the driver is "the
   feature that must stay blocked".
-- Waves 4, 6 and 7 need the Claude Code CLI, signed in, and network for `pip install`; if the `wave-run` session's
+- Waves 4, 6, 7 and 8 need the Claude Code CLI, signed in, and network for `pip install`; if the `wave-run` session's
   subagents cannot run `claude`, the rehearsal tasks run in task mode. Caps by `total_cost_usd`: manual 20 USD,
   autonomous 25 USD; on a claude.ai subscription that counts toward usage limits. The second runs reported about 2.3
-  and 1.8 USD and hit the 5-hour limit: start wave 7 in a fresh usage window. Task H of wave 3 needs network for `pip`.
-- Wave 4 depends on `F1 merged`: task J runs example 03 and the new check, which reach I and J's branch only through
-  `main`. Review F1 after wave 3.
+  and 1.8 USD and hit the 5-hour limit: start wave 8 in a fresh usage window. Task H of wave 3 needs network for `pip`.
 - Findings of the rehearsal tasks are recorded, not fixed; they become problem entries and a re-plan of this plan.
 - The fixes of I5–I9 and I12–I17 belong to F2, the feature the entries block: F2 then ships the rules and the records
   that show them working, in one review, with no wait for another feature's merge.
@@ -145,5 +141,8 @@ main branch with each feature merge.
 - The forced out-of-scope edit is a git hook in the scratch repository, not a prompt instruction an executor may
   refuse; since wave 7 it re-adds `stray.txt` to every commit of task B whose parent lacks it (B amended away P21's
   one-shot version, I16). `CLAUDE_ENV_FILE` isolation passed P0 in both second runs.
-- I13 and I14 are errors of the expectations, not of the skills: the timing line is last by `layout.md`, and
-  `v2.12.0`'s cleanup commit is what P18 replaced. I13 is closed; I14 stays open until the third run marks it intended.
+- I18 is a defect of example 01, not of the skills: its CI feature needed a file of F1 (a hidden dependency), and
+  only one executor reported it. P24 fixes the example; `merge.md` stopping `not-ready` on a blocked feature (I20) is
+  its rule. I19 is a plan error (`wave-run/report.md` asks one question per ready feature) and is closed.
+- Only the manual run is repeated: task R's autonomous record met every expectation, and P25 changes the
+  autonomous `Merged` lines only by reference to `merge.md`.

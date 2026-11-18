@@ -75,3 +75,56 @@
   (watching the whole system temp folder would catch other processes' files).
 - Tasks N and O are ➖ superseded by Q and R, which rewrite the same records. Q and R both run after P, in parallel; the
   entries stay open with `→` wave 7 tasks; waves 4 and 6 stay ⚠️ until wave 7 closes them. F2 is 🔄, waiting for wave 7.
+
+## Re-plan 2026-11-18 at a257e9d
+
+- Input: open entries I18–I22 (wave 7, task Q). Wave 7 ⚠️, no wave 🔄. `main` (6819ca2, the merge of the third re-plan,
+  no file change) was merged into the tracking branch first (a257e9d).
+- Checked on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 942c4b1: 33 status-check tests and 59 driver tests OK, all
+  three examples pass `status_check.py`, `git diff --check` clean. Wave 8 starts with no known failures.
+- I18 read from the scratch repositories of the run: in `cur`, task D's executor reported that `pip install -e .`
+  needs F1's `pyproject.toml`, and the coordinator opened I1 and blocked F3; in `base` the executor did not report it
+  and the coordinator wrote it into F3's brief. Both coordinators followed their rules; the example had a hidden
+  dependency between features → P24 (low, task S). Tried here: a flat `todo/` package with a test passes under
+  `python -m pytest -q` without an install, and `python -m pytest -q || [ $? -eq 5 ]` exits 0 in an empty folder.
+- I20 follows from I18: `wave-run/merge.md` ("Entry points") stops `not-ready` before merging anything when a named
+  feature is not `👀 review`. It stays open until the fourth run merges F1 and F3 (task U).
+- I19 confirmed as a plan error (closed in wave 7's "Closed problems"): `wave-run/report.md` puts one question per
+  ready feature before the timing footer, and the baseline did exactly that. P26 corrects the expectation.
+- I21: the baseline's merge commits are at 21:05:26 and the archived lines say 21:08, later than the run's own
+  `Finished 21:05`; `merge.md` names no source for the time → P25 (low, task T): the merge commit's committer time.
+- I22: P26 makes every command after Setup run with `env.sh` sourced, the source checks included.
+- Task Q is ➖ superseded by U, which rewrites the same record; R stays ✅ and its record is not rerun. F2 is 🔄,
+  waiting for wave 8; wave 7 stays ⚠️ until wave 8 closes I18, I20–I22.
+- To keep the README within its size goal, these lines moved here from it.
+
+  Known test failures recorded by earlier re-plans:
+
+  - none (`main` at a47af8a, 2026-11-18: `test_status_check.py` 20 tests OK, `python -m unittest discover -s
+    scripts/tests` 59 tests OK, both examples pass `status_check.py`, `git diff --check` clean)
+  - none on `feat/flow-modes-p4/F1-flow-docs-and-checks` at 6a2931a (re-plan, 2026-11-18: 32 status-check tests and 59
+    driver tests OK, examples 01 and 02 pass, `git diff --check` clean); `main` at 71d1161 is green as at a47af8a
+  - none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 1635ef1 (second re-plan, 2026-11-18: 32 status-check tests and
+    59 driver tests OK, all three examples pass, `git diff --check` clean); after task L, 33 status-check tests
+  - none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 30dc1db (third re-plan, 2026-11-18: 33 status-check tests and
+    59 driver tests OK, all three examples pass, `git diff --check` clean)
+  - none on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 942c4b1 (fourth re-plan, 2026-11-18: 33 status-check tests
+    and 59 driver tests OK, all three examples pass, `git diff --check` clean)
+
+  Assumptions about F1 (merged) and the earlier waves:
+
+  - P8 is one feature: the changelog line names the Flow checks and example 03, and the README links the example, so
+    none of the four edits is complete on `main` without the others.
+  - `status_check.py` requires the exact `Flow:` form that `wave-plan` and the flow form write, because
+    `layout.md` finds the plans of a target with `git grep` on that form; the driver keeps its own parser.
+  - The release archive gains `scripts/` (one word in `.github/workflows/release.yml`), so a release ships the driver
+    that its README documents; plugin installs already get the whole repository.
+  - Example 03 is runnable, not only illustrative: task J of wave 4 runs it in a scratch repository; its fictional
+    dates and hashes stay fictional.
+  - Example 03's target is `integration/wordstat-cli`, not the `integration/wordstat` of I3's proposal: `wave-plan`
+    names the target of a raw-list plan after its slug, and the example must look as `wave-plan` writes it.
+  - The re-plan's new solution is P17, above every P number of the index's plans (plan 2 uses up to P16).
+  - Wave 4 depends on `F1 merged`: task J runs example 03 and the new check, which reach I and J's branch only through
+    `main`. Review F1 after wave 3.
+  - I13 and I14 are errors of the expectations, not of the skills: the timing line is last by `layout.md`, and
+    `v2.12.0`'s cleanup commit is what P18 replaced. I13 is closed; I14 stays open until the third run marks it intended.
