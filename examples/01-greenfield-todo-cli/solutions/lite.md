@@ -3,8 +3,9 @@
 ## P3. README with install and usage
 User problem: a README that explains how to install and use the tool · feature F2
 **Edit:** new `README.md`: one-line description; install `pip install -e .`; the three commands with the outputs of
-`solutions/P2-cli-commands.md` "Behaviour"; an example session (add two tasks, list, done 1, list); "Data is stored
-in `todo.json` in the current folder." · **Check:** every command and output in the README matches the P2 table.
+`solutions/P2-cli-commands.md` "Behaviour"; the example session of `solutions/P2-cli-commands.md`, "Example session",
+verbatim; "Data is stored in `todo.json` in the current folder." · **Check:** every command and output in the README
+appears verbatim in the P2 "Behaviour" table or in its "Example session" block.
 
 ## P4. Tests on every push
 User problem: run the tests on every push · feature F3
