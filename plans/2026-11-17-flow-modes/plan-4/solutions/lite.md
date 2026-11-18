@@ -89,3 +89,40 @@ only the first task's lines. The fixture contradicts itself; any careful coordin
 `git grep -n "added 2: call Bob" examples/01-greenfield-todo-cli` prints one line, in `P2-cli-commands.md`;
 `git grep -n "Example session" examples/01-greenfield-todo-cli` prints the P2 heading line, the P3 lines of
 `lite.md` and task C's prompt; the changelog still has exactly one `- Unreleased` line; `git diff --check` clean.
+
+## P23. One trailer block for Wave-Model
+
+User problem: (re-plan, I15) task D's commit `82fd76b` had `Wave-Model` in its own paragraph and Claude Code's
+`Co-Authored-By` in a later one, so git read no `Wave-Model` trailer, and the coordinator accepted the low task anyway
+· feature F2
+
+**Cause:** git reads trailers only in the last paragraph of a message. The header (`skills/wave-run/SKILL.md:235`)
+says "ending with a blank line and the trailer", which allows a second trailer paragraph after it; step 5's tier gate
+(`SKILL.md:263`) says "read the trailer" without the git command that `layout.md` ("Tier gate") gives.
+
+**Edit** (text in quotes is new, verbatim; keep the header block's lines under 120 characters):
+
+1. `skills/wave-run/SKILL.md`, step 4 header: the words `ending with a blank line and the trailer
+   "Wave-Model: <the exact model ID you run on>".` become
+   `ending with one trailer block: a blank line, then "Wave-Model: <the exact model ID you run on>" and any other
+   trailer (Co-Authored-By …) on the lines right after it, with no blank line between them.`
+2. `skills/wave-run/SKILL.md`, step 5, the **Tier gate** bullet: `read the Wave-Model trailer of every non-merge
+   commit of the task` → `read the Wave-Model trailer of every non-merge commit of the task with
+   git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`, and after `(task branch: …;
+   direct task: H..HEAD).` insert `A commit whose line shows no model has no trailer, even when its message shows a
+   Wave-Model line outside the last paragraph.` (commands and the trailer name in backticks, as the bullet writes them).
+3. `skills/wave-run/task-mode.md`: `with the trailer` + `` `Wave-Model: <exact model ID>` `` → the same followed by
+   `in one trailer block with any other trailer`.
+4. `skills/wave-plan/layout.md`, "Tier gate", **Record**: `ends with the trailer `Wave-Model: <exact model ID>` (after
+   a blank line)` → `ends with one trailer block: a blank line, then `Wave-Model: <exact model ID>` and any other
+   trailers (`Co-Authored-By: …`) with no blank line between them, because git reads trailers only in the last
+   paragraph`; **Coordinator check**: after the command add `A line without a model is a missing trailer.`
+5. `skills/wave-plan/CHANGELOG.md`, the `- Unreleased` item: after `(`merged-fields`);` insert
+   `a task keeps `Wave-Model` in one trailer block with any other trailer, and the tier gate reads it with git;`
+   (wrapped like the item, two-space indent).
+
+**Check:** `git grep -n "one trailer block" skills` prints the lines of `SKILL.md`, `task-mode.md`, `layout.md` and the
+changelog; `git grep -n "trailers:key=Wave-Model" skills/wave-run/SKILL.md` prints the step 5 line; in a scratch
+repository, a commit made with `-m "x" -m "Wave-Model: m" -m "Co-Authored-By: C <c@d>"` prints nothing and one made
+with the message `x`, blank line, `Wave-Model: m`, `Co-Authored-By: C <c@d>` prints `m` for
+`git log -1 --format="%(trailers:key=Wave-Model,valueonly)"`; the check command of the wave file is green.
