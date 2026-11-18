@@ -128,8 +128,13 @@ class StatusCheckTest(unittest.TestCase):
     def test_merged_fields(self):
         self.assert_rule("merged-fields", README.replace("| | abc123 |", "| pending | |"))
 
+    def test_merged_hash_on_unmerged(self):
+        self.assert_rule("merged-fields", README.replace(
+            "| F1 | ✅ merged | | abc123 |", "| F1 | 👀 review | review | abc123 |"))
+
     def test_waiting_missing(self):
-        self.assert_rule("waiting-missing", README.replace("✅ merged", "⬜"))
+        self.assert_rule("waiting-missing", README.replace(
+            "| F1 | ✅ merged | | abc123 |", "| F1 | ⬜ | | |"))
 
     def test_review_feature(self):
         readme = README.replace("| F1 | ✅ merged | | abc123 |", "| F1 | 👀 review | review | |")

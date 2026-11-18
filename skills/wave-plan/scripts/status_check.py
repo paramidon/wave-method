@@ -149,6 +149,9 @@ def check(folder):
                 if merged and (waiting or not row["Merged"]):
                     report(readme, line, "merged-fields",
                            item + " needs empty Waiting for and non-empty Merged")
+                if not merged and row["Merged"]:
+                    report(readme, line, "merged-fields",
+                           item + " is not ✅ merged but has a Merged hash")
                 if not merged and status != "➖" and "Waiting for" in row and not waiting:
                     report(readme, line, "waiting-missing", item + " has empty Waiting for")
     for entry, (line, opened, concerned) in entries.items():
