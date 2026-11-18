@@ -126,3 +126,67 @@ changelog; `git grep -n "trailers:key=Wave-Model" skills/wave-run/SKILL.md` prin
 repository, a commit made with `-m "x" -m "Wave-Model: m" -m "Co-Authored-By: C <c@d>"` prints nothing and one made
 with the message `x`, blank line, `Wave-Model: m`, `Co-Authored-By: C <c@d>` prints `m` for
 `git log -1 --format="%(trailers:key=Wave-Model,valueonly)"`; the check command of the wave file is green.
+
+## P24. Example 01's CI needs no file of another feature
+
+User problem: (re-plan, I18, I20) in the third manual run task D's executor reported that example 01's workflow runs
+`pip install -e . pytest`, which needs the `pyproject.toml` that only F1 adds; the current coordinator opened an entry
+and blocked F3, the `v2.12.0` one kept it as a review caveat, and the user's `merge F1 F3` then stopped `not-ready`
+· feature F2
+
+**Cause:** a hidden dependency between features in the example (`layout.md`: a feature must work on `main` on its
+own). Whether an executor reports it is chance, so the two versions diverged on the fixture. The workflow does not
+need an install: `python -m pytest` puts the checkout on `sys.path`, so the tests import `todo` (a flat package with
+`todo/__init__.py`), and on F3's branch alone pytest finds no tests and exits 5. Checked here: a flat `todo/` package
+with a test passes under `python -m pytest -q` without an install, and `bash -ec 'python -m pytest -q || [ $? -eq 5 ]'`
+exits 0 in an empty folder.
+
+**Edit** (text in quotes is new, verbatim; keep every line under 120 characters):
+
+1. `examples/01-greenfield-todo-cli/solutions/lite.md`, section P4, **Edit:** the words
+   ``steps `actions/checkout@v4`, `actions/setup-python@v5`, `pip install -e . pytest`, `pytest -q` `` become
+   ``steps `actions/checkout@v4`, `actions/setup-python@v5`, `python -m pip install pytest`,
+   `python -m pytest -q || [ $? -eq 5 ]`; no install of the project: `python -m` puts the checkout on `sys.path`, and
+   exit 5 ("no tests collected") passes while F1 is not merged, so the workflow needs no file of another feature``;
+   its **Check:** gains, before the final period, ``; the file contains neither `-e .` nor `pyproject` ``.
+2. `examples/01-greenfield-todo-cli/waves/w02.md`, task D's prompt: `with pytest tests; it will have a
+   pyproject.toml.` → `(package todo/, tests in tests/); the workflow must not need any file it does not add
+   itself.` (rewrap the prompt's first lines under 120 characters); its `Check:` line → `Check: the YAML check of
+   P4; the file contains "3.10" and "3.12" and neither "-e ." nor "pyproject".`
+3. `examples/01-greenfield-todo-cli/README.md`: F3's "Done when" cell → `the workflow file is valid YAML, runs
+   `pytest` on Python 3.10 and 3.12 and needs no file of F1`; in "Assumptions", after the bullet `P1 and P2 are one
+   feature: …`, a new bullet `- F3's workflow installs only `pytest` and runs `python -m pytest` from the checkout,
+   so it needs no file of F1 and can be merged before or after it; with no tests yet, pytest's exit 5 counts as a
+   pass.`
+
+**Check:** `python skills/wave-plan/scripts/status_check.py examples/01-greenfield-todo-cli` → exit 0, no output;
+`git grep -n -F "pip install -e . pytest" examples` prints nothing; `git grep -n -F "it will have a pyproject" examples`
+prints nothing; `git grep -n -F "python -m pip install pytest" examples/01-greenfield-todo-cli` prints the P4 line of
+`lite.md`; the check command of the wave file is green.
+
+## P25. A Merged line takes its time from the merge commit
+
+User problem: (re-plan, I21) the `v2.12.0` archive of the third manual run says `Merged 2026-11-18 21:08` for F1 and
+F3, while both merge commits are at 21:05 and the run finished at 21:05 · feature F2
+
+**Cause:** `skills/wave-run/merge.md` ("Record", line 67) prescribes `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash>`
+without saying where the time comes from, so a coordinator may write one it did not read. The merge commit already
+holds the true time, and git prints it.
+
+**Edit** (text in quotes is new, verbatim; commands and file names in backticks; keep lines under 120 characters):
+
+1. `skills/wave-run/merge.md`, "Record", the bullet `The Execution of the wave file of the feature's last wave …`:
+   after `` `Rejected <YYYY-MM-DD HH:MM>: <feature-id> → I<n>`. `` append `The time of a Merged line is the committer
+   time of the commit its hash names, from git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M" <hash>, never a
+   clock reading or an estimate; the time of a Rejected line is read from the clock (layout.md, "Run times").`
+2. `skills/wave-run/autonomous.md`, the list after "Then `merge.md`, "Record", with these differences": after
+   `` `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)` `` insert ` (its time from the merge commit, as
+   in merge.md, "Record")`; after `after its `👀 review since` line` insert `, with the same time`.
+3. `skills/wave-plan/CHANGELOG.md`, the `- Unreleased` item: after `and the tier gate reads it with git;` insert
+   `a Merged line of a wave file takes its time from the merge commit, not from the clock; example 01's CI workflow
+   needs no file of another feature;` (wrapped like the item, two-space indent, lines under 120 characters).
+
+**Check:** `git grep -n "committer" skills/wave-run/merge.md` prints the new sentence; `git grep -n "its time from
+the merge commit" skills/wave-run/autonomous.md` prints one line; the changelog's `- Unreleased` item contains the
+inserted words, and the changelog still has exactly one `- Unreleased` line; in a scratch repository a commit's `git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M"`
+prints its time in that form; the check command of the wave file is green.
