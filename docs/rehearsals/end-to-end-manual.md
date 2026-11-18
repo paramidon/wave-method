@@ -1,6 +1,6 @@
 # Rehearsal: manual flow end to end
 
-2026-11-18 · Claude Code 2.1.326 · source `c07cbe7`
+2026-11-18 · Claude Code 2.1.326 · source `c07cbe7` · continued 2026-11-19 from M4
 
 ## Setup
 
@@ -79,6 +79,12 @@ files and errors are retained as `cur-M4.workflow*.msys-original` and `base-M4.w
 `<scratch>/logs`. A command-scoped `MSYS2_ARG_CONV_EXCL='feat/todo-cli/F3-ci-tests:'` passed the argument to Git
 intact. Both workflow reads then exited 0 and produced content. The Claude calls and standalone CI checks had
 already completed and were not repeated.
+
+**Continuation.** The first `cur-M5` call hit the usage limit. All 11 checks of the preserved M4 state passed
+(`<scratch>/logs/continue-state.txt`). The stopped attempt's `cur-M5.*` files and both pytest main-tree snapshots
+are in `<scratch>/logs/limit-stop/`. The continuation used `<scratch>/launch/continue.sh` and a fresh
+`<scratch>/logs/continue.stamp`. The watch's two path checks use the new stamp, the only launcher change
+(`<scratch>/logs/continue-launcher.diff`). Only the `scratch=` assignment ran before sourcing `env.sh`.
 
 ## Runs
 
@@ -256,11 +262,14 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli m
   echo $? > "$scratch/logs/cur-M5.exit"
 ```
 
-- Exit 1. Usage test: match. Model `claude-sonnet-5-5`, 8 turns, `total_cost_usd` 0.23071250, 0.33 wall minutes (`cur-M5.jsonl`, `cur-M5.err`, `cur-M5.exit`, `cur-M5.usage`).
-- Not run (usage limit). You've hit your 5-hour limit · resets <reset>
+- Launcher exit 0, CLI exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 15 turns, `total_cost_usd` 0.34299980, 0.75 wall minutes (`cur-M5.jsonl`, `cur-M5.err`, `cur-M5.exit`, `cur-M5.usage`).
+- First non-empty line: `## Merge · todo-cli`
+- Last non-empty line: “Started: 2026-11-19 02:23 · Finished: 2026-11-19 02:24 (1 min)”
 - Stop line: none.
-- Main cb90eaa → cb90eaa. No first-parent commits were added (`cur-M5.before.main`, `cur-M5.after.main`, `cur-M5.main-commits`, `cur-M5.nonmerges`).
+- Main `cb90eaa` → `c0b79e7` (`cur-M5.before.main`, `cur-M5.after.main`, `cur-M5.main-commits`, `cur-M5.nonmerges`).
 - Watch: empty (`cur-M5.outside`). Ref and worktree snapshots: `cur-M5.before.*` and `cur-M5.after.*`.
+- The stopped attempt remains in `limit-stop/` (`cur-M5.*`, including the stream, stderr, exit 1, usage match, watch, snapshots and both `M6-pytest.main-tree` files). Its limit message ended with `resets <reset>`.
+- Finding (I21). F1 and F3 merged and the plan was archived. The archived `waves/w02.md` at lines 63–64 uses `- Merged`, so `grep -E '^Merged '` returned 1 and `cur-M5.merged-lines` and `cur-M5.merge-times` are empty. Both archived timestamps are 02:24, matching Git for `2177196` and `a5f9730`.
 
 ### base-M5
 
@@ -271,7 +280,13 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli m
   echo $? > "$scratch/logs/base-M5.exit"
 ```
 
-- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Launcher exit 0, CLI exit 0. Usage test: no match. Model `claude-sonnet-5-5`, 15 turns, `total_cost_usd` 0.29660340, 0.90 wall minutes (`base-M5.jsonl`, `base-M5.err`, `base-M5.exit`, `base-M5.usage`).
+- First non-empty line: `Started: 2026-11-19 02:24`
+- Last non-empty line: “Started: 2026-11-19 02:24 · Finished: 2026-11-19 02:25 (1 min)”
+- Stop line: none.
+- Main `382347a` → `93291f0` (`base-M5.before.main`, `base-M5.after.main`, `base-M5.main-commits`, `base-M5.nonmerges`).
+- Watch: empty (`base-M5.outside`). Ref and worktree snapshots: `base-M5.before.*` and `base-M5.after.*`.
+- Pass. F1 and F3 merged, the plan was archived and the two recorded times match their commits.
 
 ### cur-M6-pytest
 
@@ -279,7 +294,9 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-run plans/2026-11-02-todo-cli m
 python -m pytest -q
 ```
 
-- Not run. The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`).
+- Launcher exit 0, pytest exit 0, 0.00 wall minutes. Pass. Observed `11 passed in 0.07s` (`cur-M6-pytest.txt`, `cur-M6-pytest.exit`).
+- Main `c0b79e7` → `c0b79e7` (`cur-M6-pytest.before.main`, `cur-M6-pytest.after.main`, `cur-M6-pytest.main-commits`, `cur-M6-pytest.nonmerges`).
+- Watch: empty (`cur-M6-pytest.outside`). Ref and worktree snapshots: `cur-M6-pytest.before.*` and `cur-M6-pytest.after.*`.
 
 ### base-M6-pytest
 
@@ -287,7 +304,9 @@ python -m pytest -q
 python -m pytest -q
 ```
 
-- Not run. The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`).
+- Launcher exit 0, pytest exit 0, 0.02 wall minutes. Finding (I20). Expected 11 passed. Observed `13 passed in 0.10s` (`base-M6-pytest.txt`, `base-M6-pytest.exit`).
+- Main `93291f0` → `93291f0` (`base-M6-pytest.before.main`, `base-M6-pytest.after.main`, `base-M6-pytest.main-commits`, `base-M6-pytest.nonmerges`).
+- Watch: empty (`base-M6-pytest.outside`). Ref and worktree snapshots: `base-M6-pytest.before.*` and `base-M6-pytest.after.*`.
 
 ### cur-M6
 
@@ -298,7 +317,13 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-
   echo $? > "$scratch/logs/cur-M6.exit"
 ```
 
-- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Launcher exit 0, CLI exit 0. Usage test: no match. Model `claude-haiku-5-5`, 5 turns, `total_cost_usd` 0.00976163, 0.28 wall minutes (`cur-M6.jsonl`, `cur-M6.err`, `cur-M6.exit`, `cur-M6.usage`).
+- First non-empty line: `Started: 2026-11-19 02:26`
+- Last non-empty line: “Started: 2026-11-19 02:26 · Finished: 2026-11-19 02:26 (under 1 min)”
+- Stop line: none.
+- Main `c0b79e7` → `c0b79e7` (`cur-M6.before.main`, `cur-M6.after.main`, `cur-M6.main-commits`, `cur-M6.nonmerges`).
+- Watch: empty (`cur-M6.outside`). Ref and worktree snapshots: `cur-M6.before.*` and `cur-M6.after.*`.
+- Finding (I20). The report says there is no active plan and refers to `archive/`, with no archived plan name.
 
 ### base-M6
 
@@ -309,23 +334,29 @@ MSYS_NO_PATHCONV=1 timeout 3600 claude -p "/wave-status" --output-format stream-
   echo $? > "$scratch/logs/base-M6.exit"
 ```
 
-- Not run (usage limit). Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
+- Launcher exit 0, CLI exit 0. Usage test: no match. Model `claude-haiku-5-5`, 6 turns, `total_cost_usd` 0.00546442, 0.23 wall minutes (`base-M6.jsonl`, `base-M6.err`, `base-M6.exit`, `base-M6.usage`).
+- First non-empty line: `Started: 2026-11-19 02:26`
+- Last non-empty line: “Finished: 2026-11-19 02:27”
+- Stop line: none.
+- Main `93291f0` → `93291f0` (`base-M6.before.main`, `base-M6.after.main`, `base-M6.main-commits`, `base-M6.nonmerges`).
+- Watch: empty (`base-M6.outside`). Ref and worktree snapshots: `base-M6.before.*` and `base-M6.after.*`.
+- Pass. The report names archived plan `2026-11-02-todo-cli` and reports no active plan.
 
 ## Results
 
 Evidence filenames below are relative to `<scratch>/logs/`.
-Reported usage for both attempts totalled $3.20962390 in the last results' `total_cost_usd` values against a $20 cap.
-The usage limit stopped the last Claude call at cur-M5.
+Reported usage through the continuation totalled $3.86445314 in the last results' `total_cost_usd` values against a $20 cap.
 
 | Expectation | Result | Evidence |
 | --- | --- | --- |
 | P0 isolates the session and subagent | Pass | `P0.jsonl` has 2 matching Bash tool results: venv Python, prefix and temp under `<scratch>`, `pathconv=unset`. `P0.exit` is 0 |
-| P21 watch after every executed step | Pass | All 11 `.outside` files are empty |
-| P22 usage scan, snapshots and exit result for each Claude command | Pass | 8 calls have `.exit`, `.usage`, `.before.*` and `.after.*` evidence; usage matches: cur-M5 |
-| P22 usage stop prevents every later Claude call | Pass | `cur-M5.usage`, `cur-M5.exit`, `cur-M5.after.refs`, `cur-M5.outside`. Later Claude steps have no call logs |
+| P21 watch after every executed step | Pass | All 17 `.outside` files are empty, including six continuation watches |
+| P22 usage scan, snapshots and exit result for each Claude command | Pass | 12 calls have `.exit`, `.usage`, `.before.*` and `.after.*` evidence. The sole match was the original `cur-M5` |
+| P22 usage stop prevents every later Claude call | Pass | `limit-stop/cur-M5.usage`, `limit-stop/cur-M5.exit`, `limit-stop/cur-M5.after.refs`, `limit-stop/cur-M5.outside`. Calls resumed after the preserved state check |
 | I22 scratch isolation for source checks and generated files | Pass | `env.sh` was sourced before source checks; final check files in `<scratch>/logs`; see Setup |
-| Working folder refs unchanged across the calls | Pass | `working-before.refs` and `working-after.refs` |
-| Final wave check passes under the scratch environment | Pass | Exit codes for `final-check-status-suite.txt` = 0, `final-check-unit-suite.txt` = 0, `final-check-examples.txt` = 0, `final-check-diff.txt` = 0 |
+| Working folder refs unchanged across the calls | Pass | `working-before.refs` / `working-after.refs` and `working-before-continue.refs` / `working-after-continue.refs`. Each pair matches |
+| Final wave check passes under the scratch environment | Pass | 33 status-check tests, 59 driver tests, all example status checks, and `git diff --check` pass (`continue-check.txt`) |
+| I23 continuation from the preserved M4 state | Pass | All 11 checks exited 0 in `continue-state.txt`. See `continue-launcher.diff` and `limit-stop/` |
 | cur-M0 status check is silent and exits 0 | Pass | Exit 0, output empty (`cur-M0.exit`, `cur-M0.txt`) |
 | base-M0 status check is silent and exits 0 | Pass | Exit 0, output empty (`base-M0.exit`, `base-M0.txt`) |
 | cur-M1 driver skips manual flow and creates no driver folder | Pass | `next: nothing — plans/2026-11-02-todo-cli: manual flow: the driver runs autonomous plans only`, driver folder absent (`cur-M1.exit`, `cur-M1.txt`, `cur-M1.driver-dir`) |
@@ -344,12 +375,13 @@ The usage limit stopped the last Claude call at cur-M5.
 | cur-M4 I18 no open problem on plan/todo-cli | Pass | Open entries none (`cur-M4.tracking-problems`) |
 | cur-M4 I18 F3 runs its own test command and needs no F1 files | Pass | Workflow show exit 0, dependency count 0, F3 extract exit 0, CI command exit 0 (`cur-M4.workflow`, `cur-M4.workflow-deps`, `cur-M4.ci-alone`, `cur-M4.ci-alone.exit`) |
 | cur-M3 approved merges only, with their hashes in feature statuses | Pass | 2a6fae8 → cb90eaa. F2 e1cdad7. 2 first-parent commits, 0 non-merges (`cur-M3.main-commits`, `cur-M3.nonmerges`) |
-| cur-M5 I20 approved merges only, with their hashes in feature statuses | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| cur-M5 I20 merge finishes without a stop line | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| cur-M5 I20 all features merged and the plan is archived | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| cur-M5 I21 both Merged lines equal their commit times | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| cur-M6-pytest I20 all 11 tests pass on main | Not run | The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`) |
-| cur-M6 I20 status shows no active plan and names the archived plan | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| cur-M3 I21 Merged line time equals its merge commit | Pass | F2 line 22:11, commit 22:11 (`cur-M3.merge-times`) |
+| cur-M5 I20 approved merges only, with their hashes in feature statuses | Pass | `cb90eaa` → `c0b79e7` (3 merges, 0 non-merges). F1 `2177196`, F3 `a5f9730` (`cur-M5.archive-readme`, `cur-M5.main-commits`, `cur-M5.nonmerges`) |
+| cur-M5 I20 merge finishes without a stop line | Pass | Launcher and CLI exit 0, no usage match or stop line (`cur-M5.exit`, `cur-M5.usage`, `cur-M5.jsonl`) |
+| cur-M5 I20 all features merged and the plan is archived | Pass | F1, F2 and F3 merged. Plan at `plans/archive/2026-11-02-todo-cli/` (`cur-M5.archive-readme`) |
+| cur-M5 I21 both Merged lines equal their commit times | Finding | Both archived `- Merged` lines match Git at 02:24. The anchored scan omitted both lines (`cur-M5.merge-times`, archived `waves/w02.md:63–64`) |
+| cur-M6-pytest I20 all 11 tests pass on main | Pass | 11 passed, exit 0 (`cur-M6-pytest.txt`) |
+| cur-M6 I20 status shows no active plan and names the archived plan | Finding | No active plan. Archived plan name absent (`cur-M6.jsonl`) |
 | base-M2 wave 1 and tasks A/C done, F2 in review, and F1 waits for wave 2 | Pass | W1 ✅, A ✅, C ✅, F1 🔄, F2 👀 review (`base-M2.tracking-readme`) |
 | base-M2 last result opens with Started | Pass | Expected `Started:`, observed `Started: 2026-11-18 22:09` (`base-M2.jsonl`) |
 | base-M2 F2 review block present | Pass | F2 review block present (`base-M2.jsonl`) |
@@ -364,16 +396,17 @@ The usage limit stopped the last Claude call at cur-M5.
 | base-M4 I18 no open problem on plan/todo-cli | Pass | Open entries none (`base-M4.tracking-problems`) |
 | base-M4 I18 F3 runs its own test command and needs no F1 files | Pass | Workflow show exit 0, dependency count 0, F3 extract exit 0, CI command exit 0 (`base-M4.workflow`, `base-M4.workflow-deps`, `base-M4.ci-alone`, `base-M4.ci-alone.exit`) |
 | base-M3 approved merges only, with their hashes in feature statuses | Pass | 59df659 → 382347a. F2 591b296. 2 first-parent commits, 0 non-merges (`base-M3.main-commits`, `base-M3.nonmerges`) |
-| base-M5 I20 approved merges only, with their hashes in feature statuses | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| base-M5 I20 merge finishes without a stop line | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| base-M5 I20 all features merged and the plan is archived | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| base-M5 I21 baseline Merged line times and commit times recorded | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
-| base-M6-pytest I20 all 11 tests pass on main | Not run | The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`) |
-| base-M6 I20 status shows no active plan and names the archived plan | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| base-M3 I21 baseline Merged line time recorded | Pass | F2 line 22:15, commit 22:14 · intended (P25) (`base-M3.merge-times`) |
+| base-M5 I20 approved merges only, with their hashes in feature statuses | Pass | `382347a` → `93291f0` (3 merges, 0 non-merges). F1 `7b5c535`, F3 `c6d3af4` (`base-M5.archive-readme`, `base-M5.main-commits`, `base-M5.nonmerges`) |
+| base-M5 I20 merge finishes without a stop line | Pass | Launcher and CLI exit 0, no usage match or stop line (`base-M5.exit`, `base-M5.usage`, `base-M5.jsonl`) |
+| base-M5 I20 all features merged and the plan is archived | Pass | F1, F2 and F3 merged. Plan at `plans/archive/2026-11-02-todo-cli/` (`base-M5.archive-readme`) |
+| base-M5 I21 baseline Merged line times and commit times recorded | Pass | F1 and F3 lines and commit times all 02:25 (`base-M5.merge-times`) |
+| base-M6-pytest I20 all 11 tests pass on main | Finding | 13 passed (expected 11), exit 0 (`base-M6-pytest.txt`). The baseline includes extra empty-text and corrupt-file tests (`tests/test_cli.py:52,56`) |
+| base-M6 I20 status shows no active plan and names the archived plan | Pass | No active plan. Archived plan `2026-11-02-todo-cli` named (`base-M6.jsonl`) |
 | M2 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
 | M3 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
 | M4 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |
-| M5 manual flow matches v2.12.0 in the comparison | Not run (usage limit) | Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit` |
+| M5 manual flow matches v2.12.0 in the comparison | Finding | Both runs merged the same features, archived the plan and kept only the main checkout. The merge-line scan differs as recorded in the I21 finding |
 
 The comparison counts commits added to `main` by each step. Worktrees listed are in addition to the main
 checkout. M5 statuses come from the archived README if the tracking branch was removed. Hashes and wording
@@ -383,32 +416,18 @@ are recorded in the logs and are expected to vary across repositories.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | cur-M2 | feat/todo-cli/F1-todo-store-and-cli, feat/todo-cli/F2-usage-readme | todo-cli-F1, todo-cli-F2, todo-cli-plan | 0 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 👀 review, F3 ⬜ | F2 | None | None | None | No merge |
 | base-M2 | feat/todo-cli/F1-todo-store-and-cli, feat/todo-cli/F2-usage-readme | todo-cli-F1, todo-cli-F2, todo-cli-plan | 0 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 👀 review, F3 ⬜ | F2 | None | None | None | No merge |
-| cur-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | No merge |
-| base-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | No merge |
+| cur-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | equal |
+| base-M3 | None | todo-cli-F1, todo-cli-plan | 2 / 0 | W1 ✅, W2 ⬜, A ✅, B ⬜, C ✅, D ⬜, F1 🔄, F2 ✅ merged, F3 ⬜ | No | None | No task commits | No task commits | 22:15 vs 22:14 · intended (P25) |
 | cur-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | None | No merge |
 | base-M4 | feat/todo-cli/F3-ci-tests | todo-cli-F1, todo-cli-F3, todo-cli-plan | 0 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 👀 review, F2 ✅ merged, F3 👀 review | F1, F3 | None | None | D eb791ec · intended (P23) | No merge |
-| cur-M5 | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run |
-| base-M5 | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run | Not run |
+| cur-M5 | None | None | 3 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 ✅ merged, F2 ✅ merged, F3 ✅ merged | No | None | No task commits | No task commits | Finding. The scan omitted both bullet lines. Direct inspection found both equal at 02:24 |
+| base-M5 | None | None | 3 / 0 | W1 ✅, W2 ✅, A ✅, B ✅, C ✅, D ✅, F1 ✅ merged, F2 ✅ merged, F3 ✅ merged | No | None | No task commits | No task commits | equal (F1 and F3 at 02:25) |
 
 ## Not verified
 
 - The watch checked the Python user site and `/c/tmp`. The run did not check other host paths or Claude Code's global application state.
 - F3's GitHub Actions job was exercised locally against its feature tree. It was not dispatched on GitHub.
 - The autonomous rehearsal was not repeated. The merge-time rule is shared with the autonomous flow.
-
-- Not run (usage limit). cur-M5 I20 approved merges only, with their hashes in feature statuses. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). cur-M5 I20 merge finishes without a stop line. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). cur-M5 I20 all features merged and the plan is archived. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). cur-M5 I21 both Merged lines equal their commit times. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run. cur-M6-pytest I20 all 11 tests pass on main. The F1 test suite is absent from main after the usage stop (`cur-M6-pytest.main-tree`).
-- Not run (usage limit). cur-M6 I20 status shows no active plan and names the archived plan. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). base-M5 I20 approved merges only, with their hashes in feature statuses. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). base-M5 I20 merge finishes without a stop line. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). base-M5 I20 all features merged and the plan is archived. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). base-M5 I21 baseline Merged line times and commit times recorded. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run. base-M6-pytest I20 all 11 tests pass on main. The F1 test suite is absent from main after the usage stop (`base-M6-pytest.main-tree`).
-- Not run (usage limit). base-M6 I20 status shows no active plan and names the archived plan. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
-- Not run (usage limit). M5 manual flow matches v2.12.0 in the comparison. Usage stop in `cur-M5.jsonl`, `cur-M5.usage`, `cur-M5.exit`.
 
 ## Repeat
 
@@ -473,3 +492,11 @@ python -m unittest discover -s scripts/tests
 for p in examples/*/; do python skills/wave-plan/scripts/status_check.py "${p%/}"; done
 git diff --check
 ```
+
+**Resume after a usage stop.** In each shell resolve the preserved `<scratch>`, source its `env.sh` and export
+`CLAUDE_ENV_FILE`, `scratch` and `working`. Compare both live ref and worktree lists to M4 and check both clean
+main checkouts, installed skill trees, the original launcher and the absence of baseline M5 and `limit-stop/`.
+After the state check passes, move the stopped files to `limit-stop/`, use a fresh stamp in the continuation
+launcher and capture the source refs. Record M3 times, run current and baseline M5, capture the archive and M5
+time evidence, run current and baseline M6 pytest, then current and baseline M6 status, and compare the source
+refs. Check the accumulated cost before each Claude call and stop future calls on a usage match.
