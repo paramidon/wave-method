@@ -30,7 +30,7 @@ Merged: short hash of the merge commit into the main branch.
 | 5 | `waves/w05.md` | K, L, M | ✅ |
 | 6 | `waves/w06.md` | N, O | ✅ (verified by P, Q and R, wave 7) |
 | 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I18, I20, I21, I22 |
-| 8 | `waves/w08.md` | S, T, U (after S, T) | ⬜ |
+| 8 | `waves/w08.md` | S, T, U (after S, T) | 🔄 since 2026-11-18 21:54 |
 
 ## Tasks
 
@@ -54,9 +54,9 @@ Merged: short hash of the merge commit into the main branch.
 | P | `trailer-block-rule` | F2 | 7 | low | ✅ |
 | Q | `manual-flow-third-run` | F2 | 7 | medium | ➖ superseded by U |
 | R | `autonomous-flow-third-run` | F2 | 7 | medium | ✅ |
-| S | `example-ci-independence` | F2 | 8 | low | ⬜ |
-| T | `merge-time-from-git` | F2 | 8 | low | ⬜ |
-| U | `manual-flow-fourth-run` | F2 | 8 | medium | ⬜ |
+| S | `example-ci-independence` | F2 | 8 | low | 🔄 |
+| T | `merge-time-from-git` | F2 | 8 | low | 🔄 |
+| U | `manual-flow-fourth-run` | F2 | 8 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p4` and reach the
