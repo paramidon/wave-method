@@ -351,6 +351,12 @@ throughout. Commit counts are first-parent only. The base-M5 statuses come from 
 | M5 | cur | None | F1, F3, plan/todo-cli | 0 / 0 | F1 👀 review, F2 ✅ merged, F3 ⚠️ blocked I1, A ✅, B ✅, C ✅, D ⚠️ I1, 1 ✅, 2 ⚠️ I1 | No | Stop not-ready | No task run | No task run |
 | M5 | base | None | None | 3 / 0 | F1 ✅ merged, F2 ✅ merged, F3 ✅ merged, A ✅, B ✅, C ✅, D ✅, 1 ✅, 2 ✅ | No | None | No task run | No task run |
 
+Historical I14 is **intended (P18)**. In the second rehearsal, baseline task A committed three
+`__pycache__` files (`f1d10b6`), and the coordinator removed them in cleanup commit `1ac1aa5`.
+P18 introduced an explicit scope gate for such changes. In the third rehearsal, both sides
+inherited `PYTHONDONTWRITEBYTECODE=1` and their M2 and M4 `.paths` files listed only declared
+paths. Neither side exercised bytecode cleanup in this run.
+
 Manual flow differed from v2.12.0 at M4 and M5. The current runner recorded the missing
 packaging metadata as a blocking issue while the baseline flagged the same dependency in its
 review brief. The run shows how each report handled the dependency. It did not run CI on
