@@ -24,7 +24,7 @@ Merged: short hash of the merge commit into the main branch.
 | 2 | `waves/w02.md` | E, F | ➖ dropped (tasks → wave 4) |
 | 3 | `waves/w03.md` | G, H (after G) | ✅ |
 | 4 | `waves/w04.md` | I, J | ⚠️ I5, I6, I7, I8, I9 |
-| 5 | `waves/w05.md` | K, L, M | ⬜ |
+| 5 | "waves/w05.md" | K, L, M | 🔄 since 2026-11-18 18:20 |
 | 6 | `waves/w06.md` | N, O | ⬜ |
 
 ## Tasks
@@ -41,9 +41,9 @@ Merged: short hash of the merge commit into the main branch.
 | H | `example-index-check` | F1 | 3 | low | ✅ |
 | I | `manual-flow-rehearsal` | F2 | 4 | medium | ➖ superseded by N |
 | J | `autonomous-flow-rehearsal` | F2 | 4 | medium | ➖ superseded by O |
-| K | `task-scope-enforcement` | F2 | 5 | medium | ⬜ |
-| L | `merged-cell-check` | F2 | 5 | low | ⬜ |
-| M | `example-session-fixture` | F2 | 5 | low | ⬜ |
+| K | `task-scope-enforcement` | F2 | 5 | medium | 🔄 |
+| L | `merged-cell-check` | F2 | 5 | low | 🔄 |
+| M | `example-session-fixture` | F2 | 5 | low | 🔄 |
 | N | `manual-flow-rerun` | F2 | 6 | medium | ⬜ |
 | O | `autonomous-flow-rerun` | F2 | 6 | medium | ⬜ |
 
