@@ -26,6 +26,23 @@ def main(argv: list[str] | None = None) -> int: ...
 
 **Limits:** `done` on a task that is already done prints the same line and exits 0.
 
+**Example session** (an empty folder; the README copies it verbatim):
+
+```text
+$ todo add "buy milk"
+added 1: buy milk
+$ todo add "call Bob"
+added 2: call Bob
+$ todo list
+[ ] 1 buy milk
+[ ] 2 call Bob
+$ todo done 1
+done 1: buy milk
+$ todo list
+[x] 1 buy milk
+[ ] 2 call Bob
+```
+
 **Acceptance tests** (`tests/test_cli.py`, each test in a `tmp_path` with `monkeypatch.chdir`):
 1. `add` prints `added 1: buy milk` and creates `todo.json`;
 2. a second `add` gets id 2;

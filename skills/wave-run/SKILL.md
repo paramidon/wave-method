@@ -229,9 +229,12 @@ Report language: <the language of the user's messages in this session>. Everythi
 repository (code, comments, docs, commit messages) is in English, even where the existing text is not.
 Plan folder (read-only): <absolute path of the plan folder in the tracking worktree>. Read only the files of
 it that the task names (paths are relative to the plan folder); do not read other waves, history or archive.
-Work only in the working folder. Do not edit anything under plans/. When done, commit all your changes on
-this branch with the message "<plan> <feature-id> / <task-id>: <short>", ending with a blank line and the trailer
-"Wave-Model: <the exact model ID you run on>". Do not switch branches, do not
+Work only in the working folder. Do not edit anything under plans/. When done, commit your changes on this
+branch: add every file you created or changed for the task by name (git add <file> …; never git add -A, git add .
+or git commit -a), and never commit generated files (bytecode, caches, build or test output). Use the message
+"<plan> <feature-id> / <task-id>: <short>", ending with one trailer block: a blank line, then
+"Wave-Model: <the exact model ID you run on>" and any other trailer (Co-Authored-By …) on the lines right
+after it, with no blank line between them. Do not switch branches, do not
 merge, do not push, do not touch other worktrees or the main checkout.
 End your report with exactly this block (one item per line, "none" when empty):
 Model: <the exact model ID you run on>
@@ -249,21 +252,30 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
 ### 5. Check each task
 
 - Task branch: `git log feat/<plan>/<feature>..<task branch>` shows the work is committed. Uncommitted changes left in a task worktree: use the fix loop and ask it to commit.
-- Task branch: `git diff --stat feat/<plan>/<feature>...<task branch>` shows only its files from the wave
-  file's task table and nothing under `plans/`. Out-of-scope edits go to the problem log; if such an edit
-  conflicts with another task, ask the user.
-  Autonomous flow: `autonomous.md`, "Points of steps 1–6".
-- Direct task: `git -C <feature worktree> status --porcelain` is empty (otherwise use the fix loop and ask it to commit); `git log H..HEAD` is not empty; `git diff --stat H HEAD` shows only the task's files from the wave file and nothing under `plans/`.
-- **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task
-  (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`). A subagent that replied
+- **Scope.** List every path that any commit of the task touched, including a file added and removed again:
+  task branch `git log --no-merges --name-only --format= feat/<plan>/<feature>..<task branch> | sort -u`;
+  direct task `git -C <feature worktree> log --no-merges --name-only --format= H..HEAD | sort -u`. A path is in
+  scope when it equals a path in backticks of the task's `Files` cell in the wave file's task table, or lies
+  under such a path that ends with `/`; a path under `plans/` is never in scope. Any other path is an
+  out-of-scope edit.
+- Direct task: `git -C <feature worktree> status --porcelain` shows no change to a tracked file and no untracked
+  path that is one of the task's files (otherwise use the fix loop and ask it to commit its files); untracked
+  generated files (bytecode, caches) stay uncommitted. `git log H..HEAD` is not empty.
+- **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task with
+  `git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`
+  (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`).
+  A commit whose line shows no model has no trailer, even when its message shows a `Wave-Model` line outside
+  the last paragraph. A subagent that replied
   `Stop tier-mismatch`, a missing trailer, an unknown model or a model below the task's tier → the work is not
   accepted: do not merge the task branch (direct task: undo it with `git revert --no-edit H..HEAD`), the task is
   ⚠️ with a problem entry `below tier: <model> ran a <tier> task`, and it runs again on a model of its tier (a
   new subagent, or task mode). Never use the fix loop to repair such work.
 - Run the direct task's check command. A failure: use the fix loop.
-- Out-of-scope edits or unusable direct work: record it in `problems.md` and ask the user. Never
-  `git reset --hard` the feature branch without the user's explicit OK; the default undo is
-  `git revert --no-edit H..HEAD`.
+- Out-of-scope edits or unusable direct work: one entry in `problems.md`,
+  `out of scope: <paths> (<commit hashes>)` for a scope failure, then ask the user. An out-of-scope path is
+  never cleaned up instead: no commit that deletes or restores it, no amend or rebase, no fix loop for it. The only undo
+  is `git revert --no-edit H..HEAD` for a direct task (never `git reset --hard` the feature branch without the
+  user's explicit OK) and leaving a task branch unmerged.
   Autonomous flow: `autonomous.md`, "Points of steps 1–6".
 - Read the report's final block, ignoring `none` values. Every `Not checked:` line not covered by a later task, and
   every `Problems:` line, becomes one entry of `problems.md` (add the ID, `status: open`). A report without the

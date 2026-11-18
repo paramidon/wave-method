@@ -91,6 +91,9 @@ entries (`SKILL.md` step 8). A re-plan reschedules skipped tasks.
 - **Step 5, an out-of-scope edit or unusable direct work:** a new entry naming the files; do not merge the task: keep
   a task branch and its worktree unmerged, undo a direct task with `git revert --no-edit H..HEAD` (never
   `git reset --hard`); the task is ⚠️, the feature `⚠️ blocked`; its dependants are skipped.
+  The paths come from the scope command of `SKILL.md` step 5, so a file added and removed again counts. The revert
+  is the only undo: never a commit that deletes the paths, and the feature stays ⚠️ blocked even when the revert
+  leaves its branch clean.
 - **Step 6, a conflict that would change a plan solution:** `git merge --abort` in the feature worktree; a new entry
   naming the solution file and both tasks; the task being merged is ⚠️ (its branch and worktree kept), the feature
   `⚠️ blocked`; its dependants are skipped; the wave goes on.
@@ -105,10 +108,13 @@ Run after step 8's commit and before the report; it replaces step 10. In the mer
 earlier ones):
 
 1. Apply condition 5 of `layout.md`, "Auto-approval", and its outcome on failure.
-2. Conditions 1, 3 and 4 of `layout.md`, "Auto-approval". For 4 run
+2. Conditions 1, 3, 4 and 6 of `layout.md`, "Auto-approval". For 4 run
    `git log --no-merges --format="%h %s%n%(trailers:key=Wave-Model,valueonly)" <main>..feat/<plan>/<feature>` and
-   use `layout.md`, "Model tiers", or the README `Models:` line to evaluate the trailers. A failure → the feature is
-   `⚠️ blocked I<n>`; for 4 a new entry `below tier: <model> ran a <tier> task (<hash>)`.
+   use `layout.md`, "Model tiers", or the README `Models:` line to evaluate the trailers. For 6 run
+   `git log --no-merges --name-only --format= <main>..feat/<plan>/<feature> | sort -u` and compare it with the
+   `Files` cells of the feature's tasks in every wave file, as `SKILL.md` step 5 "Scope" does. A failure → the feature
+   is `⚠️ blocked I<n>`; for 4 a new entry `below tier: <model> ran a <tier> task (<hash>)`; for 6 a new entry
+   `out of scope at approval: <paths> (<commit hashes>)`.
 3. `merge.md`, "Merge one feature", step 1. Red → the feature is `⚠️ blocked I<n>` with a new entry, as in 2; do not
    merge. When resolving a conflict changed lines of the feature's own changes: do not merge; a new entry
    `merging <main> changed F<k>'s own lines in <files>: needs the user's review`; the feature is `⚠️ blocked I<n>`.
@@ -118,10 +124,12 @@ earlier ones):
 
 Then `merge.md`, "Record", with these differences:
 
-- the Execution line is `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)`; a feature left unmerged gets
+- the Execution line is `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash> (auto-approved)`
+  (its time from the merge commit, as in `merge.md`, "Record"); a feature left unmerged gets
   `Not merged <YYYY-MM-DD HH:MM>: <feature-id> — <manual review · I<n> · main-dirty>`;
 - the brief `reviews/<feature>.md` of every merged feature gets the header line
-  ``- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, auto-approved`` after its `👀 review since` line;
+  ``- Merged <YYYY-MM-DD HH:MM> into `integration/<name>` `<hash>`, auto-approved`` after its `👀 review since` line,
+  with the same time;
 - remove the worktree of a merged feature but keep its branch; `wave-status` lists it as a leftover once the
   integration branch is in `<main branch>`;
 - no archive: the tracking branch and its worktree stay (`layout.md`, "Archive");

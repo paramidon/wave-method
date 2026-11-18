@@ -78,7 +78,7 @@ def merged_block(
         heading += f" · `{target.worktree}`"
     approval = (
         "by the user" if "approved by the user" in sections["header"].casefold()
-        else "auto — every task ✅ or ➖, check green, no open entry, tier gate clean, not under manual review"
+        else "auto — every task ✅ or ➖, check green, no open entry, tier gate clean, scope clean, not under manual review"
     )
     return "\n".join([heading, *_feature_summary(feature, sections), f"Approved: {approval}"])
 
