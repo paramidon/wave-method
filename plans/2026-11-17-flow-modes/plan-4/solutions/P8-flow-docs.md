@@ -107,6 +107,9 @@ created by task B of the same wave; write the link anyway).
 
 ## B. Example 03
 
+Corrected by `solutions/P17-example-03-fixes.md` (re-plan of 2026-11-18): the plan slug and its paths, the check
+command and the packaging of `pyproject.toml`. Read both; where they differ, P17 wins.
+
 Folder `examples/03-autonomous-night-run/`, the plan exactly as `/wave-plan flow autonomous` writes it before any
 wave ran, in the current templates (`skills/wave-plan/templates.md`): `README.md`, `solutions/P1-word-counter.md`,
 `solutions/P2-top-words-cli.md`, `solutions/lite.md`, `waves/w01.md`, `waves/w02.md`. It must be runnable: the
