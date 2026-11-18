@@ -25,3 +25,27 @@
 - Wave 2 (E, F) depends on `F1 merged`, which now needs wave 3; a re-plan appends waves, so wave 2 is ➖ dropped and
   rebuilt as wave 4 with the same prompts: E → I, F → J, new example paths and section names.
 - I1–I3 stay open with `→` wave 3 tasks; wave 1 stays ⚠️ until wave 3 closes them. F1 is 🔄 (no task ⚠️ or ❌ left).
+
+## Re-plan 2026-11-18 at 1e7214e
+
+- Input: open entries I5–I9 of wave 4 (tasks I and J). Wave 4 ⚠️, no wave 🔄. `main` (6a8bc07, F1 merged) was merged
+  into the tracking branch first (1e7214e).
+- Checked on `feat/flow-modes-p4/F2-end-to-end-rehearsal` at 1635ef1: 32 status-check tests and 59 driver tests OK,
+  all three examples pass `status_check.py`, `git diff --check` clean. Wave 5 starts with no known failures.
+- I5 confirmed in the fixture, not in the skills: P3 of example 01 asks for a session that adds two tasks, its check
+  and task C's prompt require every output to be a row of the P2 table, which shows only the first task. Both `cur`
+  and `base` copy the fixture from the working folder, so fixing it (P20) keeps the comparison fair.
+- I6: the scratch venv was only on the launcher's `PATH`; nested Bash resolved the global Python. The `C:/tmp/...`
+  directories match `MSYS_NO_PATHCONV=1` being inherited by nested shells, so a native Python got `/tmp/...`
+  unconverted. P21 uses `CLAUDE_ENV_FILE` (sourced before every Bash command) and a preflight; a probe of it from
+  this session was refused by the permission classifier, so the preflight is the first real test.
+- I7 has no cause of its own: the launcher ran the chain as one script and was stopped after M5. P21 runs one call per
+  shell command and writes each exit code at once.
+- I8 confirmed at three places of the prose (`SKILL.md` header "commit all your changes", step 5's net-diff scope
+  check, no scope condition in auto-approval) → P18. Test path: a post-commit hook in the scratch repository forces
+  `stray.txt` into task B's first commit (task O).
+- I9: the `merge.md` "Record" does not say that other rows stay, and `status_check.py` checks `Merged` only for
+  merged features → P19 (rule `merged-fields` extended, one test).
+- Tasks I and J are ➖ superseded by N and O, which rewrite the same records. All five entries stay open with `→`
+  tasks of waves 5 and 6; wave 4 stays ⚠️ until wave 6 closes them. F2 is 🔄, waiting for wave 5. All fixes are F2
+  tasks: the entries block F2, and F2's records are only meaningful with the fixes in place.
