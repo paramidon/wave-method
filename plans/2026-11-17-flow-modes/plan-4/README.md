@@ -21,7 +21,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D | ⚠️ I1, I2, I3 |
 | 2 | `waves/w02.md` | E, F | ➖ dropped (tasks → wave 4) |
-| 3 | `waves/w03.md` | G, H (after G) | ⬜ |
+| 3 | `waves/w03.md` | G, H (after G) | 🔄 since 2026-11-18 17:00 |
 | 4 | `waves/w04.md` | I, J | ⬜ |
 
 ## Tasks
@@ -34,8 +34,8 @@ Merged: short hash of the merge commit into the main branch.
 | D | `changelog-release-files` | F1 | 1 | low | ✅ |
 | E | `manual-flow-run` | F2 | 2 | medium | ➖ superseded by I |
 | F | `autonomous-flow-run` | F2 | 2 | medium | ➖ superseded by J |
-| G | `night-example-plan` | F1 | 3 | medium | ⬜ |
-| H | `example-index-check` | F1 | 3 | low | ⬜ |
+| G | `night-example-plan` | F1 | 3 | medium | 🔄 |
+| H | `example-index-check` | F1 | 3 | low | 🔄 |
 | I | `manual-flow-rehearsal` | F2 | 4 | medium | ⬜ |
 | J | `autonomous-flow-rehearsal` | F2 | 4 | medium | ⬜ |
 
