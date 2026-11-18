@@ -15,7 +15,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8, P17 | A (1), B (1) ➖, C (1), D (1), G (3), H (3) | the six acceptance tests of `solutions/P8-flow-docs.md` and of `solutions/P17-example-03-fixes.md` hold (task H): 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve, example 03 has slug `wordstat-cli`, its check passes on an empty baseline and its package builds | ✅ merged | | `feat/flow-modes-p4/F1-flow-docs-and-checks` | 1fc60af |
-| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P26 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6) ➖, O (6) ➖, P (7), Q (7) ➖, R (7), S (8), T (8), U (8) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19, P20, P23, P24 and P25 checks of `solutions/lite.md` (L, M, P, S, T) hold; `docs/rehearsals/end-to-end-autonomous.md` meets `solutions/P22-third-rehearsal-run.md` "Acceptance tests" (R) and `end-to-end-manual.md` meets `solutions/P26-fourth-manual-run.md` "Acceptance tests" (U): P0 and the hook probe Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete through M6 with F1 and F3 merged and the plan archived on both, `cur`'s `Merged` times equal to its merge commits, readable `Wave-Model` trailers, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | 🔄 | wave 8 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
+| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P26 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6) ➖, O (6) ➖, P (7), Q (7) ➖, R (7), S (8), T (8), U (8) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19, P20, P23, P24 and P25 checks of `solutions/lite.md` (L, M, P, S, T) hold; `docs/rehearsals/end-to-end-autonomous.md` meets `solutions/P22-third-rehearsal-run.md` "Acceptance tests" (R) and `end-to-end-manual.md` meets `solutions/P26-fourth-manual-run.md` "Acceptance tests" (U): P0 and the hook probe Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete through M6 with F1 and F3 merged and the plan archived on both, `cur`'s `Merged` times equal to its merge commits, readable `Wave-Model` trailers, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | ⚠️ blocked (I20, I21, I23) | I20, I21, I23 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -29,8 +29,8 @@ Merged: short hash of the merge commit into the main branch.
 | 4 | `waves/w04.md` | I, J | ✅ (verified by Q and R, wave 7) |
 | 5 | `waves/w05.md` | K, L, M | ✅ |
 | 6 | `waves/w06.md` | N, O | ✅ (verified by P, Q and R, wave 7) |
-| 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I18, I20, I21, I22 |
-| 8 | `waves/w08.md` | S, T, U (after S, T) | 🔄 since 2026-11-18 21:54 |
+| 7 | `waves/w07.md` | P, Q (after P), R (after P) | ⚠️ I20, I21 |
+| 8 | `waves/w08.md` | S, T, U (after S, T) | ⚠️ I23 |
 
 ## Tasks
 
@@ -54,9 +54,9 @@ Merged: short hash of the merge commit into the main branch.
 | P | `trailer-block-rule` | F2 | 7 | low | ✅ |
 | Q | `manual-flow-third-run` | F2 | 7 | medium | ➖ superseded by U |
 | R | `autonomous-flow-third-run` | F2 | 7 | medium | ✅ |
-| S | `example-ci-independence` | F2 | 8 | low | 🔄 |
-| T | `merge-time-from-git` | F2 | 8 | low | 🔄 |
-| U | `manual-flow-fourth-run` | F2 | 8 | medium | 🔄 |
+| S | `example-ci-independence` | F2 | 8 | low | ✅ |
+| T | `merge-time-from-git` | F2 | 8 | low | ✅ |
+| U | `manual-flow-fourth-run` | F2 | 8 | medium | ⚠️ I23 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-modes-p4` and reach the
