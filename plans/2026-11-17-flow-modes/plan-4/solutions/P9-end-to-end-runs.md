@@ -3,6 +3,10 @@ User problem: on a throwaway repository, never a real project, one run in manual
 one in autonomous flow with a forced red task and a feature that must stay blocked; report what actually happened,
 including what could not be verified · feature F2
 
+Re-plan 2026-11-18 (I5–I9): the reruns, tasks N and O of wave 6, follow
+`solutions/P21-rehearsal-isolation-rerun.md`, which amends this file (isolation, preflight, call form, a forced
+out-of-scope edit and new autonomous expectations).
+
 **Cause:** the skills are prose; only `status_check.py` and the driver (`scripts/tests/`, a fake `claude`) have
 tests. Part 2's rehearsals (`docs/rehearsals/*.md`) ran single skills and chains in print mode, and part 3 tested
 the driver against a stub. Nothing has run the merged skills and the real driver end to end, and nothing has
