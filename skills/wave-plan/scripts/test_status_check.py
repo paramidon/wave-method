@@ -56,6 +56,61 @@ class StatusCheckTest(unittest.TestCase):
         result = self.run_check()
         self.assertEqual((0, ""), (result.returncode, result.stdout))
 
+    def test_flow_manual(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: manual\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_flow_autonomous(self):
+        readme = README.replace("# Test plan\n",
+                                "# Test plan\n\n- Flow: autonomous · target: integration/test-plan · manual review: F1\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_flow_autonomous_default_target(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomous\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_flow_backticks(self):
+        readme = README.replace("# Test plan\n",
+                                "# Test plan\n\n- Flow: autonomous · target: `integration/test-plan`\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_unknown(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomus\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_bad_target(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomous · target: main\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_manual_fields(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: manual · target: integration/x\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_unknown_field(self):
+        readme = README.replace("# Test plan\n",
+                                "# Test plan\n\n- Flow: autonomous · target: integration/x · colour: blue\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_order(self):
+        readme = README.replace("# Test plan\n",
+                                "# Test plan\n\n- Flow: autonomous · manual review: F1 · target: integration/x\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_twice(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: manual\n- Flow: autonomous\n")
+        self.assert_rule("flow-line", readme)
+
+    def test_flow_review_unknown(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomous · manual review: F9\n")
+        self.assert_rule("flow-review-unknown", readme)
+
+    def test_flow_outside_header(self):
+        result = self.run_check(README + "\n## Assumptions\n\n- Flow: autonomus\n")
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
     def test_red_without_entry(self):
         self.assert_rule("red-without-entry", README.replace("| A | ✅ |", "| A | ⚠️ |"))
 
