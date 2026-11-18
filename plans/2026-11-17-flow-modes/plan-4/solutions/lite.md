@@ -190,3 +190,96 @@ holds the true time, and git prints it.
 the merge commit" skills/wave-run/autonomous.md` prints one line; the changelog's `- Unreleased` item contains the
 inserted words, and the changelog still has exactly one `- Unreleased` line; in a scratch repository a commit's `git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M"`
 prints its time in that form; the check command of the wave file is green.
+
+## P28. Three expectations of the manual record were wrong
+
+User problem: (re-plan, I24–I26) task V's continuation recorded three Findings: the M5 merge-time scan found no line
+in the current archive, the baseline passed 13 tests where 11 were expected, and the current `/wave-status` did not
+name the archived plan. All three are errors of the expectations in `solutions/P26-fourth-manual-run.md` and
+`solutions/P27-fourth-run-continuation.md`, not of the skills · feature F2
+
+**Cause** (checked at the re-plan in the scratch folder `tmp.10B4rFz0kw` of task V):
+
+- I24: `wave-run/merge.md` ("Record") asks for one line per feature in the wave file's Execution. The current
+  coordinator's Execution of the archived `waves/w02.md` is a list, so it wrote `- Merged 2026-11-19 02:24: …` as list
+  items (a plain line right after a list would break `layout.md`, "Markdown rules"); `w01.md` has no list and a plain
+  `Merged` line. P26's scan `grep -E '^Merged '` matches only the plain form. With `^(- )?Merged ` both archives give
+  two lines, every line time equal to its commit time (`cur` 02:24, `base` 02:25). No script parses these lines.
+- I25: the example's acceptance tests are 5 (`P1-json-store.md`) + 6 (`P2-cli-commands.md`) = 11. The baseline's task
+  B also tested the empty-text and corrupt-file rows of P2's behaviour table (`tests/test_cli.py:52,56`), which its
+  prompt allows. The count of extra tests is the executor's choice; the expectation is exit 0 with at least 11 passed.
+- I26: `wave-status/SKILL.md` "Input" inspects every plan folder except `plans/archive/`, and "What to read" says not
+  to read archived plans, in the current skills and in `v2.12.0`. The current report followed that; the baseline also
+  named the plan, from the last commit message. P9 asked for "no plan in progress, or only the archived one as
+  finished"; P26 narrowed it to "names the archived one" by mistake. The expectation is: no active plan reported;
+  naming the archived plan is allowed, not required.
+
+**Edit** — 1. Rescan (Git Bash, in the task's working folder; no `claude` call, no network):
+
+```bash
+scratch="$(dirname "$(mktemp -u)")/tmp.10B4rFz0kw"
+. "$scratch/env.sh"
+export CLAUDE_ENV_FILE="$(cygpath -m "$scratch")/env.sh"
+export scratch working="$(pwd)"
+test "$(git -C "$scratch/cur" rev-parse --short main)" = c0b79e7 && \
+  test "$(git -C "$scratch/base" rev-parse --short main)" = 93291f0 && test ! -e "$scratch/logs/anchored-scan"
+mkdir "$scratch/logs/anchored-scan"
+mv "$scratch/logs"/cur-M5.merged-lines "$scratch/logs"/cur-M5.merge-times \
+  "$scratch/logs"/base-M5.merged-lines "$scratch/logs"/base-M5.merge-times "$scratch/logs/anchored-scan/"
+for repo in cur base; do
+  git -C "$scratch/$repo" show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^(- )?Merged ' \
+    | sed 's/^- //' > "$scratch/logs/$repo-M5.merged-lines"
+  while read -r _ day hm id hash _; do
+    at=$(git -C "$scratch/$repo" log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M' "$hash")
+    printf '%s line=%s %s commit=%s\n' "$id" "$day" "${hm%:}" "$at"
+  done < "$scratch/logs/$repo-M5.merged-lines" > "$scratch/logs/$repo-M5.merge-times"
+done
+```
+
+If the `test` line fails, stop with `state lost: <which>` and change nothing. Expected `cur-M5.merge-times`:
+
+```text
+F1-todo-store-and-cli line=2026-11-19 02:24 commit=2026-11-19 02:24
+F3-ci-tests line=2026-11-19 02:24 commit=2026-11-19 02:24
+```
+
+and `base-M5.merge-times` equal to `anchored-scan/base-M5.merge-times` (F1 and F3, line and commit at 02:25).
+
+2. `docs/rehearsals/end-to-end-manual.md`: replace each line, found by its text (line numbers at 23d15d1), with the
+   text given verbatim between the outer double backticks; keep every other line:
+
+- "Results", after the line `Reported usage through the continuation totalled …`: a blank line and the paragraph
+  ``Three expectations of the plan were corrected after the run (P28). A `Merged` line is a list item (`- Merged`)
+  when its Execution is a list, so the M5 scan accepts both forms (I24). The example's 11 acceptance tests must pass
+  and an executor may add more, so the pytest check is exit 0 with at least 11 passed (I25). `wave-status` does not
+  read `plans/archive/`, so M6 must report no active plan and may name the archived one (I26).`` (wrapped as here).
+- `cur-M5`, line 272, the bullet starting `- Finding (I21).` → one line:
+  ``- Pass (I21, I24). F1 and F3 merged and the plan was archived. The archived `waves/w02.md` writes both lines as list items (`- Merged`, lines 63–64); the first scan, anchored at `^Merged `, matched neither, and its files are kept in `anchored-scan/`. The corrected scan gives both lines at 02:24, equal to Git for `2177196` and `a5f9730` (`cur-M5.merge-times`).``
+- `base-M6-pytest`, line 307 →
+  ``- Launcher exit 0, pytest exit 0, 0.02 wall minutes. Pass (I25). Observed `13 passed in 0.10s` (`base-M6-pytest.txt`, `base-M6-pytest.exit`): the 11 acceptance tests and two tests the baseline's task B added for the empty-text and corrupt-file rows (`tests/test_cli.py:52,56`).``
+- `cur-M6`, line 326 →
+  ``- Pass (I26). The report says there is no active plan and that `plans/` holds only `archive/`, which it did not read, as `wave-status` "Input" and "What to read" say in both versions.``
+- Results table, line 382 →
+  ``| cur-M5 I21 both Merged lines equal their commit times | Pass | I24: F1 and F3 lines 02:24, commits 02:24 by the corrected scan; the anchored first scan is in `anchored-scan/` (`cur-M5.merge-times`, archived `waves/w02.md:63–64`) |``
+- line 383 → ``| cur-M6-pytest I20 the 11 acceptance tests pass on main | Pass | 11 passed, exit 0 (`cur-M6-pytest.txt`) |``
+- line 384 → ``| cur-M6 I20 status shows no active plan | Pass | I26: no active plan; `archive/` named, not read (`cur-M6.jsonl`) |``
+- line 404 →
+  ``| base-M6-pytest I20 the 11 acceptance tests pass on main | Pass | I25: 13 passed, exit 0: the 11 acceptance tests and two extra tests (`base-M6-pytest.txt`, `tests/test_cli.py:52,56`) |``
+- line 405 →
+  ``| base-M6 I20 status shows no active plan | Pass | No active plan; archived plan `2026-11-02-todo-cli` also named (`base-M6.jsonl`) |``
+- line 409 →
+  ``| M5 manual flow matches v2.12.0 in the comparison | Pass | Paired comparison rows and their ref, worktree, main and report evidence |``
+- Comparison table, row `cur-M5` (line 423): only its last cell, `Finding. The scan omitted …`, becomes
+  `equal (F1 and F3 at 02:24)`.
+- "Repeat", line 475: `git show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^Merged ' \` →
+  ``git show main:plans/archive/2026-11-02-todo-cli/waves/w02.md | grep -E '^(- )?Merged ' | sed 's/^- //' \``.
+
+No real path, user name or time zone in the record.
+
+**Check:** `cur-M5.merge-times` is exactly the two lines above; `diff "$scratch/logs/base-M5.merge-times"
+"$scratch/logs/anchored-scan/base-M5.merge-times"` prints nothing; `test ! -s
+"$scratch/logs/anchored-scan/cur-M5.merge-times"` exits 0; in the record, `grep -c -w Finding` prints 0,
+`grep -c -F "grep -E '^Merged '"` prints 0, `grep -c -F "grep -E '^(- )?Merged '"` prints 1, and `grep -c -F I24`,
+`grep -c -F I25`, `grep -c -F I26` each print at least 2; `git diff --stat HEAD` names only the record; the hunks of
+`git diff -U0 HEAD -- docs/rehearsals/end-to-end-manual.md` lie only in the sections `cur-M5`, `base-M6-pytest`,
+`cur-M6`, "Results" and "Repeat"; the check command of the wave file is green.
