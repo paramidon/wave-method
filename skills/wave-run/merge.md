@@ -62,6 +62,8 @@ In the tracking worktree, after the merges and rejections of this run:
 
 - README "Features": a merged feature gets `✅ merged`, an empty `Waiting for` and the short merge hash in
   "Merged"; a rejected one as in "Rejection"; a feature left for later keeps its row.
+  Change only the rows of the features this run merged, rejected or recorded, each found by its own `ID` cell,
+  never with a replacement that can match another row; afterwards `git diff` of README.md changes no other row.
 - The Execution of the wave file of the feature's last wave (the last wave in its "Tasks (wave)" cell) gets one line
   per feature: `Merged <YYYY-MM-DD HH:MM>: <feature-id> <hash>` or `Rejected <YYYY-MM-DD HH:MM>: <feature-id> → I<n>`.
 - New entries: as `SKILL.md` step 8 ("New problems").
