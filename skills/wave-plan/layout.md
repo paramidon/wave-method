@@ -183,7 +183,7 @@ Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N
 - ⚠️ and ❌ mean "action needed now". Each ⚠️/❌ item names at least one open entry of `problems.md` (`⚠️ I4`), or, for a ❌ wave, says that it must be re-run.
 - When the last open entry concerning an item is closed, the item becomes ✅ with a short note: `✅ (fixed by AB, wave 6)`. A task that will never run because another replaces it is `➖ superseded by AA`; a wave whose tasks all moved elsewhere is `➖ dropped (tasks → wave 7)`. ➖ is final and is not a problem.
 - Whoever closes an entry updates the items it concerns in the same commit: `wave-run` (step 8 of the wave that fixed it, or when the user accepts it), `wave-plan` at a re-plan (an item superseded by new tasks becomes ➖ at once; an item waiting for fix tasks stays ⚠️ with `→ task Y`).
-- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌ item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. It also checks the README `Flow:` line ("Flow"): `flow-line` for a malformed line, `flow-review-unknown` for a `manual review:` ID that is not a feature. History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it with `python <wave skills folder>/wave-plan/scripts/status_check.py <plan folder>` (absolute script path, see "Skill paths"; in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
+- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌ item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. It also checks the README `Flow:` line ("Flow"): `flow-line` for a malformed line, `flow-review-unknown` for a `manual review:` ID that is not a feature. It also reports `merged-fields` for a feature that is ✅ merged without a `Merged` hash or with a `Waiting for`, and for a feature that is not ✅ merged but has a `Merged` hash. History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it with `python <wave skills folder>/wave-plan/scripts/status_check.py <plan folder>` (absolute script path, see "Skill paths"; in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
 
 ## Running waves
 A wave is running while its status in README "Waves" is `🔄 since <YYYY-MM-DD HH:MM>` on the tracking branch (`git show plan/<plan>:<plan folder>/README.md`). This mark is the lock: `wave-run` commits it when the wave starts and removes it with the wave's "done" or "stopped" commit.
@@ -269,7 +269,7 @@ it sits together with the other features merged since the user's last merge:
 How to test:
 1. <an action specific to this feature> → <what the user should see>
 Worth a look: <as in the review block>
-Approved: <auto — every task ✅ or ➖, check green, no open entry, tier gate clean, not under manual review · by the user>
+Approved: <auto — every task ✅ or ➖, check green, no open entry, tier gate clean, scope clean, not under manual review · by the user>
 ```
 
 The brief stays on the tracking branch after the merge, in every flow; nothing deletes it, and archiving moves it
@@ -426,11 +426,14 @@ before the merge (`wave-run/autonomous.md`, "Auto-approval"):
    (`<plan> <feature-id> / <task-id>: …`) has a `Wave-Model` trailer naming a model of that task's tier or higher
    ("Tier gate");
 5. the feature is not listed under `manual review:`.
+6. its scope is clean: every path that a non-merge commit of `<main>..feat/<plan>/<feature>` touched
+   (`git log --no-merges --name-only --format=`) is in scope for one of the feature's tasks as `wave-run/SKILL.md`
+   step 5, "Scope", defines it.
 
 | Condition that fails | The feature |
 |---|---|
 | 5 | stays `👀 review`, `Waiting for: review`, until the user approves it |
-| 1, 2, 3 or 4 | becomes ⚠️ blocked, `Waiting for: I<n>`, naming its open entry (a new entry for 2 and 4) |
+| 1, 2, 3, 4 or 6 | becomes ⚠️ blocked, `Waiting for: I<n>`, naming its open entry (a new entry for 2, 4 and 6) |
 | `<main checkout>` is not ready ("Main readiness") | stays `👀 review`, `Waiting for: main-dirty` |
 
 The run goes on with everything that does not depend on a feature left unmerged.
@@ -463,7 +466,7 @@ Every point where `wave-run` asks the user or waits for them. Manual flow is the
 | task branches of this wave exist | step 1 | ask: continue from them, delete them, or stop `leftover-branches` | never reuse or delete them: stop `leftover-branches` |
 | `Depends on: F<k> merged` and F<k> is not `✅ merged` | step 1 | stop `feature-unmerged` | the same stop; "Auto-approval" has usually merged F<k> before |
 | a feature check is red before the wave | step 3 | stop `red-before-wave` | new entry; the feature is ⚠️ blocked; skip its tasks; the wave goes on |
-| an out-of-scope edit, or unusable direct work | step 5 | entry; ask the user | entry; do not merge the task (a direct task is reverted); the task is ⚠️ and the feature ⚠️ blocked; skip its dependants |
+| an out-of-scope edit, or unusable direct work | step 5 | entry; ask the user; never cleaned up by a new commit | entry; do not merge the task (a direct task is reverted, never cleaned up by a new commit); the task is ⚠️ and the feature ⚠️ blocked; skip its dependants |
 | a merge conflict would change a plan solution | step 6 | stop `design-conflict` | abort the merge; entry; the task is ⚠️ and the feature ⚠️ blocked; skip its dependants; the wave goes on |
 | a task stays red after 2 attempts | fix loop | the task is ⚠️; stop `red-after-merge` if no other task can continue | the same |
 | no model of a task's tier; a session or work below its tier | steps 1 and 5, task mode | stop `tier-missing` or `tier-mismatch`; the work runs again on its tier | the same; never waived |
