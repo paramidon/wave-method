@@ -12,7 +12,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `flow-docs-and-checks` | README, autonomous example, Flow checks and changelog for both flows | P8, P17 | A (1), B (1) ➖, C (1), D (1), G (3), H (3) | the six acceptance tests of `solutions/P8-flow-docs.md` and of `solutions/P17-example-03-fixes.md` hold (task H): 32 status-check tests and 59 driver tests OK, all three examples pass `status_check.py`, one `Unreleased` line, README links resolve, example 03 has slug `wordstat-cli`, its check passes on an empty baseline and its package builds | ✅ merged | | `feat/flow-modes-p4/F1-flow-docs-and-checks` | 1fc60af |
-| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P21 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6), O (6) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19 and P20 checks of `solutions/lite.md` (L, M) hold; `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` meet `solutions/P21-rehearsal-isolation-rerun.md` "Acceptance tests" (N, O): P0 Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | 🔄 | wave 5 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
+| F2 | `end-to-end-rehearsal` | End-to-end runs of both flows on scratch repositories, and the fixes they found | P9, P18–P21 | E (2) ➖, F (2) ➖, I (4) ➖, J (4) ➖, K (5), L (5), M (5), N (6), O (6) | the acceptance tests of `solutions/P18-task-scope-enforcement.md` (task K) and the P19 and P20 checks of `solutions/lite.md` (L, M) hold; `docs/rehearsals/end-to-end-manual.md` and `end-to-end-autonomous.md` meet `solutions/P21-rehearsal-isolation-rerun.md` "Acceptance tests" (N, O): P0 Pass, nothing written outside scratch, the manual comparison of `cur` and `base` complete, F2 of the scratch night run blocked by its forced out-of-scope file with empty `Merged` cells; the check command green (33 status-check tests, 59 driver tests) | 🔄 | wave 6 | `feat/flow-modes-p4/F2-end-to-end-rehearsal` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -24,7 +24,7 @@ Merged: short hash of the merge commit into the main branch.
 | 2 | `waves/w02.md` | E, F | ➖ dropped (tasks → wave 4) |
 | 3 | `waves/w03.md` | G, H (after G) | ✅ |
 | 4 | `waves/w04.md` | I, J | ⚠️ I5, I6, I7, I8, I9 |
-| 5 | "waves/w05.md" | K, L, M | 🔄 since 2026-11-18 18:20 |
+| 5 | `waves/w05.md` | K, L, M | ✅ |
 | 6 | `waves/w06.md` | N, O | ⬜ |
 
 ## Tasks
@@ -41,9 +41,9 @@ Merged: short hash of the merge commit into the main branch.
 | H | `example-index-check` | F1 | 3 | low | ✅ |
 | I | `manual-flow-rehearsal` | F2 | 4 | medium | ➖ superseded by N |
 | J | `autonomous-flow-rehearsal` | F2 | 4 | medium | ➖ superseded by O |
-| K | `task-scope-enforcement` | F2 | 5 | medium | 🔄 |
-| L | `merged-cell-check` | F2 | 5 | low | 🔄 |
-| M | `example-session-fixture` | F2 | 5 | low | 🔄 |
+| K | `task-scope-enforcement` | F2 | 5 | medium | ✅ |
+| L | `merged-cell-check` | F2 | 5 | low | ✅ |
+| M | `example-session-fixture` | F2 | 5 | low | ✅ |
 | N | `manual-flow-rerun` | F2 | 6 | medium | ⬜ |
 | O | `autonomous-flow-rerun` | F2 | 6 | medium | ⬜ |
 

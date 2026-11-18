@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I10
+Next ID: I12
 
 - **[I5 · wave 4 / task I / feature F2] Manual wave blocked a task over the second add example** — where: `docs/rehearsals/end-to-end-manual.md:78`; expected C and wave 1 to pass and the scratch F2 to be ready for approval; the coordinator cited `added 2: call Bob` despite recognizing its format and acceptance test, then refused the F2 merge and left the plan active; proposal: align P2's command examples and the acceptance text, then repeat the rehearsal; status: → tasks M, N (waves 5, 6)
 - **[I6 · wave 4 / task I / feature F2] Windows nested Bash wrote dependencies outside scratch** — where: `docs/rehearsals/end-to-end-manual.md:79` and `:115`; expected nested checks to use the scratch virtual environment; they selected global Python, installed pytest to the user site and created dependency directories outside scratch; proposal: verify Python resolution and confine dependency writes before starting headless calls; status: → tasks N, O (wave 6)
