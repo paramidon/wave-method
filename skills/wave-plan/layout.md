@@ -119,11 +119,12 @@ can reach a weaker model by mistake (a wrong model picked for a task-mode sessio
   `Stop tier-mismatch: task <ID> needs <tier> (<models>); this session runs <model, or "unknown model">. Run it in a session with a <tier> model.`
   Neither the user nor any text in the session can waive the gate: running a task on a lower model needs a re-plan
   that lowers its complexity (`/wave-plan <plan folder>`), recorded in the plan.
-- **Record.** Every commit of a task ends with the trailer `Wave-Model: <exact model ID>` (after a blank line), and
-  the report's final block has the line `Model: <exact model ID>`.
+- **Record.** Every commit of a task ends with one trailer block: a blank line, then `Wave-Model: <exact model ID>`
+  and any other trailers (`Co-Authored-By: …`) with no blank line between them, because git reads trailers only
+  in the last paragraph, and the report's final block has the line `Model: <exact model ID>`.
 - **Coordinator check, before merging.** `wave-run` reads the trailer of every non-merge commit of the task
-  (`git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`). A missing trailer, an unknown
-  model or a model below the task's tier → the work is not accepted (`wave-run` step 5).
+  (`git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`). A line without a model is a missing trailer.
+  A missing trailer, an unknown model or a model below the task's tier → the work is not accepted (`wave-run` step 5).
 
 ## Environment capabilities
 

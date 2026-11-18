@@ -17,8 +17,8 @@ One task in one fresh session, whose model is of the task's tier or higher and w
   `capability-missing`. Read only
   `README.md`, the wave file and the solution files the prompt names. Do the task from its prompt in the
   prepared worktree, commit there, adding the task's files by name and no generated files (as the header of `SKILL.md` step 4 says) (`<plan> <feature-id> / <task-id>: <short>`, with the trailer
-  `Wave-Model: <exact model ID>`), run the check command, write
-  nothing under `plans/`, and report the result in the language of the user's messages in this session
+  `Wave-Model: <exact model ID>` in one trailer block with any other trailer), run the check command,
+  write nothing under `plans/`, and report the result in the language of the user's messages in this session
   and the next command `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>`.
 - Resume (`/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>` on a wave waiting for task mode):
   check each waiting task as in

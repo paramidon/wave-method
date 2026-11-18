@@ -22,8 +22,9 @@ and no other file carries a version. Changes since the last tag go into a line
   archives include `scripts/`. Fixes from the end-to-end runs: a task adds its own files by name and never commits
   generated files; `wave-run` finds out-of-scope paths in every commit of a task, never cleans them up with a new
   commit, and auto-approval also needs a clean scope; `status_check.py` reports a Merged hash on a feature that is
-  not ✅ merged (`merged-fields`); example 01's README session is part of its P2 solution. A plan without a `Flow:`
-  line behaves as before.
+  not ✅ merged (`merged-fields`); a task keeps `Wave-Model` in one trailer block with any other trailer,
+  and the tier gate reads it with git; example 01's README session is part of its P2 solution. A plan without a
+  `Flow:` line behaves as before.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has

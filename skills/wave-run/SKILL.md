@@ -232,8 +232,9 @@ it that the task names (paths are relative to the plan folder); do not read othe
 Work only in the working folder. Do not edit anything under plans/. When done, commit your changes on this
 branch: add every file you created or changed for the task by name (git add <file> …; never git add -A, git add .
 or git commit -a), and never commit generated files (bytecode, caches, build or test output). Use the message
-"<plan> <feature-id> / <task-id>: <short>", ending with a blank line and the trailer
-"Wave-Model: <the exact model ID you run on>". Do not switch branches, do not
+"<plan> <feature-id> / <task-id>: <short>", ending with one trailer block: a blank line, then
+"Wave-Model: <the exact model ID you run on>" and any other trailer (Co-Authored-By …) on the lines right
+after it, with no blank line between them. Do not switch branches, do not
 merge, do not push, do not touch other worktrees or the main checkout.
 End your report with exactly this block (one item per line, "none" when empty):
 Model: <the exact model ID you run on>
@@ -260,8 +261,11 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
 - Direct task: `git -C <feature worktree> status --porcelain` shows no change to a tracked file and no untracked
   path that is one of the task's files (otherwise use the fix loop and ask it to commit its files); untracked
   generated files (bytecode, caches) stay uncommitted. `git log H..HEAD` is not empty.
-- **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task
-  (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`). A subagent that replied
+- **Tier gate** (`layout.md`, "Tier gate"): read the `Wave-Model` trailer of every non-merge commit of the task with
+  `git log --no-merges --format="%h %(trailers:key=Wave-Model,valueonly)" <range>`
+  (task branch: `feat/<plan>/<feature>..<task branch>`; direct task: `H..HEAD`).
+  A commit whose line shows no model has no trailer, even when its message shows a `Wave-Model` line outside
+  the last paragraph. A subagent that replied
   `Stop tier-mismatch`, a missing trailer, an unknown model or a model below the task's tier → the work is not
   accepted: do not merge the task branch (direct task: undo it with `git revert --no-edit H..HEAD`), the task is
   ⚠️ with a problem entry `below tier: <model> ran a <tier> task`, and it runs again on a model of its tier (a
