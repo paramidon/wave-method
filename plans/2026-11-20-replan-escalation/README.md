@@ -18,7 +18,7 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⚠️ I2 |
-| 2 | `waves/w02.md` | F, G | ⬜ |
+| 2 | $([char]96)waves/w02.md$([char]96) | F, G | 🔄 since 2026-11-21 00:26 |
 
 ## Tasks
 
@@ -29,8 +29,8 @@ Merged: short hash of the merge commit into the main branch.
 | C | `replan-record-check` | F1 | 1 | medium | ✅ |
 | D | `replan-count-shown` | F1 | 1 | medium | ✅ |
 | E | `escalation-docs` | F1 | 1 | low | ✅ |
-| F | `evidence-fallback-skill` | F1 | 2 | low | ⬜ |
-| G | `evidence-fallback-template` | F1 | 2 | low | ⬜ |
+| F | `evidence-fallback-skill` | F1 | 2 | low | 🔄 |
+| G | `evidence-fallback-template` | F1 | 2 | low | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/replan-escalation` and
