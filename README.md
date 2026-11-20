@@ -135,8 +135,10 @@ A feature branch holds only its own feature, so each one can be reviewed and mer
 ```
 
 shows what each feature is waiting for (features waiting for your review come with the same short block), running
-waves, and the next command. If a wave reports problems, re-plan
-them with `/wave-plan plans/2026-11-02-csv-export`.
+waves, and the next command. If a wave reports problems, re-plan them with `/wave-plan plans/2026-11-02-csv-export`.
+A feature whose fixes keep failing is escalated at its second re-plan and held at its third until you give a direction
+(`/wave-plan plans/2026-11-02-csv-export override F2: <what to do>`); see
+[Re-plan escalation](skills/wave-plan/layout.md#re-plan-escalation).
 
 ### A long backlog
 
@@ -278,7 +280,9 @@ What it adds compared with "agent, please do these ten things":
   starts with its required tier, so a weaker model given it by mistake stops instead of doing the work, and the
   coordinator merges a task only when its commits name a model of its tier.
 - **A closed problem loop.** Whatever a subagent could not check, or found broken, becomes a problem entry that
-  the next planning run turns into fix tasks.
+  the next planning run turns into fix tasks. A feature re-planned a second time is escalated: the planner verifies
+  its assumption by running code, its fix tasks need a high-tier model and, in autonomous flow, it waits for your
+  review; a third re-plan waits for your direction.
 
 ## How it works
 
@@ -365,6 +369,7 @@ The skills follow these rules on every run:
   feature for a later `/wave-run <plan> merge <F-ID>`.
 - Nothing is ever pushed.
 - A task never runs on a model below its tier.
+- A feature is re-planned at most twice on its own; a third re-plan needs your `override` direction.
 - A wave in progress is a lock: no re-plan or second wave of the same plan starts until it finishes.
 - Every stop prints a stop code and the next command.
 - Autonomous flow approves a feature only under the five auto-approval conditions. Features under manual
