@@ -22,7 +22,8 @@ the closest code of `SKILL.md`, "Stops"; its `next:` says what the user must dec
    replacing an existing `Flow:` line, else right after the `- Re-plans:` line. For `autonomous`:
    `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>`, where the last part is present only
    when the list is not empty (`review <F-IDs>` replaces the list; `review none` empties it; without `review` the
-   list stays). For `manual`: `- Flow: manual`.
+   list stays; a feature that the README `Re-plans:` record names under `escalated:` always stays in it,
+   `layout.md`, "Re-plan escalation"). For `manual`: `- Flow: manual`.
 4. Commit `Plan <plan>: flow <manual|autonomous>` on the tracking branch. Nothing else changes: features already
    `👀 review` stay so; the next run applies the new flow to them.
 5. Report: `wave-run/report.md`, "Flow report".

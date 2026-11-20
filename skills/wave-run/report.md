@@ -57,7 +57,7 @@ Stop <code>: <one line> — next: <command or action>
 
 ### Problems
 
-- New: **I<n>** <essence> (<task, feature>)
+- New: **I<n>** <essence> (<task, feature>; F<k> re-planned <c>× → next re-plan <escalated · held>)
 - Closed: **I<n>** → <closing status>; changed statuses: <item: old → new>
 
 ### Auto-merged
@@ -91,7 +91,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 | Tasks of wave N | always | one row per task of this wave; `Done` is the task's `Done:` line in one line, or the reason it is ⚠️, ❌ or waiting |
 | Features | always | one row per feature of the plan, from README "Features"; `Tasks` is `<done>/<total>` followed by the IDs of the tasks still missing; `Branch` is `feat/<plan>/<feature>`, for a `👀 review` feature the branch to review |
 | Merges and checks | always | task merges with their conflicts, then the check result of every feature worktree touched (what passed, what failed) |
-| Problems | always | new entries of `problems.md` (the essence of each), entries this wave closed and the statuses that changed; `none` when there is nothing |
+| Problems | always | new entries of `problems.md` (the essence of each), entries this wave closed and the statuses that changed; `none` when there is nothing; a feature re-planned at least once (`layout.md`, "Re-plan escalation") adds its count and what the next re-plan does to each new entry's line, which otherwise ends after `<task, feature>` |
 | Auto-merged | autonomous flow | for every `👀 review` feature that "Auto-approval" of `wave-run/autonomous.md` looked at in this run: merged → its merged block of `layout.md`, "Feature review", in full (its `Approved:` line says why and the review block rules for "How to test" apply); not merged → one line (manual review, the failed condition with its entry, or `main-dirty` with the reason); `none` when no feature was `👀 review` |
 | Check by hand | a feature that is not `👀 review` has something tests do not cover (UI, visuals) | one line per check, in its feature worktree |
 | Ready for review | a feature is `👀 review` | the review block of `layout.md`, "Feature review", for every `👀 review` feature (this wave's and earlier ones), from its `reviews/<feature>.md`, without the `Merge:` line (autonomous flow: with it, since no question is asked); nothing else about a ready feature (no task list, check result, test counts, commits or diff statistics). When two ready features change the same paths (`git diff --name-only <main>...<branch>` of each), add one line naming the paths: the second merge brings the first one in from `<main>` and may need conflict resolution. |
@@ -106,7 +106,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 | a feature is `👀 review` | review it, then `/wave-run <plan folder> merge <F-ID>`<br>`$wave-run <plan folder> merge <F-ID>` (for `main-dirty`, clear the reason first) |
 | a later wave is ⬜ | `/wave-run <plan folder> <N+1>`<br>`$wave-run <plan folder> <N+1>`; it waits for a review only if its `Depends on:` names the feature |
 | waiting for task mode | one per task, in launch-group order: `/wave-run <plan folder> <N> task <ID>`<br>`$wave-run <plan folder> <N> task <ID>` — fresh session, model: `<models of the task's tier>` (`<tier>`), needs `<tool>`; a weaker model stops `tier-mismatch` |
-| open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them |
+| open problems | `/wave-plan <plan folder>`<br>`$wave-plan <plan folder>`, listing them; a feature held at the re-plan limit: decide, then `/wave-plan <plan folder> override F<k>: <direction>`<br>`$wave-plan <plan folder> override F<k>: <direction>` |
 | last wave done, plan from an index | the index parts plannable now: `/wave-plan <index> part <K>`<br>`$wave-plan <index> part <K>` |
 | autonomous flow, `integration/<name>` has commits `<main branch>` lacks | review `git diff <main branch>...integration/<name>`, then merge it yourself in the main checkout: `git merge --no-ff integration/<name>` |
 
