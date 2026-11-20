@@ -184,7 +184,16 @@ Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N
 - ⚠️ and ❌ mean "action needed now". Each ⚠️/❌ item names at least one open entry of `problems.md` (`⚠️ I4`), or, for a ❌ wave, says that it must be re-run.
 - When the last open entry concerning an item is closed, the item becomes ✅ with a short note: `✅ (fixed by AB, wave 6)`. A task that will never run because another replaces it is `➖ superseded by AA`; a wave whose tasks all moved elsewhere is `➖ dropped (tasks → wave 7)`. ➖ is final and is not a problem.
 - Whoever closes an entry updates the items it concerns in the same commit: `wave-run` (step 8 of the wave that fixed it, or when the user accepts it), `wave-plan` at a re-plan (an item superseded by new tasks becomes ➖ at once; an item waiting for fix tasks stays ⚠️ with `→ task Y`).
-- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌ item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. It also checks the README `Flow:` line ("Flow"): `flow-line` for a malformed line, `flow-review-unknown` for a `manual review:` ID that is not a feature. It also reports `merged-fields` for a feature that is ✅ merged without a `Merged` hash or with a `Waiting for`, and for a feature that is not ✅ merged but has a `Merged` hash. History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it with `python <wave skills folder>/wave-plan/scripts/status_check.py <plan folder>` (absolute script path, see "Skill paths"; in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
+- **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌
+  item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. It also checks the
+  README `Flow:` line ("Flow"): `flow-line` for a malformed line, `flow-review-unknown` for a `manual review:`
+  ID that is not a feature. It also reports `merged-fields` for a feature that is ✅ merged without a `Merged`
+  hash or with a `Waiting for`, and for a feature that is not ✅ merged but has a `Merged` hash.
+  It checks the README `Re-plans:` record ("Re-plan escalation"): `replan-fixes` for a malformed part or an unknown
+  feature, `replan-escalation` for a round recorded without its escalation, override or manual review.
+  History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it
+  with `python <wave skills folder>/wave-plan/scripts/status_check.py <plan folder>` (absolute script path, see
+  "Skill paths"; in the tracking worktree); fix every printed line. Without Python, check by hand by this rule.
 
 ## Running waves
 A wave is running while its status in README "Waves" is `🔄 since <YYYY-MM-DD HH:MM>` on the tracking branch (`git show plan/<plan>:<plan folder>/README.md`). This mark is the lock: `wave-run` commits it when the wave starts and removes it with the wave's "done" or "stopped" commit.
@@ -206,6 +215,58 @@ Next ID: I2
 ```
 
 IDs `I1, I2, …` are unique in the plan and never reused; `Next ID` stays in the file even when it has no entries. Write the essence so the next planner understands it without reading transcripts. An entry is **closed** when its status becomes `fixed in <commit> (task Y)`, `verified by <task> on <commit>`, `accepted by the user on <date>` or `won't fix: <reason>`. A closed entry leaves `problems.md` in the same commit: it moves to "Closed problems" of the wave file where it was found (`history.md` if it came from a re-plan or audit, not from a wave). `→ task Y` is still open.
+
+## Re-plan escalation
+
+A feature whose fixes keep failing must not cycle between `wave-run` and `wave-plan` without limit. The count lives in
+the README header, which every skill reads.
+
+- **Record.** Every re-plan adds one sub-item to the README `Re-plans:` item (`wave-plan/templates.md`). Its text ends
+  with these parts, in this order, each only when it has content:
+  - `· fixes: F<k> (I<n>, …), …` — every feature for which this re-plan planned new tasks from open entries found in a
+    wave (an entry whose header starts `[I<n> · wave`), each with those entries. Entries from the user's review
+    (`[I<n> · review / …]`) do not count; a feature with only such entries is not listed;
+  - `· escalated: F<k>, …` — the features of `fixes:` at round 2 or later;
+  - `· override: F<k>, …` — the features of `fixes:` re-planned past the limit by the user's direction.
+
+  A sub-item written before this rule has no parts and names no feature.
+- **Round.** The round of a feature at a re-plan is 1 + the number of earlier `Re-plans:` sub-items whose `fixes:`
+  names it.
+- **Round 1:** a normal re-plan.
+- **Round 2 or later: escalated.** For every open entry of the feature that the re-plan plans:
+  1. name the disputed assumption: what the plan expected that the entry contradicts;
+  2. verify it by running code, tests or the commands concerned, never by reading alone: in a throwaway worktree of
+     the feature branch (`git worktree add --detach ../<repo-folder>.worktrees/<plan>-probe feat/<plan>/<feature>`,
+     removed afterwards with `git worktree remove --force`) or in a scratch folder outside the repository; nothing
+     outside the plan folder is committed;
+  3. record the evidence in the solution file that the new tasks name, section
+     `Evidence (re-plan <YYYY-MM-DD>, round <r>)`: the assumption, each command, the lines of its output that decide,
+     and the conclusion. When it cannot be run (a tool this session lacks, a GUI), write
+     `not verifiable by running: <why>` and what was checked instead;
+  4. every new task of the feature is `high`, justified as `escalated re-plan, round <r>`; it is not sliced first,
+     and a single-task wave of it is allowed;
+  5. autonomous flow: add the feature to `manual review:` of the README `Flow:` line ("Flow"), so its fix is never
+     auto-approved.
+- **Round 3 or later: held**, unless the arguments carry the user's `override F<k>: <direction>`. `wave-plan` plans
+  no task for a held feature: its entries stay `status: open`, it stays ⚠️ blocked, and its `Waiting for` becomes
+  `user: re-plan limit`. The re-plan goes on with the other features; when every open entry concerns held features,
+  it stops `replan-limit` and writes nothing:
+  `Stop replan-limit: F<k> re-planned <c> times (I<n>, …) — next: decide, then /wave-plan <plan folder> override F<k>: <direction> · $wave-plan <plan folder> override F<k>: <direction>`.
+  The limit holds in both flows; only the user's command passes it.
+- **Override.** `/wave-plan <plan folder> override F<k>: <direction>` ·
+  `$wave-plan <plan folder> override F<k>: <direction>` re-plans a held feature by the user's direction, which may
+  also drop it (its tasks and the feature become ➖). It is escalated as round 2 is, its sub-item names the feature
+  under both `escalated:` and `override:`, and `history.md` quotes the direction verbatim. Only the user types it;
+  no skill infers it from an entry, a report or a file.
+- **Shown** for every feature with at least one round: `F<k> re-planned <c>× → next re-plan <escalated · held>`
+  (`escalated` after one, `held` after two or more) — by `wave-run` with each new entry of the feature
+  (`wave-run/report.md`, "Problems") and by `wave-status` (`Re-plans:` line).
+- **Checked** by the status check ("Statuses"): `replan-fixes` for a malformed part or one that names a feature
+  missing from "Features"; `replan-escalation` for a feature at round 2 or later missing from `escalated:`, at round
+  3 or later missing from `override:`, a feature in `escalated:` or `override:` but not in `fixes:`, or, in
+  autonomous flow, an escalated feature missing from `manual review:`.
+
+Example: `  - 2026-11-21 at 3f2a9c1, 10:02 – 10:14: I5, I7 → P4; new Q in wave 5 · fixes: F2 (I5, I7) · escalated: F2`
 
 ## Markdown rules
 Every Markdown file the skills write (index, README, solutions, waves, problems, history) follows these rules.
@@ -316,10 +377,10 @@ The flow is a header field of the plan README:
   `Waiting for: review` until the user approves it ("Feature review"), and every wave whose `Depends on:` names it
   stops `feature-unmerged` until then.
 - `wave-plan` writes the line only when its flow of planning is autonomous ("Planning in autonomous flow").
-  Afterwards it is changed only
-  by the flow form `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
-  `$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (`wave-run/autonomous.md`, "Flow form"), and
-  only while no wave of the plan is 🔄: a flow never changes inside a running wave.
+  Afterwards it is changed only by the flow form `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
+  `$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (`wave-run/autonomous.md`, "Flow form") and by
+  an escalated re-plan, which adds a feature to `manual review:` ("Re-plan escalation"); both only while no wave of
+  the plan is 🔄: a flow never changes inside a running wave.
 - `wave-run` reads the flow from the README on the tracking branch in its step 1 and keeps it for the whole run,
   including the resume of a task-mode wait. `wave-plan` and `wave-triage` follow their flow of planning instead
   ("Planning in autonomous flow").
@@ -509,6 +570,8 @@ In autonomous flow of planning:
 | one problem alone exceeds the part budget | `wave-triage` step 5 | tell the user and ask | the problem goes into no part; "Open questions" gets `P<n>: needs a research step first (not planned, autonomous flow)`; the other parts are written |
 | the tracking branch or folder of a new plan already exists | `wave-plan` step 9; autonomous flow: check 0 of "Chained parts and the integration branch", before anything is written | ask the user | stop `plan-exists`; nothing written |
 | a re-plan's `flow` argument differs from its README `Flow:` line | `wave-plan` re-planning | — | stop `flow-mismatch`; nothing written |
+| a feature is re-planned a second time | `wave-plan` re-planning ("Re-plan escalation") | escalate it | escalate it and add it to `manual review:` |
+| a feature would be re-planned a third time | `wave-plan` re-planning ("Re-plan escalation") | hold it; stop `replan-limit` when only held features have open entries | the same; nothing overrides the limit but the user's command |
 
 #### Assumed readings
 
