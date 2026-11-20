@@ -125,7 +125,8 @@ concerns held features, stop `replan-limit` without writing, with the stop line 
   from that branch, not from `<main>`.
 - Escalated re-plan (`layout.md`, "Re-plan escalation"): for every open entry of the feature, name the disputed
   assumption and verify it by running code, tests or commands in a throwaway worktree or a scratch folder, never by
-  reading alone; record the evidence in the solution file the new tasks name.
+  reading alone; record the evidence in the solution file the new tasks name. When it cannot be run (a tool this
+  session lacks, a GUI), record `not verifiable by running: <why>` and what was checked instead.
 - Autonomous flow: read the code and run the tests in the integration worktree (`<main checkout>`), which holds
   the parts merged before this one; record known failures for it.
 
@@ -251,8 +252,8 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 - Re-plan: the status check (script, `layout.md`, "Statuses") passes.
 - Re-plan rounds: the new `Re-plans:` sub-item names every feature planned from wave entries under `fixes:`, from
   round 2 under `escalated:` and past the limit under `override:`; every escalated feature has an `Evidence` section
-  with a command run in this session, only `high` new tasks and, in autonomous flow, a place in `manual review:`; a
-  held feature got no task.
+  (with a command run in this session, or `not verifiable by running: <why>` and what was checked instead), only
+  `high` new tasks and, in autonomous flow, a place in `manual review:`; a held feature got no task.
 
 ### 9. Write, commit on the tracking branch, merge
 1. Tracking worktree from `<main>` (`master` or `main`; the integration branch in autonomous flow):
