@@ -343,7 +343,9 @@ After a task-mode wait, reach this step on resume once the waiting tasks are che
 - Update `Waiting for` of every feature with a task in this wave: `wave <N>` (its next tasks), `I<n>` (an open
   entry), `review` (ready, waits for the user's review and approval), or `user: <question>`. Empty once merged.
 - New problems: append entries to `problems.md` with the next IDs (update `Next ID`), in the format of
-  `layout.md`; create the file with the first entry.
+  `layout.md`; create the file with the first entry. For every feature a new entry concerns, count its earlier
+  re-plans: the README `Re-plans:` sub-items whose `fixes:` part names it (`layout.md`, "Re-plan escalation");
+  the report shows the count.
 - Closed problems: every open entry this wave fixed or verified (its `→ task Y` tasks are now ✅, or a check of
   this wave verified it) gets its closing status and moves to "Closed problems" of the wave file where it was
   found. Then update every earlier task, wave and feature it concerned, as `layout.md` says

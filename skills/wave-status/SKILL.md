@@ -36,8 +36,9 @@ Read only the following, according to `layout.md`, "Who reads what":
   (`git show plan/<plan>:<plan folder>/README.md`), otherwise from the main checkout. Use its Features columns
   `| ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |` and Waves
   columns `| Wave | File | Tasks | Status |`, and its Tasks columns `| ID | Slug | Feature | Wave | Complexity | Status |`.
-  Also its `Flow:` header line (`layout.md`, "Flow"). For a plan in autonomous flow, `<main>` below is its
-  integration branch and `<main checkout>` its integration worktree (`layout.md`, "Names"); also read
+  Also its `Flow:` header line (`layout.md`, "Flow") and its `Re-plans:` header item
+  (`layout.md`, "Re-plan escalation"). For a plan in autonomous flow, `<main>` below is its integration branch
+  and `<main checkout>` its integration worktree (`layout.md`, "Names"); also read
   `git rev-list --count <main branch>..integration/<name>`
   when that branch exists.
 - Each plan's `problems.md`: entry headers only (`**[I<n> · …] essence**`).
@@ -107,6 +108,8 @@ Feature status comes first: the user reads it before anything about waves.
 - `Merged, not recorded:` a feature branch merged into `<main>` whose row is not `✅ merged` (the user merged it);
   the next `/wave-run <plan folder>` · `$wave-run <plan folder>` records it.
 - `Last stop:` the last `Stop <code>: … — next: …` line, or `Waiting: task mode <IDs> — next: …`.
+- `Re-plans:` every feature re-planned at least once, counted from the `Re-plans:` sub-items whose `fixes:` names it
+  (`layout.md`, "Re-plan escalation"): `F<k> re-planned <c>× → next re-plan <escalated · held>`, separated by `;`.
 - `Inconsistencies:` a ⚠️/❌ item that names no open entry; an open entry whose items are all ✅ or ➖ (the
   status check of `layout.md`, "Statuses").
   May run the script read-only on a plan folder of the tracking branch's worktree; otherwise check by reading.
@@ -154,6 +157,7 @@ Ready for review:
 - Integration: <as the bullet says>
 - Merged, not recorded: <F-IDs and branches>
 - Last stop: <the line>
+- Re-plans: <F<k> re-planned <c>× → next re-plan <escalated · held>; …>
 - Inconsistencies: <one item per line>
 - Leftovers: <one item and its suggested command per line>
 - Next: <one command, both forms>
@@ -173,7 +177,7 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 - Always printed: the opening `Started:` line, the plan header, `Tracking branch`, `Features`, the table,
   `Waves`, `Next`, the times line.
   `Merged, not in <main branch>:` and `Integration:`: autonomous flow only, always there (`none`, `not created
-  yet`). `Ready for review:`: when a feature is `👀 review`. `Merged, not recorded`, `Last stop`,
+  yet`). `Ready for review:`: when a feature is `👀 review`. `Merged, not recorded`, `Last stop`, `Re-plans`,
   `Inconsistencies`, `Leftovers`: only when they have content. `## Index parts`: when an index has a part
   without a plan folder.
 - Labels and column names are written exactly as the template writes them; when the user's language is not
@@ -212,7 +216,9 @@ Use the first rule that applies:
    `/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`.
    Otherwise a 🔄 wave means `wait: wave N is running`.
 2. The last wave is ❌: use the `next:` command of its stop line.
-3. Open entries not marked `→ task …`: `/wave-plan <plan folder>` · `$wave-plan <plan folder>`.
+3. Open entries not marked `→ task …`: `/wave-plan <plan folder>` · `$wave-plan <plan folder>`; when such an entry
+   concerns a feature held at the re-plan limit (`layout.md`, "Re-plan escalation"): decide, then
+   `/wave-plan <plan folder> override F<k>: <direction>` · `$wave-plan <plan folder> override F<k>: <direction>`.
 4. A feature `👀 review`: "review `<branch>`, then" and its merge command (see "Suggested commands"). If rule 5 also
    applies, give its command on a second line: a wave waits for a review only when its `Depends on:` names the
    feature (`wave-run` then stops `feature-unmerged`).
