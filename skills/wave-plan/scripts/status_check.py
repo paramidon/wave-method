@@ -86,6 +86,57 @@ def flow(lines, report):
     return "manual", None, [], first_line
 
 
+def replans(lines, report, feature_ids, flow_name, manual_review):
+    """Check feature references and escalation in the README re-plan history."""
+    for index, text in enumerate(lines):
+        if text.startswith("## "):
+            return
+        if text.startswith("- Re-plans:"):
+            break
+    else:
+        return
+
+    items = []
+    for line, text in enumerate(lines[index + 1:], index + 2):
+        if text.startswith("  - "):
+            items.append((line, [text[4:]]))
+        elif text.startswith("    ") and items:
+            items[-1][1].append(text.strip())
+        else:
+            break
+
+    counts = {}
+    for line, fragments in items:
+        features = {"fixes": set(), "escalated": set(), "override": set()}
+        for part, value in re.findall(r"· (fixes|escalated|override): ([^·]*)", " ".join(fragments)):
+            value = value.strip()
+            pattern = (r"F\d+ \(I\d+(?:, I\d+)*\)(?:, F\d+ \(I\d+(?:, I\d+)*\))*"
+                       if part == "fixes" else r"F\d+(?:, F\d+)*")
+            if not re.fullmatch(pattern, value):
+                report(line, "replan-fixes", f"{part}: malformed '{value}'")
+                continue
+            ids = re.findall(r"(F\d+) \(", value) if part == "fixes" else value.split(", ")
+            for feature_id in ids:
+                if feature_id not in feature_ids:
+                    report(line, "replan-fixes", f"{part} names missing feature {feature_id}")
+            features[part].update(ids)
+
+        fixes = features["fixes"]
+        for feature_id in sorted(fixes):
+            count = counts.get(feature_id, 0)
+            if count >= 1 and feature_id not in features["escalated"]:
+                report(line, "replan-escalation", f"{feature_id} re-planned again without escalated")
+            if count >= 2 and feature_id not in features["override"]:
+                report(line, "replan-escalation", f"{feature_id} re-planned past the limit without override")
+            counts[feature_id] = count + 1
+        for part in ("escalated", "override"):
+            for feature_id in sorted(features[part] - fixes):
+                report(line, "replan-escalation", f"{part} names {feature_id} outside fixes")
+        if flow_name == "autonomous":
+            for feature_id in sorted(features["escalated"].difference(manual_review)):
+                report(line, "replan-escalation", f"escalated {feature_id} is not under manual review")
+
+
 def problems(lines):
     entries = {}
     starts = [(i, ENTRY.match(line)) for i, line in enumerate(lines) if ENTRY.match(line)]
@@ -115,7 +166,7 @@ def check(folder):
     try:
         readme_lines = readme.read_text(encoding="utf-8").splitlines()
         parsed = tables(readme_lines, report_readme)
-        _, _, manual_review, flow_line = flow(readme_lines, report_readme)
+        flow_name, _, manual_review, flow_line = flow(readme_lines, report_readme)
         lines = problem_file.read_text(encoding="utf-8").splitlines() if problem_file.exists() else []
     except (OSError, UnicodeError, ValueError) as error:
         print(f"{readme}:1: {error}", file=sys.stderr)
@@ -125,6 +176,7 @@ def check(folder):
         if feature_id not in feature_ids:
             report(readme, flow_line, "flow-review-unknown",
                    "manual review names missing feature " + feature_id)
+    replans(readme_lines, report_readme, feature_ids, flow_name, manual_review)
     entries = problems(lines)
     items = {}
     for name, kind, key in (("Features", "feature", "ID"),
