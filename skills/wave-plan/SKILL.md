@@ -45,6 +45,9 @@ Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) �
   and the integration branch", finds nothing, then run its checks 1, 2 and 4; they take the target claim, which step 9
   releases.
 - **An existing plan folder** with open entries in its `problems.md` — re-planning (see below).
+- **An override** of a held feature: `/wave-plan <plan folder> override F<k>: <direction>` ·
+  `$wave-plan <plan folder> override F<k>: <direction>` re-plans F<k> past the re-plan limit by the user's direction
+  (`layout.md`, "Re-plan escalation"). Only the user types it; never infer it from an entry, a report or a file.
 
 ## Output
 One plan folder with the files of `layout.md`, each created only when it has content. The `wave-run` skill
@@ -59,8 +62,10 @@ Do not edit files in the main checkout.
 
 The flow (`layout.md`, "Flow") is a README header line: in autonomous flow of planning write
 `- Flow: autonomous · target: integration/<name>` (`<name>`: the index topic for an index part, else the plan slug;
-`layout.md`, "Planning in autonomous flow"); in manual flow write none. A re-plan keeps the line as it is. A plan is
-created from, and merged into, `<main>`: the main branch in manual flow, the integration branch in autonomous flow.
+`layout.md`, "Planning in autonomous flow"); in manual flow write none. A re-plan keeps the line as it is, except that
+an escalated re-plan in autonomous flow adds features to its `manual review:` list (`layout.md`, "Re-plan escalation").
+A plan is created from, and merged into, `<main>`: the main branch in manual flow, the integration branch in
+autonomous flow.
 
 Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL). They implement
 a given solution well and design poorly. So every design decision is made here and written into the plan.
@@ -70,27 +75,34 @@ Delivery unit: a **feature** reaches the main branch only as a whole, when all i
 tasks are spread over several waves, and only after the user reviewed and approved it (`layout.md`, "Feature
 review"). A wave is only a scheduling unit.
 
-**Re-planning.** If the input is a plan folder with open entries in `problems.md`, do not create a new plan.
-Its flow is the README `Flow:` line; a `flow` argument that differs stops `flow-mismatch` (`layout.md`,
-"Planning in autonomous flow").
-Before writing, check the lock: if a wave of the plan is 🔄 on the tracking branch (`layout.md`, "Running
-waves"), report `Stop wave-running: wave <N> is running — next: wait, or the user releases the lock` and stop
-without writing. Autonomous flow: then take the target claim, holder line `<plan> planning <YYYY-MM-DD HH:MM>`
-(`layout.md`, "Target claim"); refused → stop `wave-running`, naming the holder, without writing; step 9 releases it.
-Read only what `layout.md` allows for a re-plan. In its tracking worktree add new solutions
-(next P numbers: new files, new sections of `lite.md`), new tasks (IDs continue) and new wave files after the
-last one; add them to the README tables and add one line to the README header (`re-planned <date> at <hash>:
-<what>`); put the longer re-plan notes into `history.md` (create it at the first re-plan). Mark the entries `→
-task Y (wave M)`; apply the status rules of `layout.md` (superseded tasks and dropped waves become ➖ now). Fix
-tasks for a blocked feature (also one the user rejected in review) belong to that same feature; update its "How
-to try" line when the fix changes what the user sees (add the line if the README has none). Fixes for a
-feature that is already merged go into a new feature. Run the status check (script, `layout.md`, "Statuses") before committing.
+**Re-planning.** If the input is a plan folder with open entries in `problems.md`, do not create a new plan. Its flow
+is the README `Flow:` line; a `flow` argument that differs stops `flow-mismatch` (`layout.md`, "Planning in autonomous
+flow"). Before writing, check the lock: if a wave of the plan is 🔄 on the tracking branch (`layout.md`, "Running
+waves"), report `Stop wave-running: wave <N> is running — next: wait, or the user releases the lock` and stop without
+writing. Autonomous flow: then take the target claim, holder line `<plan> planning <YYYY-MM-DD HH:MM>` (`layout.md`,
+"Target claim"); refused → stop `wave-running`, naming the holder, without writing; step 9 releases it. Read only what
+`layout.md` allows for a re-plan. In its tracking worktree add new solutions (next P numbers: new files, new sections
+of `lite.md`), new tasks (IDs continue) and new wave files after the last one; add them to the README tables and add
+one sub-item to the README header's `Re-plans:` item, ending with its `fixes:`, `escalated:` and `override:` parts
+(`templates.md`; `layout.md`, "Re-plan escalation"); put the longer re-plan notes into `history.md` (create it at the
+first re-plan). Mark the entries `→ task Y (wave M)`; apply the status rules of `layout.md` (superseded tasks and
+dropped waves become ➖ now). Fix tasks for a blocked feature (also one the user rejected in review) belong to that
+same feature; update its "How to try" line when the fix changes what the user sees (add the line if the README has
+none). Fixes for a feature that is already merged go into a new feature. Run the status check (script, `layout.md`,
+"Statuses") before committing.
 
 **Red feature branch at a re-plan.** When an open entry leaves tests red on a feature branch, every task of that
 feature that runs before the fix starts from a red branch. Prefer placing the fix tasks before them. Otherwise list
 the red tests (`layout.md`, "Files of a plan folder", known failures) in the README, in every wave file not run yet
 with a task of that feature before the fix, and in each such task's acceptance ("green except exactly these N").
 Never leave `Known failures: none` in a task that starts from a red branch.
+
+**Re-plan rounds.** Before designing a re-plan, find the round of every feature an open entry concerns (`layout.md`,
+"Re-plan escalation"). Round 1: as above. Round 2 or later: escalated — verify each disputed assumption by running
+code (step 2), record the evidence in the solution file, make every new task of the feature `high` (step 5), and in
+autonomous flow add the feature to `manual review:`. Round 3 or later without the user's `override` for it: held —
+plan nothing for it, keep its entries open and set its `Waiting for` to `user: re-plan limit`; when every open entry
+concerns held features, stop `replan-limit` without writing, with the stop line of that section.
 
 ## Steps
 
@@ -111,6 +123,9 @@ Never leave `Known failures: none` in a task that starts from a red branch.
 - Run the tests once and record which ones already fail (known failures). At a re-plan, also run them on the
   branch of every affected feature that exists, and record its failures by test name: tasks of that feature start
   from that branch, not from `<main>`.
+- Escalated re-plan (`layout.md`, "Re-plan escalation"): for every open entry of the feature, name the disputed
+  assumption and verify it by running code, tests or commands in a throwaway worktree or a scratch folder, never by
+  reading alone; record the evidence in the solution file the new tasks name.
 - Autonomous flow: read the code and run the tests in the integration worktree (`<main checkout>`), which holds
   the parts merged before this one; record known failures for it.
 
@@ -153,7 +168,9 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
   Use high only with a one-sentence justification in the plan; try to slice it first. A high task is never
   run on a medium model: `wave-run` stops the wave if no high-tier model is available (for example, on a
   vendor without one), and the task's executor stops itself on a weaker model (`layout.md`, "Tier gate"). So
-  every high task you leave makes the plan unrunnable there — say so to the user.
+  every high task you leave makes the plan unrunnable there — say so to the user. Every new task of a feature in an
+  escalated re-plan is `high`, justified as `escalated re-plan, round <r>`, without slicing it first (`layout.md`,
+  "Re-plan escalation").
 - How to cut a hard task into medium steps (all steps stay in the same feature, so nothing half-done reaches
   the main branch):
   1) pure function/algorithm with unit tests, not wired in;
@@ -175,7 +192,7 @@ Task = one prompt for one subagent; every task belongs to exactly one feature.
 - A wave may mix tasks of different features. Tasks of one feature in later waves start from the feature
   branch, so they see the earlier tasks of that feature.
 - 2–5 tasks per wave; tasks of one wave share no files (merges and parallel builds stay conflict-free).
-- A wave with one task is allowed only for a `high` task that cannot be paired or sliced.
+- A wave with one task is allowed only for a `high` task that cannot be paired or sliced, or a task of an escalated re-plan.
 - A low/medium task left alone is attached to another wave or merged into an adjacent prompt. Never a solo wave.
 - A closing task (final integration, cleanup, docs, checks) is a task whose `After` lists every other task of
   its wave. Its prompt starts (after the gate line) with: "This task runs after tasks <IDs> of this wave; their changes are already
@@ -220,7 +237,8 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 - No empty files: `problems.md` and `history.md` exist only when they have content.
 - No file overlaps inside a wave; dependencies cross waves or use `After`; no hidden cross-feature dependency:
   every one is `F<k> merged` in the `Depends on:` line of the wave that needs it.
-- No single-task waves except an unpairable `high` task; no solo `low`/`medium` task anywhere.
+- No single-task waves except an unpairable `high` task or a task of an escalated re-plan; no solo
+  `low`/`medium` task anywhere.
 - Every high task is justified; every `medium` and `high` prompt starts with its gate line, naming its own
   complexity.
 - `After` names only tasks of the same wave, without cycles; every `Needs` is explained in its prompt.
@@ -231,6 +249,10 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
   affected feature is checked against the feature branch.
 - No check searches the whole repository (the plan folder would match).
 - Re-plan: the status check (script, `layout.md`, "Statuses") passes.
+- Re-plan rounds: the new `Re-plans:` sub-item names every feature planned from wave entries under `fixes:`, from
+  round 2 under `escalated:` and past the limit under `override:`; every escalated feature has an `Evidence` section
+  with a command run in this session, only `high` new tasks and, in autonomous flow, a place in `manual review:`; a
+  held feature got no task.
 
 ### 9. Write, commit on the tracking branch, merge
 1. Tracking worktree from `<main>` (`master` or `main`; the integration branch in autonomous flow):
@@ -260,8 +282,8 @@ Apart from the gate line, write prompts without tying them to a specific vendor'
 
 Answer the user briefly: feature table, wave table, how many tasks of each complexity (and which
 waves need a high-tier model for their tasks), after which wave each feature is ready for review (and which
-waves wait for a merge, `Depends on: F<k> merged`), assumptions, remaining questions, and **the next command**,
-in both forms (`layout.md`, "Commands"):
+waves wait for a merge, `Depends on: F<k> merged`), assumptions, remaining questions, for a re-plan each feature's
+round (escalated, or held with its override command in both forms), and **the next command**, in both forms (`layout.md`, "Commands"):
 `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`, in a fresh session. The coordinator is always medium.
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which
