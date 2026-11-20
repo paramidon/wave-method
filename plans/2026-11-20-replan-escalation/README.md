@@ -8,7 +8,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1 | A (1), B (1), C (1), D (1), E (1) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status` | 🔄 | wave 1 | | |
+| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1 | A (1), B (1), C (1), D (1), E (1) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status` | ⚠️ blocked (I2) | I2 | `feat/replan-escalation/F1-replan-escalation` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -16,17 +16,17 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | 🔄 since 2026-11-20 20:38 |
+| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⚠️ I2 |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `escalation-rule-layout` | F1 | 1 | medium | 🔄 |
-| B | `escalation-in-wave-plan` | F1 | 1 | medium | 🔄 |
-| C | `replan-record-check` | F1 | 1 | medium | 🔄 |
-| D | `replan-count-shown` | F1 | 1 | medium | 🔄 |
-| E | `escalation-docs` | F1 | 1 | low | 🔄 |
+| A | `escalation-rule-layout` | F1 | 1 | medium | ✅ |
+| B | `escalation-in-wave-plan` | F1 | 1 | medium | ⚠️ I2 |
+| C | `replan-record-check` | F1 | 1 | medium | ✅ |
+| D | `replan-count-shown` | F1 | 1 | medium | ✅ |
+| E | `escalation-docs` | F1 | 1 | low | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/replan-escalation` and
