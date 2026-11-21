@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1, P2 | A (1), B (1), C (1), D (1), E (1), F (2), G (2) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status`; the P2 check of `solutions/lite.md` holds (tasks F, G) | 👀 review | review | `feat/replan-escalation/F1-replan-escalation` | |
+| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1, P2 | A (1), B (1), C (1), D (1), E (1), F (2), G (2) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status`; the P2 check of `solutions/lite.md` holds (tasks F, G) | ✅ merged | | `feat/replan-escalation/F1-replan-escalation` | b824dc7 |
 
 Merged: short hash of the merge commit into the main branch.
 
