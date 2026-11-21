@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1, P2 | A (1), B (1), C (1), D (1), E (1), F (2), G (2) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status`; the P2 check of `solutions/lite.md` holds (tasks F, G) | ⚠️ blocked (I2) | wave 2 | `feat/replan-escalation/F1-replan-escalation` | |
+| F1 | `replan-escalation` | Re-plans of a feature are counted; the second is escalated, the third waits for the user | P1, P2 | A (1), B (1), C (1), D (1), E (1), F (2), G (2) | acceptance tests 1–7 of `solutions/P1-replan-escalation.md` hold (task E): 39 status-check tests and 59 driver tests OK, all three examples pass, the escalated/held rules and the override command are in `layout.md`, `wave-plan`, `wave-run` and `wave-status`; the P2 check of `solutions/lite.md` holds (tasks F, G) | ✅ merged | | `feat/replan-escalation/F1-replan-escalation` | b824dc7 |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -17,20 +17,20 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ⚠️ I2 |
-| 2 | `waves/w02.md` | F, G | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D, E (after A, B, C, D) | ✅ (fixed by F, G, wave 2) |
+| 2 | `waves/w02.md` | F, G | ✅ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
 | A | `escalation-rule-layout` | F1 | 1 | medium | ✅ |
-| B | `escalation-in-wave-plan` | F1 | 1 | medium | ⚠️ I2 |
+| B | `escalation-in-wave-plan` | F1 | 1 | medium | ✅ (fixed by F, G, wave 2) |
 | C | `replan-record-check` | F1 | 1 | medium | ✅ |
 | D | `replan-count-shown` | F1 | 1 | medium | ✅ |
 | E | `escalation-docs` | F1 | 1 | low | ✅ |
-| F | `evidence-fallback-skill` | F1 | 2 | low | ⬜ |
-| G | `evidence-fallback-template` | F1 | 2 | low | ⬜ |
+| F | `evidence-fallback-skill` | F1 | 2 | low | ✅ |
+| G | `evidence-fallback-template` | F1 | 2 | low | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/replan-escalation` and
