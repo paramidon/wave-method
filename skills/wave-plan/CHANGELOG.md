@@ -26,6 +26,12 @@ and no other file carries a version. Changes since the last tag go into a line
   and the tier gate reads it with git; a `Merged` line of a wave file takes its time from the merge commit, not
   from the clock; example 01's CI workflow needs no file of another feature; example 01's README session is part
   of its P2 solution. A plan without a `Flow:` line behaves as before.
+  Re-plan escalation (`layout.md`, "Re-plan escalation"): each README `Re-plans:` sub-item names the features it
+  fixed from wave entries (`fixes:`); a feature's second re-plan is escalated — its assumption verified by running
+  code and recorded as evidence, its new tasks `high`, and in autonomous flow its review manual — and a third is held
+  until the user's `/wave-plan <plan folder> override F<k>: <direction>` (stop `replan-limit`); `wave-run` and
+  `wave-status` show each feature's count, and `status_check.py` checks the record (`replan-fixes`,
+  `replan-escalation`).
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has

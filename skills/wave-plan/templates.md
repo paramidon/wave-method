@@ -7,7 +7,7 @@
 
 - Plan: `plans/<…>/` · slug: `<slug>` · tracking branch: `plan/<slug>` · created <date> · base: <git short hash> · planned <YYYY-MM-DD HH:MM> – <YYYY-MM-DD HH:MM>
 - Index: `plans/<date>-<topic>/index.md` part <K> (omit when planned from a raw list)
-- Re-plans: none (later one sub-item each: `<date> at <hash>, <start HH:MM> – <end HH:MM>: <what>`; details in `history.md`)
+- Re-plans: none (later one sub-item each: `<date> at <hash>, <start HH:MM> – <end HH:MM>: <what>`, ending with the `· fixes:`, `· escalated:` and `· override:` parts of `layout.md`, "Re-plan escalation"; details in `history.md`)
 - Flow: (omit for manual flow; `autonomous · target: integration/<name>` when the flow of planning is autonomous, `<name>` = the index topic or the plan slug; `manual review: <F-IDs>` only when the user asks: `layout.md`, "Flow", "Planning in autonomous flow")
 - Models: (omit unless this plan names concrete models; tiers and rules: `layout.md`, "Model tiers")
 
@@ -69,6 +69,7 @@ User problem: <one line, as in README> · feature F<k>
 **Algorithm:** …
 **Limits:** …
 **Acceptance tests:** …
+**Evidence (re-plan <YYYY-MM-DD>, round <r>):** assumption, commands, deciding output lines, conclusion — or `not verifiable by running: <why>` and what was checked instead (escalated re-plans only: `layout.md`, "Re-plan escalation")
 ````
 
 ### `solutions/lite.md`

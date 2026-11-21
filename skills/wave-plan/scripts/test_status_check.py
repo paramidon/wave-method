@@ -72,6 +72,46 @@ class StatusCheckTest(unittest.TestCase):
         result = self.run_check(readme)
         self.assertEqual((0, ""), (result.returncode, result.stdout))
 
+    def test_replans_escalated(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
+                                "  - 2026-11-01 at abc1234, 10:00 – 10:10: old free text\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F1 (I1)\n"
+                                "  - 2026-11-03 at abc1236, 10:00 – 10:10: I2 → P3 · fixes: F1 (I2) · escalated: F1\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_replans_malformed(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F1 I1\n")
+        self.assert_rule("replan-fixes", readme)
+
+    def test_replans_unknown_feature(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F9 (I1)\n")
+        self.assert_rule("replan-fixes", readme)
+
+    def test_replans_not_escalated(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F1 (I1)\n"
+                                "  - 2026-11-03 at abc1236, 10:00 – 10:10: I2 → P3 · fixes: F1 (I2)\n")
+        self.assert_rule("replan-escalation", readme)
+
+    def test_replans_no_override(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F1 (I1)\n"
+                                "  - 2026-11-03 at abc1236, 10:00 – 10:10: I2 → P3 · fixes: F1 (I2) · escalated: F1\n"
+                                "  - 2026-11-04 at abc1237, 10:00 – 10:10: I3 → P4 · fixes: F1 (I3) · escalated: F1\n")
+        self.assert_rule("replan-escalation", readme)
+
+    def test_replans_autonomous_review(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomous\n- Re-plans:\n"
+                                "  - 2026-11-02 at abc1235, 10:00 – 10:10: I1 → P2 · fixes: F1 (I1)\n"
+                                "  - 2026-11-03 at abc1236, 10:00 – 10:10: I2 → P3 · fixes: F1 (I2) · escalated: F1\n")
+        self.assert_rule("replan-escalation", readme)
+        readme = readme.replace("- Flow: autonomous\n", "- Flow: autonomous · manual review: F1\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
     def test_flow_backticks(self):
         readme = README.replace("# Test plan\n",
                                 "# Test plan\n\n- Flow: autonomous · target: `integration/test-plan`\n")
