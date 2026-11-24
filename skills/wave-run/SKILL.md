@@ -28,6 +28,12 @@ the named features after review): `/wave-run <plan folder> merge <F-IDs>` · `$w
 Flow form (switches the plan's flow between waves, `layout.md`, "Flow"):
 `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` ·
 `$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` (see `wave-run/autonomous.md`, "Flow form").
+**Coordinated run** (`layout.md`, "Coordinated runs"; steps `wave`, `task`, `flow`): the plan must be in
+autonomous flow, else stop `manual-flow` before anything is written. Every task runs in task mode
+(`task-mode.md`): no task subagent is launched and `tier-missing` is not checked, because the coordinator
+launches each task on a model of its tier. Nothing is asked, `report.md` is not read, and the run ends with the
+return line of that section instead of the final report. Step 1 writes `Capabilities: coordinated run (every task
+in task mode)`.
 
 The coordinator does not write task code itself (except merge-conflict resolution) and does not change the
 plan's solutions.
@@ -58,7 +64,8 @@ plan's solutions.
 - **A task is never run on a model below its tier** (see "Environment capabilities"), and work done below its
   tier is never merged (`layout.md`, "Tier gate"; step 5).
 - **Every final report follows the template of `wave-run/report.md`**, read right before writing it. The
-  environment's default answer style never shortens it.
+  environment's default answer style never shortens it. A coordinated run returns its return line instead
+  (`layout.md`, "Coordinated runs").
 - Never push.
 
 ## Environment capabilities
@@ -106,6 +113,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `tier-missing` | no model of a task's tier exists in this environment | re-slice, or run from an environment that has it |
 | `tier-mismatch` | a task-mode session runs a model below the task's tier, or cannot tell its model (`layout.md`, "Tier gate") | run the task again in a fresh session with a model of its tier |
 | `capability-missing` | a needed capability is missing and task mode cannot help | see "Environment capabilities" |
+| `manual-flow` | a coordinated run of a plan in manual flow | `/wave-run <plan folder> flow autonomous`<br>`$wave-run <plan folder> flow autonomous` |
 | `target-unsafe` | autonomous flow cannot guarantee that merges stay on the integration branch (`layout.md`, "Integration target"); the line names the failed check | fix what the line names (free the integration branch, clean or remove its worktree), then run the same command again |
 | `target-conflict` | merging `<main branch>` into the integration branch conflicts (`wave-run/autonomous.md`) | merge `integration/<name>` into `<main branch>`, or `<main branch>` into it, yourself; then run the same command again |
 | `target-unmerged` | the flow form switches to manual while the integration branch has commits `<main branch>` lacks | review `git diff <main branch>...integration/<name>`, merge it yourself, then run the flow form again |
@@ -126,7 +134,9 @@ missing report block — send the request (what to commit, the error text, or th
 same subagent, or its replacement ("Environment capabilities", row "continuing a subagent"). It commits on its
 branch (a direct task: on the feature branch); merge a task branch again, then repeat the check that failed. A red
 check gets at most 2 attempts per task; then the task is ⚠️ with a problem entry, and if no other task can
-continue, stop `red-after-merge`.
+continue, stop `red-after-merge`. Without a subagent to send it to (a coordinated run, or a resume in a session
+without subagents), the request becomes a fix request for a task-mode session (`task-mode.md`, "Fix requests");
+each counts as an attempt.
 
 ## Steps
 
@@ -277,7 +287,9 @@ Problems: **[wave <N> / task <ID> / feature <F>] <essence>** — where: <file:li
   is `git revert --no-edit H..HEAD` for a direct task (never `git reset --hard` the feature branch without the
   user's explicit OK) and leaving a task branch unmerged.
   Autonomous flow: `autonomous.md`, "Points of steps 1–6".
-- Read the report's final block, ignoring `none` values. Every `Not checked:` line not covered by a later task, and
+- Read the report's final block, ignoring `none` values. For a task run in task mode, the block is the paragraph of
+  `Done:`/`Try:`/`Not checked:`/`Problems:` lines in the body of its last commit
+  (`git log -1 --format=%B <last commit of the task>`, `task-mode.md`). Every `Not checked:` line not covered by a later task, and
   every `Problems:` line, becomes one entry of `problems.md` (add the ID, `status: open`). A report without the
   block, or with an empty `Done:`: ask the same subagent for it once (fix loop); still missing → one entry
   `report block missing`. Keep `Done:` and `Try:` for the feature's review brief (step 8).
