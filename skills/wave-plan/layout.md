@@ -661,7 +661,7 @@ and the skills it starts.
 
 | Step | Skill and arguments | Tier | Return line |
 |---|---|---|---|
-| `navigate` | `wave-auto/navigator.md` with `start <start> · skip <units, or none>` | low | 0–4 lines `halt <unit>: <reason> — next: <command or action>`, then one line `next: <action>` or `done` |
+| `navigate` | `wave-auto/navigator.md` with `start <start> · skip <units, or none>` | low | 0 or more lines `halt <unit>: <reason> — next: <command or action>` (one per halted unit, no limit), then one line `next: <action>` or `done` |
 | `triage-ask` | `wave-triage flow autonomous ask <list>` | high | `questions <n> · index <index path>` |
 | `triage-answers` | `wave-triage flow autonomous answers <index path>`, with an `Answers:` block | high | `answers recorded · clusters <cluster names, or none>` |
 | `triage-cluster` | `wave-triage cluster <cluster> <index path>` | medium | `cluster <cluster>: <n> records · high <h> · unsure <u>` |

@@ -55,6 +55,8 @@ Read only the following, according to `layout.md`, "Who reads what":
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
   `git branch --merged <main> "feat/*"`.
+- `git for-each-ref --format="%(refname)" refs/wave-method/claims/auto/` and, for each ref,
+  `git cat-file -p <ref>` (coordinator claims of `wave-auto`).
 - The main branch name, once, before writing anything: `main` when
   `git rev-parse --verify --quiet refs/heads/main` succeeds, else `master` when
   `git rev-parse --verify --quiet refs/heads/master` succeeds (`layout.md`, "Names"). This name is
@@ -118,6 +120,8 @@ Feature status comes first: the user reads it before anything about waves.
   flow the kept branches of auto-merged features are leftovers only once the integration branch is in
   `<main branch>`. A target claim whose holder line names a wave that is not 🔄 on that plan's tracking branch:
   suggest `git update-ref -d refs/wave-method/claims/integration/<name>`, once the user is sure no run holds it.
+  A coordinator claim (`refs/wave-method/claims/auto/<name>`, `wave-auto`) is a leftover too: suggest
+  `git update-ref -d refs/wave-method/claims/auto/<name>`, once the user is sure no `wave-auto` session runs.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
@@ -180,6 +184,9 @@ Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
   yet`). `Ready for review:`: when a feature is `👀 review`. `Merged, not recorded`, `Last stop`, `Re-plans`,
   `Inconsistencies`, `Leftovers`: only when they have content. `## Index parts`: when an index has a part
   without a plan folder.
+- `## Index parts`: after the table, `Coordinator claims:` with one line per ref, `<name>: <holder line>`, or `none`
+  when there is no ref. For every index with an unplanned part or an unfinished plan, the Command cell also gives
+  `/wave-auto <index path>` · `$wave-auto <index path>`, the alternative that runs everything from one session.
 - Labels and column names are written exactly as the template writes them; when the user's language is not
   English, they are translated, and statuses, IDs, branch names, paths and commands stay as written.
 - A merged block and a review block are printed in full, never retold as one line.
