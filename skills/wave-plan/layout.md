@@ -15,6 +15,9 @@ Read only what the table lists. A file that does not exist means there is nothin
 | `wave-triage` coordinator | its `index.md`; the `triage/P<n>.md` records only of problems it re-judges or whose dependency candidates it confirms |
 | triage subagent | its prompt; it writes only its assigned `triage/P<n>.md` records |
 | `wave-status` | see its skill (READMEs, problem headers, Execution of 🔄/❌/⚠️ waves, review briefs of `👀 review` features and, in autonomous flow, of features merged into the integration branch but not yet into `<main branch>`, index "Parts") |
+| `wave-auto` coordinator | `wave-auto/SKILL.md`; of `plans/` only the "Open questions" section of an index on its triage branch, when it asks them; everything else reaches it as return lines ("Coordinated runs") |
+| navigator subagent | `wave-auto/navigator.md` and the git state it names; it changes nothing |
+| coordinated step subagent | what the row of its skill says; its prompt names the skill and arguments ("Coordinated runs") |
 | nobody | `CHANGELOG.md`; `wave-plan/scripts/` (skills run the script, they do not read it) |
 
 A wave file holds everything its wave needs. If something is missing, that is a defect of the plan: record it in `problems.md` and do not look for it in other waves, `history.md` or `archive/`.
@@ -37,7 +40,7 @@ A wave file holds everything its wave needs. If something is missing, that is a 
 
 ## Run times
 
-Every run of a wave skill (`wave-triage`, `wave-plan`, `wave-run`, `wave-status`, including a task-mode session and
+Every run of a wave skill (`wave-triage`, `wave-plan`, `wave-run`, `wave-status`, `wave-auto`, including a task-mode session and
 the `merge` form) shows when it started and when it ended. Take both times from the system clock with a shell
 command (`date "+%Y-%m-%d %H:%M"`, or `Get-Date -Format "yyyy-MM-dd HH:mm"` in PowerShell); never guess or reuse
 a time from a file.
@@ -53,10 +56,11 @@ a time from a file.
   clock right before that commit: `wave-run` in the wave file's "Execution" (`Started <…>.` in step 2,
   `Finished <…>.` in step 8, just before a stop line, which stays last; a `merge` run only in its report);
   `wave-plan` in the README header (`planned <start> – <end>`; a re-plan in its `Re-plans:` item); `wave-triage` in the index header
-  (`triaged <start> – <end>`). `wave-status` writes nothing.
+  (`triaged <start> – <end>`). `wave-status` writes nothing. `wave-auto` writes nothing of its own; its steps record
+  their times.
 
 ## Skill paths
-Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/` and `wave-status/`, which is the parent of the loaded skill's own folder (`.claude/skills/` or `.agents/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
+Paths of skill files (`wave-plan/layout.md`, `wave-run/task-mode.md`, `wave-plan/scripts/...`) are relative to the wave skills folder: the folder that holds `wave-triage/`, `wave-plan/`, `wave-run/`, `wave-status/` and `wave-auto/`, which is the parent of the loaded skill's own folder (`.claude/skills/` or `.agents/skills/` for a project install, the plugin's `skills/` for a plugin install). It is not the repository root. Resolve it once from the skill's base directory and use absolute paths when running a script from another folder.
 
 ## Version
 The skill files carry no version number. A release is a git tag `vMAJOR.MINOR.PATCH` of the wave-method repository; `wave-plan/CHANGELOG.md` (agents do not read it) lists what each release changed.
@@ -130,7 +134,8 @@ can reach a weaker model by mistake (a wrong model picked for a task-mode sessio
 
 Skills that launch subagents determine these capabilities from the tools the session actually has — never assume
 one; when unsure, treat it as missing: **subagents**; **parallel subagents**; **model choice per subagent**;
-**continuing a subagent**; **a tool a task needs** (for example desktop control); **built-in worktree isolation**.
+**continuing a subagent**; **a tool a task needs** (for example desktop control); **built-in worktree isolation**;
+**starting a session** (a separate session with a chosen model, whose result comes back to this session).
 What each skill does when one is missing is in that skill.
 
 ## Names
@@ -201,7 +206,7 @@ A wave is running while its status in README "Waves" is `🔄 since <YYYY-MM-DD 
 - While a wave runs, only its coordinator (and the task sessions it asked for) changes the plan folder, its tracking worktree and its feature and task worktrees: no re-plan, no other wave, no renames, no manual fixes. Reading is fine. Any other skill or agent that wants to change them tells the user and stops.
 - A wave whose Execution ends with `Waiting: task mode <IDs>` is resumed by `/wave-run <plan folder> <N>` · `$wave-run <plan folder> <N>` (`wave-run`, "Environment capabilities").
 - A lock left by a session that is gone is released only by the user's decision.
-  So is a target claim of autonomous flow ("Target claim").
+  So is a target claim of autonomous flow ("Target claim") and a coordinator claim ("Coordinated runs").
 
 ## Problem log
 `problems.md` is created with the first entry:
@@ -502,8 +507,8 @@ The run goes on with everything that does not depend on a feature left unmerged.
 
 ### Results of an autonomous run
 
-What the user is shown after an unattended run, by every reader (the `wave-run` report, `wave-status`, a driver's
-summary): per plan in autonomous flow, from its README and briefs on the tracking branch:
+What the user is shown after an unattended run, by every reader (the `wave-run` report, `wave-status`, the `wave-auto`
+final report, a driver's summary): per plan in autonomous flow, from its README and briefs on the tracking branch:
 
 | Feature | Shown as |
 |---|---|
@@ -631,6 +636,56 @@ Then `wave-plan` reads the code and runs the tests in the integration worktree, 
 integration branch, merges it into the integration worktree, never into the main checkout, and releases the claim
 right after that merge (`wave-plan` step 9). The plan folder is on the integration branch only, until the user merges
 it into `<main branch>`.
+
+## Coordinated runs
+
+`wave-auto` runs the whole pipeline from one session: it delegates every step to a subagent that runs one skill and
+returns one line (`wave-auto/SKILL.md`). It reads no plan file; git and `plans/` are its only memory, so the same
+command in a new session continues where the last one stopped. This section is the contract between the coordinator
+and the skills it starts.
+
+- A **coordinated run** is a skill run whose prompt contains the line
+  `Coordinated run · step <step> · unit <unit> · return: wave-plan/layout.md, "Coordinated runs"`.
+  It is in autonomous flow ("Flow"), asks the user nothing, starts no subagent and ends with only its return line
+  (table below), instead of the report the skill gives the user. Everything else it records where the skill always
+  records it: in files under `plans/` and in git.
+- The prompt of a `medium` or `high` step starts with the gate line of "Tier gate", and the subagent applies the gate
+  before anything else.
+- A role that launches subagents stays with the coordinator: the cluster subagents of `wave-triage` step 4 and the
+  task subagents of `wave-run`. In a coordinated run such a skill ends where it would launch them and returns what the
+  coordinator must launch (`wave-triage`, "Coordinated phases"; `wave-run/task-mode.md`).
+- A return line has no Markdown and nothing before it. Any step may return a stop instead, as its first line:
+  `Stop <code>: <one line> — next: <command or action>`. The coordinator reads nothing after the return line.
+
+### Steps
+
+| Step | Skill and arguments | Tier | Return line |
+|---|---|---|---|
+| `navigate` | `wave-auto/navigator.md` with `start <start> · skip <units, or none>` | low | 0–4 lines `halt <unit>: <reason> — next: <command or action>`, then one line `next: <action>` or `done` |
+| `triage-ask` | `wave-triage flow autonomous ask <list>` | high | `questions <n> · index <index path>` |
+| `triage-answers` | `wave-triage flow autonomous answers <index path>`, with an `Answers:` block | high | `answers recorded · clusters <cluster names, or none>` |
+| `triage-cluster` | `wave-triage cluster <cluster> <index path>` | medium | `cluster <cluster>: <n> records · high <h> · unsure <u>` |
+| `triage-finish` | `wave-triage flow autonomous finish <index path>` | high | `parts <k> · index <index path> · merged <short hash>` |
+| `plan` | `wave-plan flow autonomous <index path> part <K>` | high | `planned <plan folder> · waves <w> · tasks low <l>, medium <m>, high <h>` |
+| `re-plan` | `wave-plan <plan folder>` | high | `re-planned <plan folder> · new waves <numbers> · escalated <F-IDs, or none> · held <F-IDs, or none>` |
+| `flow` | `wave-run <plan folder> flow autonomous` | medium | `flow autonomous · <plan folder>` |
+| `wave` | `wave-run <plan folder> <N>`, also its resume | medium | `waiting <ID>:<tier>[ needs <Needs>]; …` while tasks wait for task mode; else `wave <N> <status> · merged <F-IDs, or none> · review <F-IDs, or none> · blocked <F-IDs, or none>` |
+| `task` | `wave-run <plan folder> <N> task <ID>` | the task's complexity | `task <ID>: committed <short hash>`, `task <ID>: already committed <short hash>` or `task <ID>: no commit — <reason>` |
+| `status` | `wave-status`, with the plan folder when the start is a plan folder | low | its full report; the only step whose return is not one line |
+
+`<unit>` is a plan folder, or for an index part not planned yet the folder its plan will have
+(`plans/<date>-<topic>/plan-<K>`); before the index has parts it is the index path.
+
+### Coordinator claim
+
+Two coordinators of one start would launch the same tasks into the same worktrees. A coordinator therefore holds the
+ref `refs/wave-method/claims/auto/<name>` for its whole run, where `<name>` is the index topic, or the plan slug when
+it starts from a plan folder. Holder line, in ASCII only: `wave-auto <start> <YYYY-MM-DD HH:MM> run <token>`. Take,
+refusal and release work as in "Target claim". A refused claim is the one point of a run where the coordinator offers
+a takeover: at the start it asks the user once whether the holder is gone; yes → it moves the ref from the held oid to
+its own (`git update-ref <ref> <new oid> <held oid>`); no → stop `wave-running`, naming the holder. It releases the
+claim after its final report's last step, and before the report of a stop that ends the run. A coordinator claim and a
+target claim are independent: each step takes the target claim its skill takes.
 
 ## Archive
 
