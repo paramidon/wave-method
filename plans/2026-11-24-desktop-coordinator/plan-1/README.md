@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), F (2), G (2), H (2), I (2) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–G are in place, status-check and driver tests and the three examples pass, and the CLI (H) and desktop (I) rehearsals are recorded with every expectation Pass or a finding with an open entry | ⬜ | wave 1 | | |
+| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), F (2), G (2), H (2), I (2) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–G are in place, status-check and driver tests and the three examples pass, and the CLI (H) and desktop (I) rehearsals are recorded with every expectation Pass or a finding with an open entry | 🔄 | wave 1 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -17,18 +17,18 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D, E | 🔄 since 2026-11-24 22:27 |
 | 2 | `waves/w02.md` | F, G, H (after F, G), I (after F, G) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `coordinated-runs-layout` | F1 | 1 | medium | ⬜ |
-| B | `coordinated-wave-run` | F1 | 1 | medium | ⬜ |
-| C | `coordinated-triage-phases` | F1 | 1 | medium | ⬜ |
-| D | `navigator-rules` | F1 | 1 | medium | ⬜ |
-| E | `coordinator-skill` | F1 | 1 | medium | ⬜ |
+| A | `coordinated-runs-layout` | F1 | 1 | medium | 🔄 |
+| B | `coordinated-wave-run` | F1 | 1 | medium | 🔄 |
+| C | `coordinated-triage-phases` | F1 | 1 | medium | 🔄 |
+| D | `navigator-rules` | F1 | 1 | medium | 🔄 |
+| E | `coordinator-skill` | F1 | 1 | medium | 🔄 |
 | F | `coordinated-plan-status` | F1 | 2 | low | ⬜ |
 | G | `coordinator-install-docs` | F1 | 2 | low | ⬜ |
 | H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ⬜ |
