@@ -1,6 +1,6 @@
 # Desktop coordinator — index
 
-- Index: `plans/2026-11-24-desktop-coordinator/index.md` · created 2026-11-24 · base: fe1dbf2 · triaged 2026-11-24 21:11 – 2026-11-24 21:17
+- Index: `plans/2026-11-24-desktop-coordinator/index.md` · created 2026-11-24 · base: fe1dbf2 · triaged 2026-11-24 21:11 – 2026-11-24 21:17; updated 2026-11-24 21:44 – 2026-11-24 21:44
 
 ## Source list (verbatim)
 
@@ -11,7 +11,7 @@
 Возможно такое сделать?
 Хочу чтобы была возможность запуска этого как из консоли так и из десктопных клод кода и чат ГПТ кодекс.
 
-The one complaint is split into three problems P1–P3 below.
+The one complaint is split into problems P1–P3 below; P4 came from the triage discussion.
 
 ## Problems
 
