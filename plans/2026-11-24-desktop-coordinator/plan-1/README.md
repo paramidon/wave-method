@@ -17,18 +17,18 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E | 🔄 since 2026-11-24 22:27 |
+| 1 | `waves/w01.md` | A, B, C, D, E | ⚠️ I1 |
 | 2 | `waves/w02.md` | F, G, H (after F, G), I (after F, G) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `coordinated-runs-layout` | F1 | 1 | medium | 🔄 |
-| B | `coordinated-wave-run` | F1 | 1 | medium | 🔄 |
-| C | `coordinated-triage-phases` | F1 | 1 | medium | 🔄 |
-| D | `navigator-rules` | F1 | 1 | medium | 🔄 |
-| E | `coordinator-skill` | F1 | 1 | medium | 🔄 |
+| A | `coordinated-runs-layout` | F1 | 1 | medium | ✅ |
+| B | `coordinated-wave-run` | F1 | 1 | medium | ✅ |
+| C | `coordinated-triage-phases` | F1 | 1 | medium | ✅ |
+| D | `navigator-rules` | F1 | 1 | medium | ⚠️ I1 |
+| E | `coordinator-skill` | F1 | 1 | medium | ✅ |
 | F | `coordinated-plan-status` | F1 | 2 | low | ⬜ |
 | G | `coordinator-install-docs` | F1 | 2 | low | ⬜ |
 | H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ⬜ |
