@@ -32,6 +32,13 @@ and no other file carries a version. Changes since the last tag go into a line
   until the user's `/wave-plan <plan folder> override F<k>: <direction>` (stop `replan-limit`); `wave-run` and
   `wave-status` show each feature's count, and `status_check.py` checks the record (`replan-fixes`,
   `replan-escalation`).
+  New skill `wave-auto`: one command runs triage (its questions asked once, at the start), the plan of every part and
+  every wave in autonomous flow inside one session, each step as a subagent that returns one line
+  (`layout.md`, "Coordinated runs"; navigator rules in `wave-auto/navigator.md`); git is its only memory, so the same
+  command in a new session continues; a claim ref `refs/wave-method/claims/auto/<name>` keeps one coordinator per
+  start. `wave-triage` gains the phases `ask`, `answers`, `cluster` and `finish`; a task-mode session puts its report
+  block into its last commit's body, does not redo a committed task and takes fix requests from the wave file;
+  `wave-run` stops `manual-flow` in a coordinated run of a manual plan. Installers and the plugin list the fifth skill.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has

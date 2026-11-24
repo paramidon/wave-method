@@ -2,7 +2,7 @@
 
 **Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished and reviewed.**
 
-wave-method is a set of four agent skills for **Claude Code** and **OpenAI Codex** that turn a list of problems
+wave-method is a set of five agent skills for **Claude Code** and **OpenAI Codex** that turn a list of problems
 into merged commits: triage → design → waves of parallel subagent tasks in git worktrees → one review branch per
 finished feature → merges you approve.
 In the default manual flow you approve every merge, while in autonomous flow a whole plan runs
@@ -69,7 +69,7 @@ git clone https://github.com/paramidon/wave-method.git
 Options: `-Force` / `--force` replaces existing `wave-*` skill folders (use it to upgrade); `-NoCodex` /
 `--no-codex` skips the Codex links. Add `.agents/` to your project's `.gitignore` if you use the links.
 
-Manual install: copy the four folders of `skills/` into one skills folder that your agent reads (for example
+Manual install: copy the five folders of `skills/` into one skills folder that your agent reads (for example
 `<project>/.claude/skills/` or `<project>/.agents/skills/`). Keep them side by side: the skills refer to each other
 by paths relative to that folder (`wave-plan/layout.md`).
 
@@ -207,6 +207,21 @@ outside auto-approval solely because of condition 5 waits for your review. The
 [decision table](skills/wave-plan/layout.md#decision-table) gives the fixed answers for the other points where
 `wave-run` asks or waits.
 
+### One command in one session: wave-auto
+
+`/wave-auto <list>` (Codex: `$wave-auto <list>`) runs the whole pipeline in the session you type it in — the
+Claude Code CLI (`claude`) or the Claude Code desktop app. It asks the triage questions once, at the start, then
+triages, plans every part and runs every wave in autonomous flow, each step as a subagent on a model of the
+step's tier, printing one line per step. It ends with the `wave-status` report: features merged into
+`integration/<topic>`, features waiting for your review, blocked features and what each waits for.
+
+- Start from a list, an index (`/wave-auto plans/<date>-<topic>/index.md`) or a plan folder.
+- Bound it with `until 07:00` or `steps 40` before the start: `/wave-auto until 07:00 plans/<…>/index.md`.
+- Nothing is kept in the chat: if the window closes or a usage limit stops the session, run
+  `/wave-auto plans/<date>-<topic>/index.md` in a new session and it continues where it stopped.
+- A step that cannot run as a subagent of its tier runs in a separate session where the app can start one;
+  otherwise the run stops with the command to run by hand.
+
 ### Running overnight with the driver
 
 The Python 3.9+ driver uses only the standard library. It starts a fresh headless Claude Code session for each
@@ -329,7 +344,7 @@ Finished plans move to `plans/archive/`.
 - **Git** with `worktree` support, and a main branch called `main` or `master`.
 - **Claude Code** (plugin, or skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
   Subagents with a choice of model work best; without them the skills degrade to "one task per fresh session"
-  (task mode).
+  (task mode). `wave-auto` needs subagents with a choice of model (Claude Code CLI or desktop app).
 - **Python 3.9+** for the overnight driver (standard library only). Python is optional for the status-check script
   `wave-plan/scripts/status_check.py`. Without it, the check is done by reading.
 - **The Claude Code CLI** (`claude`, signed in) for the overnight driver. Autonomous flow itself also works in
@@ -388,6 +403,7 @@ The skills follow these rules on every run:
 | Language | the skills talk in the language you write in; everything written to the repository is English, always (a non-English doc a task changes is translated) |
 | Flow of a plan | the README `Flow:` line, written by `wave-plan` and changed with `/wave-run <plan folder> flow …` |
 | Driver models, caps and rails | options of `scripts/wave_driver.py` ([driver documentation](docs/wave-driver.md)) |
+| Rails of an in-session run | `until` and `steps` of `/wave-auto` (`wave-auto/SKILL.md`) |
 
 Your project's own rules (for example an `AGENTS.md` or `CLAUDE.md` with coding conventions) keep working: the
 agents load them as usual, and the planner takes them into account when it writes the task prompts.
@@ -403,6 +419,8 @@ agents load them as usual, and the planner takes them into account when it write
   command you provide.
 - **Autonomous flow and the driver** were rehearsed with Claude Code on Windows ([rehearsals](docs/rehearsals/)).
   The driver requires the Claude Code CLI and has no Codex counterpart.
+- **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)); its rails
+  (`until`, `steps`) are rules of the skill, not enforced limits.
 - **An overnight run consumes usage.** Set `--max-usd`, `--deadline`, or `--max-calls`. On a subscription, the
   run counts toward usage limits.
 
