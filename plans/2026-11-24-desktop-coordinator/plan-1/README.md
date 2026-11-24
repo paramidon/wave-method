@@ -20,7 +20,7 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E | ⚠️ I1 |
+| 1 | `waves/w01.md` | A, B, C, D, E | ✅ (I1 fixed by J, wave 3) |
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
 | 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | 🔄 since 2026-11-24 22:45 |
 
@@ -31,15 +31,15 @@ Merged: short hash of the merge commit into the main branch.
 | A | `coordinated-runs-layout` | F1 | 1 | medium | ✅ |
 | B | `coordinated-wave-run` | F1 | 1 | medium | ✅ |
 | C | `coordinated-triage-phases` | F1 | 1 | medium | ✅ |
-| D | `navigator-rules` | F1 | 1 | medium | ⚠️ I1 |
+| D | `navigator-rules` | F1 | 1 | medium | ✅ (I1 fixed by J, wave 3) |
 | E | `coordinator-skill` | F1 | 1 | medium | ✅ |
 | F | `coordinated-plan-status` | F1 | 2 | low | ➖ superseded by J |
 | G | `coordinator-install-docs` | F1 | 2 | low | ➖ superseded by K |
 | H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ➖ superseded by L |
 | I | `coordinator-desktop-rehearsal` | F1 | 2 | medium | ➖ superseded by M |
-| J | `coordinated-plan-status-halts` | F1 | 3 | low | 🔄 |
-| K | `wave-auto-install-docs` | F1 | 3 | low | 🔄 |
-| L | `coordinator-cli-record` | F1 | 3 | medium | 🔄 |
+| J | `coordinated-plan-status-halts` | F1 | 3 | low | ✅ |
+| K | `wave-auto-install-docs` | F1 | 3 | low | ⚠️ I6 |
+| L | `coordinator-cli-record` | F1 | 3 | medium | ⚠️ I2, I3, I4, I5 |
 | M | `coordinator-desktop-record` | F1 | 3 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
