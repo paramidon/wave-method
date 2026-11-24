@@ -15,7 +15,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$skills = @('wave-triage', 'wave-plan', 'wave-run', 'wave-status')
+$skills = @('wave-triage', 'wave-plan', 'wave-run', 'wave-status', 'wave-auto')
 $source = Join-Path $PSScriptRoot 'skills'
 $targetRoot = (Resolve-Path -LiteralPath $Target).Path
 $claudeSkills = Join-Path $targetRoot '.claude\skills'
