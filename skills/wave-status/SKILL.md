@@ -55,6 +55,8 @@ Read only the following, according to `layout.md`, "Who reads what":
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
   `git branch --merged <main> "feat/*"`.
+- `git for-each-ref --format="%(refname)" refs/wave-method/claims/auto/` and, for each ref,
+  `git cat-file -p <ref>` (coordinator claims of `wave-auto`).
 - The main branch name, once, before writing anything: `main` when
   `git rev-parse --verify --quiet refs/heads/main` succeeds, else `master` when
   `git rev-parse --verify --quiet refs/heads/master` succeeds (`layout.md`, "Names"). This name is
@@ -120,8 +122,6 @@ Feature status comes first: the user reads it before anything about waves.
   suggest `git update-ref -d refs/wave-method/claims/integration/<name>`, once the user is sure no run holds it.
   A coordinator claim (`refs/wave-method/claims/auto/<name>`, `wave-auto`) is a leftover too: suggest
   `git update-ref -d refs/wave-method/claims/auto/<name>`, once the user is sure no `wave-auto` session runs.
-- `Coordinator claims:` the refs of coordinator claims, listed by `git for-each-ref --format="%(refname)" refs/wave-method/claims/auto/`,
-  each read with `git cat-file -p <ref>` for its holder line.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
