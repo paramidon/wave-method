@@ -105,7 +105,7 @@ and the skills it starts.
 
 | Step | Skill and arguments | Tier | Return line |
 |---|---|---|---|
-| `navigate` | `wave-auto/navigator.md` with `start <start> · skip <units, or none>` | low | 0–4 lines `halt <unit>: <reason> — next: <command or action>`, then one line `next: <action>` or `done` |
+| `navigate` | `wave-auto/navigator.md` with `start <start> · skip <units, or none>` | low | 0 or more lines `halt <unit>: <reason> — next: <command or action>` (one per halted unit, no limit), then one line `next: <action>` or `done` |
 | `triage-ask` | `wave-triage flow autonomous ask <list>` | high | `questions <n> · index <index path>` |
 | `triage-answers` | `wave-triage flow autonomous answers <index path>`, with an `Answers:` block | high | `answers recorded · clusters <cluster names, or none>` |
 | `triage-cluster` | `wave-triage cluster <cluster> <index path>` | medium | `cluster <cluster>: <n> records · high <h> · unsure <u>` |
@@ -368,9 +368,15 @@ In this order; the first rule that applies decides the unit:
 ### Return grammar
 
 ```
-halt <unit>: <reason> — next: <command or action>      (0–4 lines)
+halt <unit>: <reason> — next: <command or action>      (0 or more lines, one per halted unit)
 next: <action>                                          (or: done)
 ```
+
+One `halt` line for every unit the reading halts, in the order the units are read, with no limit on their number;
+a unit never gets two (the first rule that applies decides it). A cap would lose units: when the reading ends with
+`done`, the coordinator's "Halts" section lists only the `halt` lines it was given, and those units are never
+skipped, so a capped unit would be neither reported nor dispatched (re-plan 1, entry I1). The return stays short:
+one line per part of the index.
 
 `<action>` is one of `ask <index path>`, `triage-cluster <index path> <cluster> …`, `triage-finish <index path>`,
 `plan <index path> part <K>`, `ask-flow <plan folder>`, `wave <plan folder> <N>`,
@@ -597,7 +603,8 @@ report's `Problems:`.
 2. `skills/wave-auto/SKILL.md` has the frontmatter above and sections 1–15; its dispatch table names every `next:`
    action of the navigator grammar; its step prompt template matches "Coordinated runs" (task E).
 3. `skills/wave-auto/navigator.md` has Sources, Index start, Plan rules 1–7 and Return grammar; every action of the
-   grammar is one of the dispatch table's (task D).
+   grammar is one of the dispatch table's (task D); the grammar and `layout.md`'s `navigate` row put no limit on the number of `halt`
+   lines (task J, re-plan 1).
 4. `wave-run`: `manual-flow` stop, coordinated paragraph, fix-loop fallback, commit-body block, `Fix requests`
    section, already-done rule (task B). `wave-triage`: "Coordinated phases" with four forms (task C).
 5. Status-check tests, driver tests and the three examples pass unchanged; `git diff --check` is clean.
