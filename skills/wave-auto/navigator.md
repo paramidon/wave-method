@@ -112,11 +112,11 @@ In this order; the first rule that applies decides the unit:
 ## Return grammar
 
 ```
-halt <unit>: <reason> — next: <command or action>      (0–4 lines)
+halt <unit>: <reason> — next: <command or action>      (0 or more lines, one per halted unit)
 next: <action>                                          (or: done)
 ```
 
-Print at most four `halt` lines. In the `— next:` part of a `halt` line, every command is given in both forms, Claude
+Print one `halt` line for every unit the reading halts, in the order the units are read, with no limit on their number; a unit never gets two. In the `— next:` part of a `halt` line, every command is given in both forms, Claude
 Code first: `/wave-run …` · `$wave-run …`. `done` means that no unit has a step to run: print it after the `halt`
 lines when no `next:` line follows. Print exactly one `next:` line or `done`, last.
 
