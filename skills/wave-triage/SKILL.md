@@ -25,6 +25,26 @@ in Codex. Print every command in both forms (`layout.md`, "Commands").
 In autonomous flow write `- Flow: autonomous · target: integration/<topic>` into the index header, right after the
 `- Index:` line, and never ask the user: each question of the steps below gets the answer of that subsection.
 
+## Coordinated phases
+
+`wave-auto` runs triage as four steps (`layout.md`, "Coordinated runs"), so that the coordinator asks the user once,
+between `ask` and `answers`, and launches the cluster subagents itself. The phases of one index share its branch
+`triage/<topic>` and worktree, which stay until `finish` merges them. A user may type these forms too.
+
+| Form | Does | Returns |
+|---|---|---|
+| `flow autonomous ask <list>` | steps 1 and 2; then step 3 without asking and without choosing readings: every question goes into "Open questions" as `- Q<n> · P<k>: <question> — readings: (a) <…>; (b) <…>`, and the header gets `- Triage: waiting for answers` right after its `- Flow:` line; commit `Index <topic>: questions` | `questions <n> · index <index path>` |
+| `flow autonomous answers <index path>` | the `Answers:` block of the prompt holds the user's answer verbatim; write each answer into the **Clarifications** of its problems (`<answer> (user's answer, <YYYY-MM-DD>)`; for more than 8 problems the records do not exist yet: write them into a section `## Answers` of the index, right before "Assumptions", one line `- P<k>: <answer> (user's answer, <YYYY-MM-DD>)` each, and `cluster` copies them into the records' **Clarifications**); each unanswered question gets an assumed reading ("Assumed readings" of `layout.md`); remove the `Q` lines and the `- Triage: waiting for answers` line; commit `Index <topic>: answers` | `answers recorded · clusters <cluster names>` for more than 8 problems, else `answers recorded · clusters none` |
+| `cluster <cluster> <index path>` | the work of one cluster subagent of step 4, with its prompt's content read from the index (the cluster's problems, the user's words, the answers); write its `triage/P<n>.md` records in the triage worktree; a problem it cannot judge gets `**Difficulty:** <best guess> (unsure)`; no commit | `cluster <cluster>: <n> records · high <h> · unsure <u>` |
+| `flow autonomous finish <index path>` | step 4 for at most 8 problems (inline records); for more, only the re-judging (records whose Difficulty is `high` or ends `(unsure)`) and the dependencies (shared paths of the records' **Where**); then steps 5 to 8. When "Parts" is already committed: only the merge of step 8 | `parts <k> · index <index path> · merged <short hash>` |
+
+- `ask` and `answers` are in autonomous flow of planning, so `ask` writes the `- Flow:` line; `ask` collects the
+  questions instead of choosing readings, `answers` chooses readings only for unanswered questions.
+- A form that finds the index in another phase (`answers` without the `- Triage: waiting for answers` line, `finish`
+  with a record of the overview missing) stops `phase-mismatch`, naming what it found; nothing written.
+- `finish`, step 8: `<main checkout>` not ready (`layout.md`, "Main readiness") → stop `main-dirty: <reason> — next:
+  git -C <main checkout> merge --no-ff triage/<topic> -m "Index <topic>"`; branch and worktree stay.
+
 ## What triage does and does not do
 - Does: restate, clarify, locate, judge difficulty, find dependencies, split into parts, write the index.
 - Does not: design solutions, write API signatures, slice into tasks, change project code. That is wave-plan.
@@ -92,7 +112,8 @@ mode, use the same checklist, difficulty criteria and dependency checks on the i
 
 For more than 8 problems, when the environment has subagents (`layout.md`, "Environment capabilities"), run
 one read-only subagent per cluster, tier `medium`, all at once where the environment allows parallel
-subagents, otherwise one after another. Read-only applies to project code; the only permitted writes
+subagents, otherwise one after another. In a coordinated run the coordinator launches them (`cluster` form of
+"Coordinated phases"). Read-only applies to project code; the only permitted writes
 are that subagent's assigned `triage/P<n>.md` records. Its prompt must include:
 - The cluster's problems with their one-line restatements, the user's words and the answers.
 - The checklist above (Where, Likely cause, Difficulty with `difficulty.md`, Size, Depends on).
@@ -238,7 +259,8 @@ Each `triage/P<n>.md` uses the full problem-record format:
 - Merge into the main branch: the main checkout must be ready for the merge of `triage/<topic>` (`layout.md`,
   "Main readiness"); then `git -C <main checkout> merge --no-ff triage/<topic> -m "Index <topic>"`. Otherwise
   do not touch it and give the user the merge command. Then remove the worktree and delete the branch. Never push.
-- **Stop.** Do not start planning. Answer the user:
+- **Stop.** Do not start planning. In a coordinated run return the line of "Coordinated phases" instead of this
+  answer. Answer the user:
   - the parts table: problems, difficulty, points, why they are grouped this way;
   - assumptions and anything you were unsure about;
   - autonomous flow: every `Assumed (autonomous, not asked)` line first, then the stops, if any;
