@@ -2,14 +2,17 @@
 
 - Plan: `plans/2026-11-24-desktop-coordinator/plan-1/` · slug: `desktop-coordinator-p1` · tracking branch: `plan/desktop-coordinator-p1` · created 2026-11-24 · base: 2abe5b3 · planned 2026-11-24 21:52 – 2026-11-24 22:08
 - Index: `plans/2026-11-24-desktop-coordinator/index.md` part 1
-- Re-plans: none
+- Re-plans:
+  - 2026-11-24 at 01bfa8c, 22:40 – 22:43: entry I1 (navigator capped `halt` lines at four) → task J; wave 2 dropped
+    before it ran, its tasks F, G, H, I moved to wave 3 as J, K, L, M so the rehearsals exercise the fixed navigator;
+    details in `history.md`
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), F (2), G (2), H (2), I (2) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–G are in place, status-check and driver tests and the three examples pass, and the CLI (H) and desktop (I) rehearsals are recorded with every expectation Pass or a finding with an open entry | ⬜ | wave 1 | | |
+| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J and K are in place, status-check and driver tests and the three examples pass, and the CLI (L) and desktop (M) rehearsals are recorded with every expectation Pass or a finding with an open entry | 🔄 | wave 3 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -17,22 +20,27 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C, D, E | ⬜ |
-| 2 | `waves/w02.md` | F, G, H (after F, G), I (after F, G) | ⬜ |
+| 1 | `waves/w01.md` | A, B, C, D, E | ⚠️ I1 |
+| 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
+| 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `coordinated-runs-layout` | F1 | 1 | medium | ⬜ |
-| B | `coordinated-wave-run` | F1 | 1 | medium | ⬜ |
-| C | `coordinated-triage-phases` | F1 | 1 | medium | ⬜ |
-| D | `navigator-rules` | F1 | 1 | medium | ⬜ |
-| E | `coordinator-skill` | F1 | 1 | medium | ⬜ |
-| F | `coordinated-plan-status` | F1 | 2 | low | ⬜ |
-| G | `coordinator-install-docs` | F1 | 2 | low | ⬜ |
-| H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ⬜ |
-| I | `coordinator-desktop-rehearsal` | F1 | 2 | medium | ⬜ |
+| A | `coordinated-runs-layout` | F1 | 1 | medium | ✅ |
+| B | `coordinated-wave-run` | F1 | 1 | medium | ✅ |
+| C | `coordinated-triage-phases` | F1 | 1 | medium | ✅ |
+| D | `navigator-rules` | F1 | 1 | medium | ⚠️ I1 |
+| E | `coordinator-skill` | F1 | 1 | medium | ✅ |
+| F | `coordinated-plan-status` | F1 | 2 | low | ➖ superseded by J |
+| G | `coordinator-install-docs` | F1 | 2 | low | ➖ superseded by K |
+| H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ➖ superseded by L |
+| I | `coordinator-desktop-rehearsal` | F1 | 2 | medium | ➖ superseded by M |
+| J | `coordinated-plan-status-halts` | F1 | 3 | low | ⬜ |
+| K | `wave-auto-install-docs` | F1 | 3 | low | ⬜ |
+| L | `coordinator-cli-record` | F1 | 3 | medium | ⬜ |
+| M | `coordinator-desktop-record` | F1 | 3 | medium | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`
@@ -57,6 +65,8 @@ and reach the main branch with each feature merge.
 ## Known test failures before start
 
 - none (`main` at 2abe5b3, 2026-11-24: 39 status-check tests and 59 driver tests OK, all three examples pass)
+- none on `feat/desktop-coordinator-p1/F1-in-session-coordinator` at 01bfa8c (re-plan 1, 2026-11-24: the same
+  checks green, `git diff --check main` clean); wave 3 starts from it
 
 ## Assumptions
 
@@ -64,7 +74,7 @@ and reach the main branch with each feature merge.
   in its start phase: the triage questions, a takeover of a stale coordinator claim, a switch of a manual plan to
   autonomous flow (user's answers in the index, P1 clarifications).
 - A wave runs through task mode — prepare, one task subagent per task, resume — instead of a `wave-run` subagent with
-  task subagents, because a subagent cannot start subagents (to be confirmed by probe P0 of task H; the design works
+  task subagents, because a subagent cannot start subagents (to be confirmed by probe P0 of task L; the design works
   either way).
 - Task mode is improved for every user, not only the coordinator: the report block in the last commit's body, no
   redo of a committed task, fix requests through the wave file.
