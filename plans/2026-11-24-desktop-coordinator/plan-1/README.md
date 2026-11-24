@@ -22,7 +22,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E | ⚠️ I1 |
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ⬜ |
+| 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | 🔄 since 2026-11-24 22:45 |
 
 ## Tasks
 
@@ -37,10 +37,10 @@ Merged: short hash of the merge commit into the main branch.
 | G | `coordinator-install-docs` | F1 | 2 | low | ➖ superseded by K |
 | H | `coordinator-cli-rehearsal` | F1 | 2 | medium | ➖ superseded by L |
 | I | `coordinator-desktop-rehearsal` | F1 | 2 | medium | ➖ superseded by M |
-| J | `coordinated-plan-status-halts` | F1 | 3 | low | ⬜ |
-| K | `wave-auto-install-docs` | F1 | 3 | low | ⬜ |
-| L | `coordinator-cli-record` | F1 | 3 | medium | ⬜ |
-| M | `coordinator-desktop-record` | F1 | 3 | medium | ⬜ |
+| J | `coordinated-plan-status-halts` | F1 | 3 | low | 🔄 |
+| K | `wave-auto-install-docs` | F1 | 3 | low | 🔄 |
+| L | `coordinator-cli-record` | F1 | 3 | medium | 🔄 |
+| M | `coordinator-desktop-record` | F1 | 3 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`
