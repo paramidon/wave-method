@@ -12,7 +12,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J and K are in place, status-check and driver tests and the three examples pass, and the CLI (L) and desktop (M) rehearsals are recorded with every expectation Pass or a finding with an open entry | 🔄 | wave 3 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
+| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3) | acceptance tests 1–7 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J and K are in place, status-check and driver tests and the three examples pass, and the CLI (L) and desktop (M) rehearsals are recorded with every expectation Pass or a finding with an open entry | ⚠️ I2, I3, I4, I5, I6, I7, I8, I9 | I2, I3, I4, I5, I6, I7, I8, I9 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -22,7 +22,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C, D, E | ✅ (I1 fixed by J, wave 3) |
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | 🔄 since 2026-11-24 22:45 |
+| 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ⚠️ I2, I3, I4, I5, I6, I7, I8, I9 |
 
 ## Tasks
 
@@ -40,7 +40,7 @@ Merged: short hash of the merge commit into the main branch.
 | J | `coordinated-plan-status-halts` | F1 | 3 | low | ✅ |
 | K | `wave-auto-install-docs` | F1 | 3 | low | ⚠️ I6 |
 | L | `coordinator-cli-record` | F1 | 3 | medium | ⚠️ I2, I3, I4, I5 |
-| M | `coordinator-desktop-record` | F1 | 3 | medium | 🔄 |
+| M | `coordinator-desktop-record` | F1 | 3 | medium | ⚠️ I4, I7, I8, I9 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`

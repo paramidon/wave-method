@@ -12,6 +12,7 @@
 - J (wave 3) — the navigator now reports every halted unit instead of at most four, `wave-plan` knows that a coordinated run ends with a return line, and `wave-status` shows coordinator claims and offers `/wave-auto` for an index.
 - K (wave 3) — the installers and the plugin files install the fifth skill `wave-auto`, and the README and the changelog describe `/wave-auto`.
 - L (wave 3) — the rehearsal of `/wave-auto` in the Claude Code CLI on a small fixture project is recorded in `docs/rehearsals/coordinator-cli.md`: questions asked once, a rail, a resume in a new session, a claim takeover, two merged features and green tests; it found three issues (I2–I4).
+- M (wave 3) — the desktop-app rehearsal of `/wave-auto` is recorded in `docs/rehearsals/coordinator-desktop.md`: from a list to both features merged into the integration branch in a separate session, and a second session that found nothing left to run; it found two new issues (I7, I8) and repeated I4.
 
 ## How to test
 
@@ -22,3 +23,4 @@
 - J: `grep -n "one per halted unit" skills/wave-auto/navigator.md skills/wave-plan/layout.md` → one line in each file; `grep -n "claims/auto/" skills/wave-status/SKILL.md` → the read bullet and the Leftovers suggestion.
 - K: `grep -n "wave-auto" install.sh install.ps1 .claude-plugin/plugin.json` → one line each; README has the subsection "One command in one session: wave-auto"; after the installer runs in a fresh project, `.claude/skills` holds five folders including `wave-auto`.
 - L: open `docs/rehearsals/coordinator-cli.md` → sections Setup, Runs, Results, Not verified, Repeat; Results show every expectation as Pass or Finding with commit hashes and quoted lines.
+- M: open `docs/rehearsals/coordinator-desktop.md` → Results shows every Rehearsal I expectation as Pass, Finding or Not run, with evidence.
