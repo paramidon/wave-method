@@ -17,7 +17,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3), N (4), O (4), P (4), Q (4), R (5), S (5), T (5) | acceptance tests 1–10 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J, K, N, R and S are in place, status-check and driver tests and the three examples pass, and the CLI (L, O, P, Q, T) and desktop (M) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | 👀 review | review | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
+| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3), N (4), O (4), P (4), Q (4), R (5), S (5), T (5) | acceptance tests 1–10 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J, K, N, R and S are in place, status-check and driver tests and the three examples pass, and the CLI (L, O, P, Q, T) and desktop (M) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | ✅ merged | | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | 8ce481d |
 
 Merged: short hash of the merge commit into the main branch.
 
