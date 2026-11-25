@@ -28,6 +28,12 @@ among those folders, its README is the path of
 ``git grep -l -F 'slug: `<slug>`' plan/<slug> -- "plans/*README.md" ":!plans/archive"``;
 read it and its files from that branch.
 
+Also inspect every triage in progress: a branch `triage/<topic>` of `git branch --list "triage/*"` whose index is not
+on `<main branch>`. Its index folder is the entry of `git ls-tree --name-only triage/<topic> plans/` whose name ends
+with `-<topic>`, its index `<index folder>/index.md`; it is in progress when
+`git cat-file -e <main branch>:<index path>` fails. Its worktree is the one that `git worktree list --porcelain` names
+with `branch refs/heads/triage/<topic>`.
+
 ## What to read
 
 Read only the following, according to `layout.md`, "Who reads what":
@@ -52,6 +58,11 @@ Read only the following, according to `layout.md`, "Who reads what":
   (`git merge-base --is-ancestor <hash> <main branch>` fails): its brief, from the tracking branch. If it has no
   brief, read the same fallback sources listed above for a feature under review.
 - Each index's "Parts" table.
+- For each triage in progress, from `git show triage/<topic>:<index path>`: the header lines (before the first `## `
+  heading) `- Flow: …` and `- Triage: waiting for answers`; when its `## Problems` section is an overview table
+  (`| P | Summary | Cluster | …`), the `P` and `Cluster` cells; and for each such problem whether its record
+  `<index folder>/triage/P<n>.md` exists in the triage worktree (the file is there) or on the branch
+  (`git cat-file -e triage/<topic>:<record path>`).
 - `git worktree list --porcelain`, `git branch --list "plan/*" "feat/*" "task/*"`,
   `git status --porcelain --untracked-files=no` of the main checkout, and
   `git branch --merged <main> "feat/*"`.
@@ -122,6 +133,9 @@ Feature status comes first: the user reads it before anything about waves.
   suggest `git update-ref -d refs/wave-method/claims/integration/<name>`, once the user is sure no run holds it.
   A coordinator claim (`refs/wave-method/claims/auto/<name>`, `wave-auto`) is a leftover too: suggest
   `git update-ref -d refs/wave-method/claims/auto/<name>`, once the user is sure no `wave-auto` session runs.
+  Never a triage in progress: neither its branch nor its worktree, which holds records not committed yet. A triage
+  worktree or branch whose index is on `<main branch>` (its `finish` merged it) is a leftover:
+  `git worktree remove <absolute worktree path>`, then `git branch -d triage/<topic>`.
 - `Next:` one command, following the first applicable next-command rule. For task mode, include each required
   task-mode command.
 
@@ -133,6 +147,15 @@ Then report each index's parts without a plan folder, whether their "Plan when" 
 `/wave-plan <index> part <K>` · `$wave-plan <index> part <K>` commands. Also count a part as planned when its plan
 folder exists on its tracking branch `plan/<topic>-p<K>`. For an index with a `Flow: autonomous` line, use check 3 of
 `layout.md`, "Chained parts and the integration branch", to decide whether the condition is met.
+
+Then report each triage in progress in its own block (Template, `## <index path> · triage in progress`):
+
+- `Triage branch:` `triage/<topic>` and its worktree path, or `no worktree`.
+- `Phase:` the first that applies: the header has `- Triage: waiting for answers` → `waiting for answers`; the index
+  has an overview table and some problem of it has no record → `clusters without records: <the Cluster cells of those
+  problems, once each, in table order>`; otherwise → `waiting for finish`.
+- `Next:` the header has `- Flow: autonomous` → `/wave-auto <index path>` · `$wave-auto <index path>`; otherwise
+  `wait: a wave-triage session is writing <index path>`.
 
 ### Template
 
@@ -166,6 +189,12 @@ Ready for review:
 - Leftovers: <one item and its suggested command per line>
 - Next: <one command, both forms>
 
+## <index path> · triage in progress · <autonomous · manual>
+
+- Triage branch: `triage/<topic>` · <worktree path · no worktree>
+- Phase: <waiting for answers · clusters without records: <names> · waiting for finish>
+- Next: <command, both forms · wait: …>
+
 ## Index parts
 
 | Index | Part | Plan when | Met | Command |
@@ -175,9 +204,12 @@ Ready for review:
 Started: <YYYY-MM-DD HH:MM> · Finished: <YYYY-MM-DD HH:MM> (<duration>)
 ````
 
-- One `## ` block per plan: plan folders under `plans/` first, then plans found only on their tracking branch.
-  `<flow>` is `manual`, or `autonomous · target: integration/<name>` followed by ` · manual review: <F-IDs>` when
-  that list is not empty.
+- One `## ` block per plan: plan folders under `plans/` first, then plans found only on their tracking branch. Then
+  one block per triage in progress, always with its three lines. `<flow>` is `manual`, or
+  `autonomous · target: integration/<name>` followed by ` · manual review: <F-IDs>` when that list is not empty.
+- With no plan, no index and no triage in progress, the report between its `Started:` line and its times line is the
+  one line `No plans, indexes or triages in progress.` and the line `- Next: /wave-auto <list> · $wave-auto <list>`
+  (or `/wave-triage <list> · $wave-triage <list>` to triage only).
 - Always printed: the opening `Started:` line, the plan header, `Tracking branch`, `Features`, the table,
   `Waves`, `Next`, the times line.
   `Merged, not in <main branch>:` and `Integration:`: autonomous flow only, always there (`none`, `not created
@@ -208,12 +240,13 @@ The commands in this subsection are suggestions for the user's report only. Do n
 ### Before sending
 
 Compare the report with "Template": the first line is `Started: <YYYY-MM-DD HH:MM>`; every plan has its header,
-`Tracking branch`, `Features`, the table, `Waves` and `Next` lines, in this order; the last line is the
-`Started: … · Finished: …` line. In autonomous flow the `Merged, not in <main branch>:` label appears exactly
-once per plan, with the name resolved in "What to read" (`Merged, not in master:` in a repository whose main
-branch is `master`), followed by one full merged block per feature or `none`, and every command of the report
-names that same branch. If something is missing, merged into prose, or a label or a branch name differs,
-rewrite the whole report before sending it; never send a correction after it.
+`Tracking branch`, `Features`, the table, `Waves` and `Next` lines, in this order; every triage in progress has its
+block with its three lines; the last line is the `Started: … · Finished: …` line. In autonomous flow the
+`Merged, not in <main branch>:` label appears exactly once per plan, with the name resolved in "What to read"
+(`Merged, not in master:` in a repository whose main branch is `master`), followed by one full merged block per
+feature or `none`, and every command of the report names that same branch. If something is missing, merged into
+prose, or a label or a branch name differs, rewrite the whole report before sending it; never send a correction
+after it.
 
 ## Next-command rules
 
