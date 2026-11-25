@@ -25,7 +25,7 @@ Merged: short hash of the merge commit into the main branch.
 | 1 | `waves/w01.md` | A, B, C, D, E | ✅ (I1 fixed by J, wave 3) |
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
 | 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ⚠️ I2, I3, I4, I5, I6, I7, I8, I9 |
-| 4 | `waves/w04.md` | N, O (after N), P (after N), Q (after N) | ⬜ |
+| 4 | `waves/w04.md` | N, O (after N), P (after N), Q (after N) | 🔄 since 2026-11-25 18:47 |
 
 ## Tasks
 
@@ -44,10 +44,10 @@ Merged: short hash of the merge commit into the main branch.
 | K | `wave-auto-install-docs` | F1 | 3 | low | ⚠️ I6 |
 | L | `coordinator-cli-record` | F1 | 3 | medium | ⚠️ I2, I3, I4, I5 |
 | M | `coordinator-desktop-record` | F1 | 3 | medium | ⚠️ I4, I7, I8, I9 |
-| N | `coordinator-report-rules` | F1 | 4 | low | ⬜ |
-| O | `coordinator-flow-rehearsal` | F1 | 4 | medium | ⬜ |
-| P | `coordinator-stops-rehearsal` | F1 | 4 | medium | ⬜ |
-| Q | `coordinator-triage-rehearsal` | F1 | 4 | medium | ⬜ |
+| N | `coordinator-report-rules` | F1 | 4 | low | 🔄 |
+| O | `coordinator-flow-rehearsal` | F1 | 4 | medium | 🔄 |
+| P | `coordinator-stops-rehearsal` | F1 | 4 | medium | 🔄 |
+| Q | `coordinator-triage-rehearsal` | F1 | 4 | medium | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`
