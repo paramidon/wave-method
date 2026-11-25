@@ -12,10 +12,12 @@ Python driver `scripts/wave_driver.py`, which starts one headless `claude -p` pe
 
 Two facts of the environment shape the design:
 
-- A subagent cannot start subagents (Claude Code gives a subagent no agent tool; to be confirmed by rehearsal H,
-  probe P0). So `wave-run`, which launches one subagent per task, and `wave-triage` step 4, which launches one per
-  cluster, cannot run *inside* a subagent with their launching role. The coordinator, a main session, keeps those
-  roles and delegates only leaf work.
+- Whether a subagent can start subagents of its own depends on the environment and its version: the Claude Code CLI
+  2.1.326 gave a subagent the agent tool and ran a nested launch (rehearsal H, probes P0 and P0b, entry I2), although
+  the first version of this plan assumed it could not. The design does not rely on it: `wave-run`, which launches one
+  subagent per task, and `wave-triage` step 4, which launches one per cluster, keep their launching role in the
+  coordinator, a main session, in every environment. So there is one behaviour everywhere, the coordinator picks the
+  model of every task and cluster, and each of them is a step that git records and a new session can resume.
 - A long chain in one session grows its context. Every step therefore returns one line, and the coordinator reads
   no plan file: git and `plans/` are its only memory, which also makes a closed window or a usage limit harmless —
   the same command in a new session continues.
@@ -50,7 +52,8 @@ Why not the alternatives:
 
 - The coordinator runs `wave-run` itself in its own context: every wave file (all prompts), merges and checks would
   enter the coordinator's context; a few waves exhaust it. Rejected (agreed with the user).
-- A `wave-run` subagent that launches task subagents: impossible without nesting.
+- A `wave-run` subagent that launches task subagents: possible only where a subagent can start subagents, which
+  the pipeline cannot count on (entry I2).
 - Keep or port the Python driver: needs a terminal and Python; the user wants the same skill in the desktop apps,
   and P4 (part 2) removes the driver.
 - Sub-coordinator sessions for every wave: depends on an app feature (a session tool); kept as the fallback for a
@@ -268,8 +271,9 @@ description: Runs the whole wave pipeline from one command inside one session �
     time, read from the clock) and `steps` (at most N steps; default 60; `navigate` and `status` do not count).
     Reaching one ends the run with its final report, `ended by rail: …`. A step already running is not cut short. A
     wave left waiting by a rail stays 🔄 with its claim marked waiting: the next `/wave-auto <start>` resumes it.
-13. **End of the run** — run the `status` step (the start's plan folder for a plan start, no argument otherwise),
-    release the claim, read the clock and print:
+13. **End of the run** — release the claim, then run the `status` step (the start's plan folder for a plan start,
+    no argument otherwise), so that its report does not list the run's own claim (order changed by re-plan 2, entry
+    I4; "Fixes after the rehearsals"), read the clock and print:
 
     ```
     ## wave-auto · <start>
@@ -581,8 +585,201 @@ show it), `## Results` (table: expectation | Pass / Finding / Not run | evidence
 A step that differs from its expectation is a finding, never fixed in the rehearsal; each finding also goes into the
 report's `Problems:`.
 
+## Fixes after the rehearsals (task N)
+
+Entries I2, I3, I4, I7 and I8 of rehearsals H and I. All are wording of the skill texts; the exact replacements are in
+the task prompt (`waves/w04.md`). Rules they must establish:
+
+- **Nesting (I2).** `layout.md`, "Coordinated runs": the launching roles stay with the coordinator whether or not a
+  subagent could start subagents; the pipeline never relies on it. The session fallback was reviewed and does not
+  depend on the premise (a session it starts is a main session): no change.
+- **Progress lines (I3, I7).** Every step except `status`, `navigate` included, gets its line as soon as it returns,
+  before the next step starts; never collected for later. The time comes from a shell command run after the return,
+  never estimated and never a placeholder. The cause of I3 is that "Loop" did not say when the line is written, so it
+  depended on the model.
+- **Claim order (I4).** The coordinator releases its claim after its last step that can write and before the `status`
+  step, in `wave-auto/SKILL.md` and in `layout.md`, "Coordinator claim". `status` is read-only, so nothing needs the
+  claim then, and `wave-status` needs no change. Not chosen: handing `status` the holder line to leave out, which
+  adds an argument to a skill for one caller.
+- **Nothing beyond the template (I8).** The final report is the template: no paragraph or note added, nothing after
+  the times line, `### Next` holds only the `Continue:` line or `- none`. The coordinator never runs, builds or tests
+  the project, and writes the user nothing besides the lines the skill names.
+
+## Second rehearsal (tasks O, P, Q)
+
+Entries I5 and I9 (behaviours not rehearsed) and I6 (installers with Codex links), and the check that task N's texts
+work. On 2026-11-25 the user chose a second CLI rehearsal with a cost cap of 30 USD over accepting everything as
+known limits (`history.md`, re-plan 2). Caps: task O 12 USD, task P 12 USD, task Q 6 USD.
+
+| Behaviour | Task, run |
+|---|---|
+| progress lines, claim order, template-only report (I3, I4, I7, I8) | every final report of O, P, Q ("Report checks") |
+| `steps` rail leaving a wave waiting, and its resume | O: O3, O4 |
+| a task already committed | O: O4 |
+| re-plan | O: O4 |
+| a task whose `Needs` tool is missing, session fallback without session start | P: P2 |
+| a navigator `halt` line | P: P3 |
+| `until` rail | P: P4 |
+| a session cut in the middle of a step, claim takeover, resume | P: P5 |
+| a run without the account-level `wave-method` plugin | P: P5 |
+| `triage-cluster` step and its model, resume in the middle of triage | Q: Q1, Q2 |
+| installers with Codex links (I6) | Q: Q3 |
+
+Accepted by the user as known limits, not rehearsed and not to be reported as "Not checked": the interactive TUI, an
+answer typed by a person, a first message of exactly `/wave-auto <list>`, permission modes other than `auto`, the cost
+in USD in the desktop app.
+
+### Shared setup (O, P, Q)
+
+- Scratch: `S=$(mktemp -d)`. Before any command that writes or deletes through a variable, check that it is not empty
+  and names a folder under `$S` (`install.sh ""` installs into the current folder).
+- Fixture: "Rehearsals (tasks H and I)", "Fixture (both)" — repository `$S/textkit`, venv `$S/venv`, skills installed
+  from the working folder with `sh <working folder>/install.sh "$S/textkit" --no-codex`.
+- Calls: `claude -p "<prompt>" --output-format stream-json --verbose --permission-mode auto --max-budget-usd <rest>
+  < /dev/null > "$S/calls/<run>.jsonl"`, with the fixture repository as the current folder, `$S/venv/Scripts` first on
+  `PATH` and `MSYS_NO_PATHCONV=1`; `<rest>` is the task's cap minus the `total_cost_usd` spent so far. No `--model`.
+  A follow-up answer adds `--continue`. A call takes up to 20 minutes: run it in the background and wait for it.
+  Never `bypassPermissions`; denials that stop a step are a finding.
+- Cap: start no call once the sum of `total_cost_usd` reaches the task's cap; record the remaining runs as Not run.
+- Lists: task O uses the list of "Fixture (both)" verbatim, tasks P and Q the lists given below, each as one argument.
+  When a run asks a question its table does not expect, answer with
+  `--continue "Take reading (a) for every question."`. When a run expected to ask asks nothing and goes on, record it
+  and continue with the next run.
+- Evidence after each run, saved as `$S/calls/<run>.evidence.txt`: `git branch --list`,
+  `git for-each-ref refs/wave-method/`, `git log --oneline -3 main`, and for a planned unit its README "Waves" and
+  "Tasks" rows from `git show plan/<slug>:<plan folder>/README.md`.
+- From each stream: the events with no `parent_tool_use_id` are the coordinator's (its text, its Bash calls, its
+  agent calls); every agent call's `model` and the `Coordinated run · step …` line of its prompt; the last `result`
+  event's `result` and `total_cost_usd`.
+- Never edit the user's settings, never disable or uninstall a plugin, never stop a process you did not start (this
+  session itself runs in a `claude` process).
+
+### Report checks
+
+Applied to every run of O, P and Q that ends with a final report; each is one Results row per run (or one row naming
+all runs where it passed).
+
+1. Progress lines: every counted step and every `navigate` of the run has a line `HH:MM · <step> · <unit> → <return
+   line>` in the coordinator's text, after the step returned and before the next step's agent call; the time has four
+   digits and the coordinator ran a clock command for it.
+2. Claim: the Status part lists no `refs/wave-method/claims/auto/` ref (Leftovers, "Coordinator claims") and no note
+   about it.
+3. Template: the parts are `Run:`, `### Steps`, `### Halts`, `### Status`, `### Next` with nothing between them but
+   their content; `### Next` holds the `Continue:` line or `- none`; nothing follows the last `Started: … · Finished:
+   …` line; no coordinator Bash call runs the project, its tests or `python`.
+
+### Task O — flow (`docs/rehearsals/coordinator-cli-flow.md`)
+
+Fixture list: the list of "Fixture (both)".
+
+| Run | Action | Expected |
+|---|---|---|
+| O1 | `/wave-auto steps 4 <list>` | one `triage-ask` step, at least one question; claim and `triage/<topic>` exist |
+| O2 | `--continue "Top 10 words, most frequent first."` | steps `triage-answers`, `triage-finish`, `plan`; `ended by rail: steps 4`; progress lines for all of them and for `navigate` |
+| O3 | `/wave-auto steps 1 plans/<date>-<topic>/index.md` | one `wave` step returning `waiting …`; no `task` step; `ended by rail: steps 1`; the wave stays 🔄 with its `Waiting: task mode` line and the integration claim holds a waiting line |
+| O-hand | by hand, see below | every task of the waiting line has its commit |
+| O4 | `/wave-auto plans/<date>-<topic>/index.md` | `next: tasks …`; each `task` step returns `already committed <hash>`; the resume records the `Problems:` line as an open entry and blocks its feature; a later `navigate` returns `next: re-plan <unit>`; the `re-plan` step returns `re-planned …`; its new wave runs; every feature ends `✅ merged` into `integration/<topic>`; `ended by done` |
+| O5 | `git merge --no-ff integration/<topic>`, `python -m pytest -q` | green |
+
+O-hand does by hand what task sessions would do, so that O4 meets the already-committed rule and an open entry:
+
+1. Read the IDs of the `Waiting: task mode` line, and each ID's prompt in the wave file
+   (`git show plan/<slug>:<plan folder>/waves/w01.md`). A task of tier `high` → record O-hand and O4 as Not run.
+2. `git worktree list` names the prepared worktree of each ID (task branch `task/<slug>/…`, or the feature worktree).
+3. Write a small correct implementation there, only in the task's files, and run its check.
+4. Commit there with the subject `<slug> <F-ID> / <ID>: <short>`; the body is one paragraph of the lines `Done:`,
+   `Try:`, `Not checked: none`, `Problems:`, then a blank line and the trailer `Wave-Model: <the exact model ID you run
+   on>`.
+5. `Problems:` is `none` for every task but one. Take a task of the waiting line whose feature has no task left for a
+   later launch group (an open entry makes autonomous flow skip the feature's later tasks, `wave-run/autonomous.md`,
+   "Skipped tasks"); when every feature has one, take the first ID and record the skipped tasks. For that task name
+   one real, small gap of what you wrote that one fix task can close, in the report format, for example
+   `**[wave 1 / task A / feature F1] a missing argument raises AttributeError instead of a ValueError with a message** —
+   where: <file:line>; expected / got: ValueError / AttributeError; proposal: check the argument, add a test`.
+
+### Task P — stops (`docs/rehearsals/coordinator-cli-stops.md`)
+
+Fixture list (one argument):
+`1. Add textkit/slug.py with slugify(text): ASCII letters and digits only, lower case, words joined by "-"; every other
+character separates words. 2. Add textkit/count.py with count_words(text) returning a dict word -> count; a word is a
+run of ASCII letters and digits, compared in lower case.`
+
+| Run | Repository | Action | Expected |
+|---|---|---|---|
+| P1 | `textkit` | `/wave-auto steps 4 <list>` | ends with the plan written and wave 1 ⬜, `ended by rail: steps 4` (with a question first: answer it, then the same) |
+| P-copy | — | copy the planned state, see below | `textkit-needs` and `textkit-halt` hold the same branches |
+| P2 | `textkit-needs` | set a `Needs`, then `/wave-auto plans/<date>-<topic>/index.md` | `wave` returns `waiting … needs …`; no `task` step for that ID; Halts: the unit, `capability-missing`, with `/wave-run <plan folder> 1 task <ID>` in both forms and `/wave-auto` again; no `claims/auto` ref left |
+| P3 | `textkit-halt` | set wave 1 🔄 by hand, then `/wave-auto plans/<date>-<topic>/index.md` | `navigate` returns `halt <unit>: wave 1 is 🔄 since … with no task-mode wait — next: …` and `done`; Halts lists it; 0 steps; the tracking branch is unchanged |
+| P4 | `textkit-halt` | `/wave-auto until 2026-01-01 00:00 plans/<date>-<topic>/index.md` | `ended by rail: until 2026-01-01 00:00`; no step other than `navigate` and `status`; the claim is released; `### Next` has `Continue:` |
+| P5a | `textkit` | `/wave-auto plans/<date>-<topic>/index.md` in the background; kill it during its first `task` step | the `claims/auto` ref stays; wave 1 is 🔄 with its `Waiting: task mode` line |
+| P5b | `textkit` | the same command, then `--continue "Yes, it is gone."`, both with `--setting-sources project,local` | asks whether the holder is gone, quoting it; takes over; `next: tasks …`; the killed task is done or `already committed`; every feature `✅ merged` into `integration/<topic>`; `ended by done` |
+
+- P-copy: after P1, `git -C "$S/textkit" worktree list`; for each worktree but the main one check it is clean and
+  `git worktree remove` it; then `cp -r "$S/textkit" "$S/textkit-needs"` and `cp -r "$S/textkit" "$S/textkit-halt"`;
+  in each copy `git worktree list` names only the copy.
+- P2 setup: `git worktree add "$S/edit" plan/<slug>`; in `<plan folder>/waves/w01.md` set the `Needs` cell of the
+  first task whose `After` is `—` to ``the `labelprint` command-line tool of a label printer``; commit
+  `rehearsal: task needs a missing tool`; `git worktree remove "$S/edit"`. Record whether other tasks of the wave ran.
+- P3 setup: the same way set the "Waves" row of wave 1 in the plan README to `🔄 since 2026-01-01 00:00`; commit
+  `rehearsal: a wave left running`.
+- P5a: start the call in the background and watch its stream for `step task`; about 20 seconds after it appears, kill
+  the whole process tree of that call only (on Windows `taskkill //F //T //PID "$(cat /proc/$!/winpid)"` in Git Bash),
+  never by image name. Check that no process of the tree is left, then record the prepared worktrees' status.
+- P5b, no plugin: the `system/init` event must list no `wave-method:` skill. If it still lists one, or the flag keeps
+  the call from running, record the plugin run as Not run with the reason and repeat without the flag.
+
+### Task Q — triage clusters and installers (`docs/rehearsals/coordinator-cli-triage.md`)
+
+Fixture list (one argument):
+`In every item a word is a run of ASCII letters and digits. 1. Add textkit/slug.py with slugify(text): the words in
+lower case joined by "-". 2. Add slug_parts(text) to textkit/slug.py returning the list of words slugify joins.
+3. Add textkit/count.py with count_words(text) returning a dict word -> count, words in lower case. 4. Add
+count_chars(text) to textkit/count.py returning a dict character -> count, whitespace left out. 5. Add
+count_lines(text) to textkit/count.py returning the number of lines that are not blank. 6. Add textkit/case.py with
+snake_case(text): the words in lower case joined by "_". 7. Add camel_case(text) to textkit/case.py: the first word in
+lower case, the others capitalised, joined with nothing. 8. Add kebab_case(text) to textkit/case.py: the words in
+lower case joined by "-". 9. Add textkit/trim.py with squeeze(text) turning every run of whitespace into one space and
+stripping both ends. 10. Add truncate(text, n) to textkit/trim.py returning at most n characters, the last one "…"
+when it cuts.`
+
+| Run | Action | Expected |
+|---|---|---|
+| Q1 | `/wave-auto steps 3 <list>` | steps `triage-ask`, `triage-answers` (returns `clusters <names>`), one `triage-cluster` on `sonnet`; `ended by rail: steps 3`; the records of that cluster exist in the triage worktree |
+| Q2 | `/wave-auto steps <m> plans/<date>-<topic>/index.md`, `<m>` = clusters without records + 1 | `navigate` returns `next: triage-cluster …` naming only the missing clusters (`next: triage-finish …` when Q1 left none); one `triage-cluster` step each; `triage-finish` returns `parts <k> …`; `ended by rail: steps <m>`; the index and the ten `triage/P<n>.md` records are on `main` |
+| Q3 | installers with Codex links, see below | each leaves five skills reachable under `.agents/skills`, `wave-auto` included |
+
+When Q1 gets as far as `triage-answers` only after a question, `--continue` the answer as "Shared setup" says. With one
+cluster only, Q1 uses `steps 3` and Q2 `steps 1`.
+
+Q3, each form into its own new folder under `$S` on which `git init` ran:
+
+1. `sh <working folder>/install.sh <folder>` (Git Bash): exit 0, five entries in `.agents/skills`, each with a
+   `SKILL.md`. Record whether they are links or copies.
+2. `powershell -NoProfile -ExecutionPolicy Bypass -File <working folder>\install.ps1 -Target <folder>`: exit 0, five
+   junctions, each with a `SKILL.md`.
+3. Linux symlinks, when `wsl.exe -l -q` names a distribution: write a script file into `$S` (do not pass the commands
+   as a quoted argument, `wsl.exe` expands them first) that does `d=$(mktemp -d)`, stops unless `d` is a non-empty
+   folder, `git init`s it, runs `sh <working folder as /mnt/…>/install.sh "$d"` and prints for each entry of
+   `.agents/skills` whether it is a symlink and has a `SKILL.md`; run it with
+   `MSYS_NO_PATHCONV=1 wsl.exe sh /mnt/<…>/q3.sh`. Expected: five symlinks.
+
+Known and outside this plan (the same on `main`), neither run nor report it: in Git Bash for Windows `ln -s` makes
+copies, so a second run of `install.sh` there stops with "exists and is not a symlink".
+
+### Record and report (O, P, Q)
+
+Each record has the sections `## Setup`, `## Runs`, `## Results` (expectation | Pass / Finding / Not run | evidence),
+`## Not verified`, `## Repeat`, with the paths written as `<scratch>` and `<working folder>` and no user or home name.
+A difference from an expectation is a finding, never fixed in the rehearsal; each finding is one `Problems:` line of
+the task's report. `Not checked:` holds only runs of the task's own procedure that could not be completed.
+
 ## Limits
 
+- Known limits of the rehearsals, accepted by the user on 2026-11-25: the interactive TUI, an answer typed by a person,
+  a first message of exactly `/wave-auto <list>`, permission modes other than `auto`, the cost in USD in the desktop
+  app.
+- Not rehearsed and not planned: the second rehearsal is CLI only, so no behaviour gets a second desktop-app run; a
+  session fallback that really starts a session (the CLI cannot); a `tier-mismatch` stop of a coordinated task.
 - The rails are soft: they act between steps; a long step is not cut short. No guard on `<main branch>` as the
   driver had: in an interactive session the user may work on `main` meanwhile; the skills' own rules keep it
   untouched (autonomous flow writes only the integration branch; triage merges only its index).
@@ -610,3 +807,6 @@ report's `Problems:`.
 5. Status-check tests, driver tests and the three examples pass unchanged; `git diff --check` is clean.
 6. Rehearsal H: P0 and C1–C5 recorded; every expectation Pass, or a Finding with an open problem entry.
 7. Rehearsal I: D1–D4 recorded likewise.
+8. The texts of "Fixes after the rehearsals" are in `wave-auto/SKILL.md` and `layout.md` (task N).
+9. Second rehearsal: the three records of tasks O, P and Q; every run of "Second rehearsal" Pass, a Finding with an
+   open problem entry, or Not run with its reason.
