@@ -40,7 +40,14 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
 - It asks the user only in the start phase. It never answers a question for the user and never lowers a tier.
 - Every step is in autonomous flow: features are auto-approved into `integration/<topic>` (or `integration/<slug>`);
   `<main branch>` receives only the triage index (step `triage-finish`).
-- One progress line per step to the user: `<HH:MM> · <step> · <unit> → <return line>`.
+- One progress line per step to the user, `navigate` included: `<HH:MM> · <step> · <unit> → <return line>`
+  ("Loop", "Progress lines").
+- It never runs, builds, tests or tries the project, in any worktree, at any point of the run, not even to confirm a
+  result. The commands it runs itself only read git and the skill files this skill names, take or release its claim,
+  and read the clock.
+- It writes the user only what this skill names: the `Started:` and `Capabilities:` lines, the progress lines, the
+  resume command, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
+  summary, comment or explanation of its own.
 
 ## Capabilities
 
@@ -112,11 +119,11 @@ language.
 ```
 repeat:
   rails (below) → end the run when one is reached
-  navigate (start, skip = halted units)
+  navigate (start, skip = halted units), then its progress line
   add every `halt` line's unit to the halted units, keep its line for the report
   `done` → final report
   the same `next:` line as the previous navigate → halt that unit `no-progress`
-  dispatch the `next:` line (table below)
+  dispatch the `next:` line (table below), each step with its progress line as it returns
 ```
 
 | Navigator line | Dispatch |
@@ -132,8 +139,18 @@ repeat:
 
 After `triage-answers`, run the cluster steps its return names (none → `triage-finish`) without navigating first.
 
-The progress line is printed for every step except `status`, whose report is the final one; for `navigate` the
+### Progress lines
+
+Every step except `status`, whose report is the final one, gets its own line: `triage-ask`, `triage-answers`,
+`triage-cluster`, `triage-finish`, `plan`, `re-plan`, `flow`, `wave`, `task` and `navigate` alike. For `navigate` the
 result is its `next:` or `done` line.
+
+- When a step returns, read the clock with a shell command (`date +%H:%M`; PowerShell `Get-Date -Format HH:mm`), then
+  write its line to the user as text, before the next step starts. Never collect lines to write later: the "Steps"
+  table of the final report does not replace them.
+- Never estimate a time and never write a placeholder such as `17:3x`. The "Steps" table repeats the times of these
+  lines.
+- Steps launched together (tasks, clusters) get one line each, as each one returns.
 
 ## Wave
 
@@ -177,8 +194,8 @@ resumes it.
 
 ## End of the run
 
-Run the `status` step (the start's plan folder for a plan start, no argument otherwise), release the claim, read the
-clock and print:
+Release the claim, then run the `status` step (the start's plan folder for a plan start, no argument otherwise), so
+that its report does not list this run's own claim. Read the clock and print:
 
 ```
 ## wave-auto · <start>
@@ -207,6 +224,11 @@ Started: <…> · Finished: <…> (<duration>)
 
 The Steps table has a row per step that counts toward `steps` (not `navigate` and `status`). Halts lists the `halt`
 lines the navigator returned and the units halted by "Results of steps".
+
+The final report is this template and nothing else: no paragraph, section or note is added between or inside its
+parts, the `status` report is copied verbatim, and nothing follows the `Started: … · Finished: …` line. `### Next`
+holds only the `Continue:` line, or `- none` when nothing is halted, waiting or cut by a rail. After the `status` step
+returns, the only command the coordinator runs reads the clock.
 
 ## Stops
 

@@ -651,9 +651,11 @@ and the skills it starts.
   records it: in files under `plans/` and in git.
 - The prompt of a `medium` or `high` step starts with the gate line of "Tier gate", and the subagent applies the gate
   before anything else.
-- A role that launches subagents stays with the coordinator: the cluster subagents of `wave-triage` step 4 and the
-  task subagents of `wave-run`. In a coordinated run such a skill ends where it would launch them and returns what the
-  coordinator must launch (`wave-triage`, "Coordinated phases"; `wave-run/task-mode.md`).
+- A role that launches subagents stays with the coordinator: the cluster subagents of `wave-triage` step 4 and the task
+  subagents of `wave-run`. In a coordinated run such a skill ends where it would launch them and returns what the
+  coordinator must launch (`wave-triage`, "Coordinated phases"; `wave-run/task-mode.md`). This holds whether or not a
+  subagent could start subagents of its own, which depends on the environment and its version: the pipeline never relies
+  on it.
 - A return line has no Markdown and nothing before it. Any step may return a stop instead, as its first line:
   `Stop <code>: <one line> — next: <command or action>`. The coordinator reads nothing after the return line.
 
@@ -678,14 +680,15 @@ and the skills it starts.
 
 ### Coordinator claim
 
-Two coordinators of one start would launch the same tasks into the same worktrees. A coordinator therefore holds the
-ref `refs/wave-method/claims/auto/<name>` for its whole run, where `<name>` is the index topic, or the plan slug when
-it starts from a plan folder. Holder line, in ASCII only: `wave-auto <start> <YYYY-MM-DD HH:MM> run <token>`. Take,
-refusal and release work as in "Target claim". A refused claim is the one point of a run where the coordinator offers
-a takeover: at the start it asks the user once whether the holder is gone; yes → it moves the ref from the held oid to
-its own (`git update-ref <ref> <new oid> <held oid>`); no → stop `wave-running`, naming the holder. It releases the
-claim after its final report's last step, and before the report of a stop that ends the run. A coordinator claim and a
-target claim are independent: each step takes the target claim its skill takes.
+Two coordinators of one start would launch the same tasks into the same worktrees. A coordinator therefore holds the ref
+`refs/wave-method/claims/auto/<name>` for its whole run, where `<name>` is the index topic, or the plan slug when it
+starts from a plan folder. Holder line, in ASCII only: `wave-auto <start> <YYYY-MM-DD HH:MM> run <token>`. Take, refusal
+and release work as in "Target claim". A refused claim is the one point of a run where the coordinator offers a
+takeover: at the start it asks the user once whether the holder is gone; yes → it moves the ref from the held oid to its
+own (`git update-ref <ref> <new oid> <held oid>`); no → stop `wave-running`, naming the holder. It releases the claim
+after its last step that can write and before the final `status` step, so that the status report does not list the run's
+own claim; a stop that ends the run releases it before the report. A coordinator claim and a target claim are
+independent: each step takes the target claim its skill takes.
 
 ## Archive
 
