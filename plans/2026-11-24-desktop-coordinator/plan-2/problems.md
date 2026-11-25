@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I19
+Next ID: I20
 
 - **[I1 · wave 1 / task A / feature F1] The `wave-run` skill description still names the medium model "GPT-6.1 SOL"** —
   where: `skills/wave-run/SKILL.md:3`; expected / got: the names of the new tier table (GPT-6.2-Sol) / "Sonnet 5.5 /
@@ -66,4 +66,10 @@ Next ID: I19
 - **[I18 · wave 2 / task D / feature F1] Not checked: whether I9 happens outside the user profile, or on macOS or Linux** — where: `docs/rehearsals/coordinator-codex-cli.md`, "Not verified";
   expected / got: known / only one Windows project below the user profile was run;
   proposal: check it with I9;
+  status: open
+- **[I19 · wave 2 / task E / feature F1] The Codex desktop app rehearsal was not run** — where:
+  `docs/rehearsals/coordinator-codex-desktop.md` (missing), `solutions/P2-codex-coordinator.md`, "Rehearsal E";
+  expected / got: a recorded run in the app / the user closed wave 2 without it on 2026-11-26, since it likely meets I8;
+  proposal: decide I8 first, then plan the desktop rehearsal again or record the app as not rehearsed (see I2); a
+  full-access mode of the app needs the user's explicit permission;
   status: open
