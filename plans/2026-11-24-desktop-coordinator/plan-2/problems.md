@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I20
+Next ID: I21
 
 - **[I1 · wave 1 / task A / feature F1] The `wave-run` skill description still names the medium model "GPT-6.1 SOL"** —
   where: `skills/wave-run/SKILL.md:3`; expected / got: the names of the new tier table (GPT-6.2-Sol) / "Sonnet 5.5 /
@@ -69,3 +69,12 @@ Next ID: I20
   proposal: decide I8 first, then plan the desktop rehearsal again or record the app as not rehearsed (see I2); a
   full-access mode of the app needs the user's explicit permission;
   status: → task O (wave 7)
+- **[I20 · wave 6 / feature F1] The user stopped wave 6 before it started: what the Codex support is for and what the
+  open work means was not understandable** — where: `README.md` of this plan, feature F1; `solutions/P2-codex-coordinator.md`;
+  expected / got: the user can decide whether to run the wave from a plain explanation / the question about the open
+  entries (Codex rehearsals not run, claims written ahead of them, commands starting outside the project folder) was not
+  understood. User's words: "не понял про кодекс. остановить. записать проблемы для перепланирования";
+  proposal: at the re-plan, first explain in plain words what Codex is, why the skills should run in it, what is done and
+  what remains, then ask the user whether to continue F1, narrow it or drop it (F2 waits for F1 merged, so check its
+  tasks too); waves 6 and 7 are not to be run before that decision;
+  status: open
