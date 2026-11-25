@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I21
+Next ID: I22
 
 - **[I2 · wave 1 / task A / feature F1] README and layout already claim Codex rehearsals that are not recorded yet** —
   where: `README.md:434`, `skills/wave-plan/layout.md:160`; expected / got: claims backed by records in
@@ -30,8 +30,8 @@ Next ID: I21
   proposal: tighten these rules at the next `wave-auto` edit and check them again in Codex;
   status: → tasks M, N, O (waves 6, 7)
 - **[I14 · wave 2 / task D / feature F1] Not checked: the whole Codex CLI pipeline after its first step (questions, resume, plans, waves, parallel limit, trailers, claims, merge, tests)** — where: `docs/rehearsals/coordinator-codex-cli.md`, runs X3-X5 and checks 2, 3;
-  expected / got: a recorded run / Not run because of I8;
-  proposal: repeat the rehearsal once I8 is solved;
+  expected / got: a recorded run / Not run because of I8; not run again in wave 7 (task N), because of I21;
+  proposal: repeat the rehearsal once I8 and I21 are solved;
   status: → task N (wave 7)
 - **[I15 · wave 2 / task D / feature F1] Not checked: whether the pipeline works with other Codex permissions** — where: `docs/rehearsals/coordinator-codex-cli.md`, "Not verified";
   expected / got: the permissions it needs are known / neither the bypass option (forbidden by the user for this run) nor an extra writable root for `.git` was tried;
@@ -57,3 +57,13 @@ Next ID: I21
   proposal: decide I8 first, then plan the desktop rehearsal again or record the app as not rehearsed (see I2); a
   full-access mode of the app needs the user's explicit permission;
   status: → task O (wave 7)
+- **[I21 · wave 7 / task N / feature F1] Codex CLI does not apply the permission profile of `<project>/.codex/config.toml` in a project it was never told to trust: the thread runs read-only** —
+  where: `README.md:62-78`, `skills/wave-plan/layout.md:183-202` ("for a trusted project"); run X1 and finding N1 in
+  `docs/rehearsals/coordinator-codex-cli.md`;
+  expected / got: a worktree and a commit / `sandbox_policy` `read-only`, active profile `:read-only`, nothing created,
+  X2–X5 not run. Probable cause, not verified: the new folder is not trusted; `codex exec` with `-C` and
+  `approval_policy` added no trust entry, against the planning evidence "Codex writes a trust entry for every new
+  project folder", and neither the README nor the layout says how a project becomes trusted;
+  proposal: the user decides how a project becomes trusted (a `[projects.…]` entry, or the profile in
+  `~/.codex/config.toml`; both change the user's Codex settings), then document it and repeat the CLI rehearsal;
+  status: open
