@@ -9,8 +9,8 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit | P2 | A (1), B (1), D (2), E (2) | acceptance tests 1–7 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A and B are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, and the Codex CLI (D) and desktop app (E) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | ⬜ | wave 1 | | |
-| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3), G (3) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | ⬜ | wave 1 | | |
+| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit | P2 | A (1), B (1), D (2), E (2) | acceptance tests 1–7 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A and B are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, and the Codex CLI (D) and desktop app (E) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | 🔄 | wave 1 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
+| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3), G (3) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 1 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -18,7 +18,7 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C | ⬜ |
+| 1 | `waves/w01.md` | A, B, C | 🔄 since 2026-11-26 00:06 |
 | 2 | `waves/w02.md` | D, E | ⬜ |
 | 3 | `waves/w03.md` | F, G (needs F1 merged) | ⬜ |
 
@@ -26,9 +26,9 @@ Merged: short hash of the merge commit into the main branch.
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⬜ |
-| B | `codex-launch-rules` | F1 | 1 | medium | ⬜ |
-| C | `remove-driver-files` | F2 | 1 | low | ⬜ |
+| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | 🔄 |
+| B | `codex-launch-rules` | F1 | 1 | medium | 🔄 |
+| C | `remove-driver-files` | F2 | 1 | low | 🔄 |
 | D | `codex-cli-rehearsal` | F1 | 2 | medium | ⬜ |
 | E | `codex-desktop-rehearsal` | F1 | 2 | medium | ⬜ |
 | F | `unattended-runs-readme` | F2 | 3 | medium | ⬜ |
