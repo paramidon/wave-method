@@ -21,7 +21,7 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C | ⚠️ I1, I2, I3, I5, I6 |
-| 2 | `waves/w02.md` | D, E | ⬜ |
+| 2 | `waves/w02.md` | D, E | 🔄 since 2026-11-26 01:32 |
 | 3 | `waves/w03.md` | F, G (needs F1 merged) | ➖ dropped (tasks → wave 5) |
 | 4 | `waves/w04.md` | H, I | ⬜ |
 | 5 | `waves/w05.md` | J, K (needs F1 merged) | ⬜ |
@@ -33,8 +33,8 @@ Merged: short hash of the merge commit into the main branch.
 | A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I1, I2, I3 → tasks H, I |
 | B | `codex-launch-rules` | F1 | 1 | medium | ⚠️ I5, I6 → task H |
 | C | `remove-driver-files` | F2 | 1 | low | ✅ |
-| D | `codex-cli-rehearsal` | F1 | 2 | medium | ⬜ |
-| E | `codex-desktop-rehearsal` | F1 | 2 | medium | ⬜ |
+| D | `codex-cli-rehearsal` | F1 | 2 | medium | 🔄 |
+| E | `codex-desktop-rehearsal` | F1 | 2 | medium | 🔄 |
 | F | `unattended-runs-readme` | F2 | 3 | medium | ➖ superseded by J |
 | G | `driver-mentions-cleanup` | F2 | 3 | low | ➖ superseded by K |
 | H | `codex-text-fixes` | F1 | 4 | low | ⬜ |
