@@ -14,7 +14,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2), E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7), O (7), P (7) | acceptance tests 1–5 and 9–12 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L and M are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI (N) and desktop app (O) rehearsals with the permission profile are recorded with every expectation Pass, a finding with an open entry or Not run with its reason, and P's claims match the records | ⚠️ blocked (I1, I2, I3, I5, I6, I8–I12, I14–I19 → waves 6, 7) | wave 6 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
+| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2), E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7), O (7), P (7) | acceptance tests 1–5 and 9–12 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L and M are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI (N) and desktop app (O) rehearsals with the permission profile are recorded with every expectation Pass, a finding with an open entry or Not run with its reason, and P's claims match the records | ⚠️ blocked (I2, I3, I8–I12, I14–I19 → wave 7) | wave 7 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
 | F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8), R (8) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 8 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
 
 Merged: short hash of the merge commit into the main branch.
@@ -23,12 +23,12 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C | ⚠️ I1, I2, I3, I5, I6 |
+| 1 | `waves/w01.md` | A, B, C | ⚠️ I2, I3 |
 | 2 | `waves/w02.md` | D, E | ⚠️ I8, I9, I10, I11, I12, I14, I15, I16, I17, I18, I19 |
 | 3 | `waves/w03.md` | F, G (needs F1 merged) | ➖ dropped (tasks → wave 5) |
 | 4 | `waves/w04.md` | H, I | ➖ dropped (tasks → waves 6, 7) |
 | 5 | `waves/w05.md` | J, K (needs F1 merged) | ➖ dropped (tasks → wave 8) |
-| 6 | `waves/w06.md` | L, M | 🔄 since 2026-11-26 03:07 |
+| 6 | `waves/w06.md` | L, M | ✅ |
 | 7 | `waves/w07.md` | N, O, P (after N, O) | ⬜ |
 | 8 | `waves/w08.md` | Q, R (needs F1 merged) | ⬜ |
 
@@ -36,8 +36,8 @@ Merged: short hash of the merge commit into the main branch.
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I1, I2, I3 → tasks L, N, P |
-| B | `codex-launch-rules` | F1 | 1 | medium | ⚠️ I5, I6 → tasks L, M |
+| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I2, I3 → tasks N, P |
+| B | `codex-launch-rules` | F1 | 1 | medium | ✅ (fixed by L, M, wave 6) |
 | C | `remove-driver-files` | F2 | 1 | low | ✅ |
 | D | `codex-cli-rehearsal` | F1 | 2 | medium | ⚠️ I8, I9, I10, I11, I12, I14, I15, I16, I17, I18 → tasks L, M, N, O |
 | E | `codex-desktop-rehearsal` | F1 | 2 | medium | ➖ superseded by O |
@@ -47,8 +47,8 @@ Merged: short hash of the merge commit into the main branch.
 | I | `codex-claims-plugin-check` | F1 | 4 | medium | ➖ superseded by N, P |
 | J | `unattended-runs-readme-v2` | F2 | 5 | medium | ➖ superseded by Q |
 | K | `driver-mentions-cleanup-v2` | F2 | 5 | low | ➖ superseded by R |
-| L | `codex-permissions-gate` | F1 | 6 | high | 🔄 |
-| M | `wave-auto-codex-rules` | F1 | 6 | high | 🔄 |
+| L | `codex-permissions-gate` | F1 | 6 | high | ✅ |
+| M | `wave-auto-codex-rules` | F1 | 6 | high | ✅ |
 | N | `codex-cli-rehearsal-v2` | F1 | 7 | high | ⬜ |
 | O | `codex-desktop-rehearsal-v2` | F1 | 7 | high | ⬜ |
 | P | `codex-claims-after-rehearsals` | F1 | 7 | high | ⬜ |
