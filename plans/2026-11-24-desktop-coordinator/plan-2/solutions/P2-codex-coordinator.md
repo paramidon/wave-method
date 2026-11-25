@@ -466,3 +466,271 @@ folder.
 Recorded as a new last section `## Plugin install` of `docs/rehearsals/coordinator-codex-cli.md`: the Codex version,
 each command with its exit and deciding output lines, whether the two hashes are equal (not the hash values), the
 Markdown check, and one result line: Pass, Finding or Not run. Paths as `<scratch>` and `~`.
+
+## Evidence (re-plan 2026-11-26, round 2)
+
+Run in the re-planning session on Windows with `codex-cli 0.167.0-alpha.3.2` (`<codex>`, the copy of the desktop app),
+`[windows] sandbox = "elevated"` in the user's config, the user's account signed in. Scratch repositories: `<scratch>`
+below the temp folder, and `<data>` = a new folder on a data drive outside the user profile and the temp folder. Every
+`codex sandbox` call runs one command under a permission profile without a model; `codex exec` calls ran the model.
+Profiles are passed as `-c 'permissions.<name>.filesystem={…}' -P <name>` (sandbox) or
+`-c 'default_permissions="<name>"'` (exec), or come from `<repo>/.codex/config.toml`.
+
+| Entry | Disputed assumption | Command (shortened) | Deciding output | Conclusion |
+|---|---|---|---|---|
+| I8, I15 | `workspace-write` with a writable root can write `.git` | `<codex> sandbox -P :workspace -C <scratch>/repo -- git branch probe1` | `fatal: cannot lock ref 'refs/heads/probe1' … Permission denied` | the built-in workspace profile never writes `.git` |
+| I8, I15 | only full access writes `.git` | `<codex> sandbox -P :danger-full-access -C <scratch>/repo -- git branch probe2` | exit 0, branch `probe2` exists | full access works |
+| I8, I15 | (same) | profile `{":root"="read", "<repo>"="write", "<repo>/.git"="write"}` | `cannot lock ref … Permission denied` | a writable folder protects its own `.git`, even when `.git` is listed |
+| I8, I15 | (same) | profile `{":root"="read", "<data>"="write", ":tmpdir"="write"}`, `-C <data>/textkit`: `git worktree add -b wt1 ../textkit.worktrees/wt1 main`; `git -C ../textkit.worktrees/wt1 commit --allow-empty -m wt1commit`; `git update-ref refs/wave-method/claims/test HEAD` | `HEAD is now at …`; `[wt1 310494a] wt1commit`; exit 0 | a profile whose writable folder is the **parent** of the repository writes branches, worktrees next to it, commits and claim refs |
+| I8, I15 | (same) | the same profile: `git -C <this repository> update-ref refs/wave-method/probe-should-fail HEAD` | `cannot lock ref …`; no such ref in this repository | writes outside the parent folder stay refused |
+| I8, I15 | (same) | `<codex> exec -C <data>/textkit -c 'default_permissions="wave"' -c 'permissions.wave.filesystem={…as above…}' -c 'approval_policy="never"'`: the model ran `git worktree add` and a commit | `Preparing worktree (new branch 'x1')`, `[x1 caf610d] x1`; `turn_context`: `writable_roots` `["<data>"]` | the model's own shell works under the profile; its subagents inherit it (their `turn_context` has the same roots) |
+| I8 | a project can carry the profile | `<data>/textkit/.codex/config.toml` with `default_permissions = "wave"` and `[permissions.wave]`; `<codex> exec -C <data>/textkit` without sandbox options: `git branch probeP`, `git branch -D probeP` | `Deleted branch probeP` | the project config of a trusted project applies the profile in the CLI; the desktop app: not verifiable by running here (needs desktop control), task O |
+| I8 | relative paths in the profile | `filesystem = { …, ".." = "write" }` | ``filesystem path `..` must be absolute, use `~/...`, or start with `:` `` | the parent folder is written as an absolute path |
+| I8 | the agent cannot widen its own profile | profile plus `"<data>/proj/.codex" = "read"`: python writes `.codex/config.toml`; `git branch`; python writes `ok.txt` | `PermissionError: [Errno 13] Permission denied: '.codex/config.toml'`; exit 0; `repo write ok` | a more specific read entry protects `.codex` |
+| I8 | temp files work | the profile without `:tmpdir`: `python -c "tempfile.mkdtemp()"` | `tempdir ok <data>\p2\proj\tmp…` (inside the project) | keep `:tmpdir`, or temp files land in the project |
+| I8 (Windows) | the ACL of `.git` does not persist | `icacls <scratch>/…/.git` after a `:workspace` session; then the parent profile on that repository in the temp folder, and on D's old scratch | `(DENY)(W,D,Rc,GW,DC)` entries for sandbox SIDs; `cannot lock ref` for the profile with `:tmpdir` (repository inside the temp folder) and for D's scratch (its parent was a writable root of D's `workspace-write` run) | the elevated Windows sandbox leaves deny entries on `.git` for every writable folder of an earlier `workspace-write` session that held the repository; a project outside the temp folder keeps working after such a session (`<data>` test: `:workspace` once, then the parent profile with `:tmpdir`: exit 0) |
+| I9, I18 | shells start outside the project | the exec runs above: `Get-Location` in `<data>/textkit` (outside the user profile) and in D's scratch (below it) | `D:\…\textkit`; `C:\Users\…\d.Ssk0\textkit` | with the profile the shell starts in the project in both places; I9 came with D's failing `workspace-write` thread; macOS and Linux: not verifiable by running here (one Windows machine) |
+| I10 | `spawn_agent` refuses `gpt-6-luna`, which its description does not list | exec: two `spawn_agent` calls with `model: "gpt-6-luna"`, `fork_turns: "none"` | `{"task_name":"/root/gate_plain"}`, `{"task_name":"/root/gate_lookup"}`; both children's `turn_context` `"model":"gpt-6-luna"` | the ID is accepted; D3 was the coordinator's choice, so the rule must say to pass the ID of "Model tiers" anyway |
+| I11, I17 | the gate line alone makes a Codex subagent check its model | child `gate_plain` (`gpt-6-luna`) got the medium gate line and a one-line task | its final message: `ref: refs/heads/main` (it did the task) | a gate line alone is not enough |
+| I11, I17 | a lookup line makes it check | child `gate_lookup` (`gpt-6-luna`) got the gate line, then `Model lookup: … run this PowerShell command …: <lookup command>` | `gpt-6-luna; stopping because it is below the required tier.` | the prompt must carry the lookup command; the behaviour shows it although the prompt text is encrypted in the rollout |
+| I16 | the lookup works inside the sandbox | exec root: `powershell -NoProfile -File lookup.ps1` (the PowerShell command of "Vendors") | `gpt-6.2-astra` | verified |
+| I13 | `--ignore-user-config` keeps `~/.codex/config.toml` unchanged | exec in a new folder with `--ignore-user-config` | the file got `[projects.'d:\…\textkit']` `trust_level = "trusted"` | Codex writes a trust entry for every new project folder; the user accepted this on 2026-11-26; the entries of the probes and of D were removed with the user's consent |
+
+Side notes: a sandboxed git prints `warning: unable to access '<home>/.config/git/ignore': Permission denied`
+(harmless); `codex sandbox` needs `-P`; `sandbox_mode` and `default_permissions` cannot both be set.
+
+## Fixes after wave 2 (re-plan 2026-11-26, round 2)
+
+F1 is escalated (round 2): every new task is `high`. Wave 4 (H, I) and wave 5 (J, K) never ran and are dropped: I needs
+the desktop record that E never wrote, and both waves would block the new waves. H's five edits move to L and M; I's
+two parts to N (plugin check) and P (claims). Line numbers are those of
+`feat/desktop-coordinator-p2/F1-codex-coordinator` at 4d0d1f7.
+
+| Entry | Essence | Fixed by |
+|---|---|---|
+| I1, I6 | stale model name; "Launch groups" row | task L, "Permissions and gate texts (task L)", items 6, 8 |
+| I5 | the Codex `Capabilities:` example line | task M, "wave-auto rules (task M)", item 1 |
+| I8, I15 | `.git` is read-only under `workspace-write` | L (profile, `git-read-only`), M (capability check); verified by N and O |
+| I9, I18 | shells did not start in the project | verified above; N and O check it again (check 7) |
+| I10 | `gpt-6-luna` not chosen for `low` | L (Vendors cell), M (Capabilities rule); N check 1 |
+| I11, I16, I17 | no model check in a Codex step; the lookup in the sandbox; prompts unreadable | L and M (lookup line); N and O check 6 judge prompts by behaviour |
+| I12 | the coordinator leaves its fixed texts | M, item 5; N and O check 8 |
+| I14 | the rest of the CLI pipeline | task N |
+| I19 | the desktop rehearsal | task O |
+| I2 | claims match the records | task P |
+| I3 | the README plugin commands | task N, "Plugin install" |
+
+I13 is closed: accepted by the user on 2026-11-26 (rehearsals list the trust entries they add).
+
+### Shared texts (tasks L and M)
+
+The **lookup line**, one line, `<command>` being the model lookup of "Vendors" for the subagent's shell, verbatim:
+
+```
+Model lookup: this environment states no model ID; before reading or changing anything, run this command and take its one output line as the exact model you run on: <command>
+```
+
+The stop code **`git-read-only`**: a git write refused by the environment (`Permission denied` on `.git`, a ref or the
+worktrees folder). Stop line:
+`Stop git-read-only: <the refused path> — next: grant the permissions of wave-plan/layout.md, "Vendors", "Permissions in Codex", then run the same command again`.
+
+### Permissions and gate texts (task L)
+
+Files: `skills/wave-plan/layout.md`, `skills/wave-run/SKILL.md`, `skills/wave-plan/SKILL.md`,
+`skills/wave-triage/SKILL.md`, `README.md`, `skills/wave-plan/CHANGELOG.md`.
+
+1. `layout.md` "Tier gate": after the bullet `- **Gate line.** …` (lines 118-121) insert the bullet:
+
+   ```
+   - **Lookup line.** Where the vendor states no model ID in an agent's environment (Codex, "Vendors"), every prompt
+     that starts with a gate line and goes to a subagent (`wave-run`'s launch header, `wave-auto`'s step prompt) has
+     this second line, `<command>` being the model lookup of "Vendors" for the subagent's shell, verbatim:
+     `Model lookup: this environment states no model ID; before reading or changing anything, run this command and take its one output line as the exact model you run on: <command>`
+     A Codex subagent given the gate line alone does not run the lookup.
+   ```
+
+2. `layout.md` "Vendors", row `model of a tier` (line 156), Codex cell → `` `spawn_agent`'s `model`: the model ID of
+   "Model tiers" (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`), also when the tool's description does not list it; a
+   model the tool refuses is a missing tier ``.
+3. Same table, after the row `own model ID` (line 161), a new row:
+   `` | git writes | a permission mode that allows git and file writes in the repository and in `../<repo-folder>.worktrees/` (`auto` does) | the permission profile of "Permissions in Codex"; the default `workspace-write` keeps `.git` read-only | ``
+4. `layout.md`, after the PowerShell block of "Model lookup in Codex" (it ends before `## Names`, line 177), with a
+   blank line before and after:
+
+   ````
+   **Permissions in Codex.** The wave skills write branches, refs and commits in `.git` and create worktrees next to
+   the repository (`../<repo-folder>.worktrees/`). Codex's `workspace-write` sandbox keeps the `.git` of every writable
+   folder read-only, so they need this permission profile, in `<repository>/.codex/config.toml` (Codex reads it for a
+   trusted project) or in `~/.codex/config.toml`. Paths are absolute (`~/…` allowed); `<parent>` is the folder that
+   holds the repository:
+
+   ```toml
+   default_permissions = "wave"
+
+   [permissions.wave]
+   filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<repository>/.codex" = "read" }
+   ```
+
+   The sandbox stays on: the agent reads everything, writes only below `<parent>` and in the temp folder, and cannot
+   change its own profile. Subagents inherit it. Keep the file out of git (`.git/info/exclude`): its paths belong to
+   one machine. On Windows the sandbox keeps denying `.git` to a folder that was a writable folder of an earlier
+   `workspace-write` session holding that repository, the temp folder included: keep the repository out of the temp
+   folder and do not use such a folder as `<parent>`. Where the profile cannot be used, full access works
+   (`codex -s danger-full-access`). Every wave skill whose git write is refused stops `git-read-only`:
+   `Stop git-read-only: <the refused path> — next: grant the permissions of wave-plan/layout.md, "Vendors", "Permissions in Codex", then run the same command again`.
+   ````
+
+5. `wave-run/SKILL.md` step 4: the text before the header block (lines 231-232) `(the first line only for a `medium` or
+   `high` task, `layout.md`, "Tier gate"):` → `(the first line only for a `medium` or `high` task, the second only for
+   such a task where the vendor states no model ID: `layout.md`, "Tier gate"):`; in the block, after the line
+   `Required tier: …` (line 235), insert the lookup line of "Shared texts" with `<command>` kept as a placeholder.
+6. `wave-run/SKILL.md` line 217, row "Launch groups": `A group launches at once; up to the parallel limit, the rest as
+   earlier tasks return; without parallel subagents, its tasks run one after another with the same worktrees and
+   checks.` → `A group launches at once, up to the parallel limit; the rest start as earlier tasks return. Without
+   parallel subagents, its tasks run one after another with the same worktrees and checks.` (one physical line).
+7. `wave-run/SKILL.md` "Stops" table, after the row `capability-missing` (line 115), a new row:
+   `` | `git-read-only` | a git write is refused by the environment (`Permission denied` on `.git`, a ref or the worktrees folder) | grant the permissions of `layout.md`, "Vendors", "Permissions in Codex", then run the same command again | ``
+8. `wave-run/SKILL.md:3` (description): `(Sonnet 5.5 / GPT-6.1 SOL)` → `(Sonnet 5.5 / GPT-6.2-Sol)`.
+9. `wave-plan/SKILL.md:3`: `Recommended model: high complexity (Opus-class), because` → `Recommended model: high
+   complexity (Opus-class or GPT-6.2-Astra), because`; `wave-triage/SKILL.md:3`: `Recommended model: high complexity
+   (Opus-class) — misjudged` → `Recommended model: high complexity (Opus-class or GPT-6.2-Astra) — misjudged`.
+10. `README.md`: after the section `### Codex plugin (recommended for Codex)` (it ends with line 60, `Type the commands
+    with `$` in Codex (`$wave-plan …`).`), before `### Installer (a copy inside the project)`, insert:
+
+    ````
+    ### Codex permissions
+
+    The skills write branches and commits in `.git` and create worktrees next to the project
+    (`../<project>.worktrees/`). Codex's default `workspace-write` sandbox keeps `.git` read-only, so give Codex this
+    permission profile in `<project>/.codex/config.toml` (absolute paths; `<parent>` is the folder that holds the
+    project):
+
+    ```toml
+    default_permissions = "wave"
+
+    [permissions.wave]
+    filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<project>/.codex" = "read" }
+    ```
+
+    The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep the file
+    out of git (add `.codex/config.toml` to `.git/info/exclude`). Where the profile cannot be used, full access works
+    too (`codex -s danger-full-access`). Details: `skills/wave-plan/layout.md`, "Vendors".
+    ````
+
+11. `CHANGELOG.md`, the `- Unreleased` item: after its last line, as continuation lines with a two-space indent, at
+    most 120 characters:
+
+    ```
+      Codex permissions: a permission profile that writes only the folder holding the repository (`layout.md`,
+      "Vendors"; README "Codex permissions"); a git write the sandbox refuses stops `git-read-only`; prompts to Codex
+      subagents carry the model lookup right after the gate line.
+    ```
+
+### wave-auto rules (task M)
+
+File: `skills/wave-auto/SKILL.md` only.
+
+1. Lines 67-70 (from `Print one line `Capabilities: …`, for example` through the Codex example line and its period):
+   the text of "Text fixes (task H)", item 4 — the line `Print one line `Capabilities: …`, for example in Claude Code
+   and in Codex:`, a blank line, a fenced block (no language) with the two example lines without backticks or final
+   period, a blank line.
+2. "Capabilities", the bullet `- model choice per subagent: …` (lines 61-63): append the sentence `Name each tier's
+   model as that row says, also when the tool does not list it; never launch a step on another tier's model.`
+3. "Capabilities", after the bullet `- starting a session;` (line 64), a new bullet:
+   `- git writes: whether this session may write the main checkout's `.git` and the folder that holds it — in Codex,
+   from the sandbox and writable folders its environment states (`wave-plan/layout.md`, "Vendors", "Permissions in
+   Codex"); no → stop `git-read-only` before any step;`
+4. "Step prompt": line 76 `Every step's subagent gets exactly this prompt (the first line only for a medium or high
+   step):` → `Every step's subagent gets exactly this prompt (the first line only for a medium or high step; the second
+   only for such a step where the vendor states no model ID: `wave-plan/layout.md`, "Tier gate", "Lookup line"):`; in
+   the block, after the line `Required tier: …` (line 79), insert the lookup line of "Shared texts" with `<command>`
+   kept as a placeholder.
+5. Output texts:
+   - "Hard rules", the bullet `- It writes the user only what this skill names: …` (lines 51-53): append `Its first
+     message starts with the `Started:` line: no sentence comes before it.`
+   - "End of the run", after the paragraph `The Steps table has one row per step …` (lines 249-251), a new paragraph:
+     `` `<start>` in the title and in `Continue:` is the start as typed: for a list start the index path once
+     `triage-ask` returned one, else the list verbatim; never a summary, a title of its own or a placeholder such as
+     `<original list>`. The Result cell is the step's return line, verbatim. Every Halts line ends with
+     `— next: <command or action>`. ``
+   - "Stops", table "Stops that end the run", after the row `no-subagents` (line 269), a new row:
+     `` | `git-read-only` | the session cannot write the main checkout's `.git` ("Capabilities"), or a step returns it | grant the permissions of `wave-plan/layout.md`, "Vendors", "Permissions in Codex", then `/wave-auto <start>`<br>`$wave-auto <start>` | ``
+
+### Rehearsal D2 — Codex CLI with the permission profile (task N)
+
+Rehearsal D of "Rehearsals (tasks D and E)" again, with these changes; the record replaces
+`docs/rehearsals/coordinator-codex-cli.md`.
+
+- `<scratch>`: a new empty folder outside every repository and outside the temp folder, never used by Codex before
+  (`~/wave-rehearsal-<YYYYMMDD-HHMM>`). Fixture as "Fixture (both)"; then write `<scratch>/textkit/.codex/config.toml`
+  with the profile of README "Codex permissions" (`<parent>` = `<scratch>`, `<project>` = `<scratch>/textkit`, absolute
+  paths) and add `.codex/` to `<scratch>/textkit/.git/info/exclude`.
+- Before X0: hash `~/.codex/config.toml` and keep the list of its `[projects.` lines.
+- `<mode>` is `-C <scratch>/textkit -c 'approval_policy="never"'` for every call; no `-s`, no `sandbox_mode`, no
+  bypass, no `danger-full-access` (the user's decision: rehearsals use the profile only). `exec resume --last` runs
+  from `<scratch>/textkit` with `-c 'approval_policy="never"'`.
+- X1: first `Get-Location` (bash: `pwd`), then the worktree and commit probe of X1; expected Pass; remove the probe as
+  before. A failure is a finding; then X2–X5 are Not run.
+- X2–X5 and checks 1–5 as written, plus:
+  6. Every `medium` and `high` step subagent runs the model lookup before any other command and gets its model
+     (`turn_context` of its rollout; its first `function_call` is the lookup); its prompt is judged by this behaviour,
+     since the text is encrypted (I11, I16, I17).
+  7. The first shell of the root and of every subagent starts in the project or its worktree (I9, I18).
+  8. The coordinator's texts: the first output line is `Started:`; the title is `## wave-auto · <start>` as "End of the
+     run" says; each Result cell is a return line; every Halts line has `— next:`; `Continue:` holds the real start
+     (I12).
+  9. Trust entries: the `[projects.` lines added to `~/.codex/config.toml` during the run, paths as `<scratch>`;
+     nothing else of the file changed.
+- Then the plugin check of "Plugin install check (task I)", recorded as `## Plugin install`.
+- Record: the format of "Record format (both)"; right after the header paragraph a section
+  `## First attempt (2026-11-26)` of at most six lines: under `workspace-write` the pipeline stopped at its first step
+  (findings D1–D6); the full record is commit 7bcdaf1.
+- Caps: 3 hours of Codex calls. Leave `<scratch>` in place and name it in the report.
+
+### Rehearsal E2 — Codex desktop app with the permission profile (task O)
+
+Rehearsal E of "Rehearsals (tasks D and E)" again (record `docs/rehearsals/coordinator-codex-desktop.md`), with these
+changes:
+
+- `<scratch>` and the fixture as in Rehearsal D2, in its own new folder; the same `.codex/config.toml`; the config hash
+  and `[projects.` list before E0.
+- E1: open `<scratch>/textkit` as a project; new thread with GPT-6.2-Astra; leave the permission setting the app shows
+  for this project and record its exact name; if the app offers a setting that names the profile `wave` or the
+  project's config, choose it and record it. Never choose a full-access mode: that needs the user's separate
+  permission. Record the thread's `sandbox_policy` from its rollout `turn_context` (writable roots as `<scratch>`).
+- If git writes are refused (a `git-read-only` stop or `Permission denied`), that is a finding; record it and stop the
+  rehearsal there: the rest is Not run.
+- Checks 1, 3, 4, 6, 7, 8 and 9 of Rehearsal D2; the value of `session start` in the `Capabilities:` line.
+- Cap: 3 hours. Leave `<scratch>` in place and name it in the report.
+
+### Claims after the rehearsals (task P)
+
+The definitions and edits 1–3 of "Claims after the rehearsals (task I)", unchanged, read from the records of tasks N
+and O, plus edit 4. Definitions added:
+
+- **CLI profile works**: run X1 of the CLI record is Pass.
+- **Desktop profile works**: the desktop record's E1 shows writable roots `<scratch>` and no git write was refused in
+  E1–E3.
+
+4. README "### Codex permissions", after its sentence `Where the profile cannot be used, full access works too
+   (`codex -s danger-full-access`).`, add exactly one sentence:
+
+   | Case | Sentence |
+   |---|---|
+   | desktop profile works | `The Codex desktop app applies the same file.` |
+   | desktop record exists, profile does not work | `The Codex desktop app did not apply it in its rehearsal: use its full access mode there.` |
+   | desktop E1 Not run, or no record | `The Codex desktop app is not rehearsed with it yet.` |
+
+   If "CLI profile works" is false, change nothing and stop: the plan's solution failed (report it).
+
+## Acceptance tests (re-plan 2026-11-26, round 2)
+
+9. `layout.md` has the "Lookup line" bullet, the `git writes` row, the changed `model of a tier` cell and "Permissions
+   in Codex" with the profile; `wave-run/SKILL.md` has the lookup line in its header block, the `git-read-only` row and
+   the fixed "Launch groups" row; README has `### Codex permissions`; `git grep -n "GPT-6.1 SOL" -- skills README.md`
+   prints nothing (task L).
+10. `wave-auto/SKILL.md` has the fenced capabilities examples, the `git writes` bullet, the model rule, the lookup line
+    in its step prompt, the three output rules and the `git-read-only` row (task M).
+11. The CLI record (task N) shows X1 Pass under the profile, X2–X5 and checks 1–9 each Pass, a Finding with an entry,
+    or Not run with its reason, and `## Plugin install`; the desktop record (task O) likewise for E0–E4.
+12. README, layout and changelog claim exactly what the two records show (task P).
