@@ -33,7 +33,10 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
 ## Hard rules
 
 - The coordinator changes no file, makes no commit or merge, and never pushes; the only ref it writes is its claim.
-  Every change is made by a step's subagent through its skill.
+  Every change is made by a step's subagent through its skill. The token and oid of its claim live in the
+  conversation only: never in a file, not even in a temp folder, and never in a shell variable that a later command
+  needs. The command that takes the claim prints the oid, and the release or takeover command has it
+  written out literally (`wave-plan/layout.md`, "Target claim").
 - It reads nothing of `plans/` but the "Open questions" of an index on its triage branch, when it asks them. It never
   reads plan READMEs, wave files, solutions or task prompts, and never retells a subagent's output beyond its return
   line.
@@ -46,7 +49,7 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
   result. The commands it runs itself only read git and the skill files this skill names, take or release its claim,
   and read the clock.
 - It writes the user only what this skill names: the `Started:` and `Capabilities:` lines, the progress lines, the
-  resume command, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
+  `Resume:` line, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
   summary, comment or explanation of its own.
 
 ## Capabilities
@@ -62,7 +65,7 @@ At the start, from the tools this session has (`wave-plan/layout.md`, "Environme
 
 Print one line `Capabilities: …`, for example
 `Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no`.
-Neither subagents nor starting a session → stop `capability-missing`, `next:` the manual commands (`/wave-triage`,
+Neither subagents nor starting a session → stop `no-subagents`, `next:` the manual commands (`/wave-triage`,
 `/wave-plan`, `/wave-run`, in both forms).
 
 ## Step prompt
@@ -99,18 +102,20 @@ language.
 
 1. Read the clock (`Started:` line, `wave-plan/layout.md`, "Run times"); resolve the skills folder, the main checkout
    (`git rev-parse --show-toplevel`) and `<main branch>`; check the capabilities.
-2. List start: run `triage-ask`; its index path gives `<topic>`.
+2. List start: run `triage-ask`; its index path gives `<topic>`. Right after its progress line, in the same text and
+   before anything else, write the line `Resume: /wave-auto <index path> · $wave-auto <index path>`, whether or not
+   questions follow (`questions 0` too).
 3. Take the coordinator claim, the ref `refs/wave-method/claims/auto/<name>` (`wave-plan/layout.md`, "Coordinated
    runs", "Coordinator claim"): `<name>` is the index topic, or the plan slug for a plan start (the folder
    `plans/<date>-<topic>/plan-<K>` has slug `<topic>-p<K>`, the folder `plans/<date>-<slug>` has slug `<slug>`; no file
-   is read for it); `<start>` in the holder line is the index path for a list start. Refused → ask whether the holder is gone (quote its holder line); yes → take it over; no →
-   stop `wave-running`, naming the holder. For a list start print the resume command
-   `/wave-auto plans/<date>-<topic>/index.md` · `$wave-auto plans/<date>-<topic>/index.md` right after `triage-ask`.
+   is read for it); `<start>` in the holder line is the index path for a list start. Refused → ask whether the holder
+   is gone (quote its holder line); yes → take it over; no → stop `wave-running`, naming the holder.
 4. Questions: after `triage-ask` with `questions <n>` > 0, or when the navigator returns `next: ask <index>`, read the
    `- Q<n> · …` lines of "Open questions" with `git show triage/<topic>:<index path>`, ask them all in one message and
-   wait. Then run `triage-answers` with the answer verbatim (`Answers: none` for 0 questions; the user may answer only
-   some). When the navigator returns `next: ask-flow <plan folder>`: ask whether to switch that plan to autonomous
-   flow; yes → step `flow`; no → halt the unit.
+   wait. With `questions 0`, or when the index has no `- Q<n>` line, ask nothing and do not wait. Then run
+   `triage-answers` with the answer verbatim (`Answers: none` for 0 questions; the user may answer only some). When
+   the navigator returns `next: ask-flow <plan folder>`: ask whether to switch that plan to autonomous flow; yes →
+   step `flow`; no → halt the unit.
 5. The start phase ends with the first step that is not `triage-ask` or `navigate`. From then on a navigator line
    `next: ask …` or `next: ask-flow …` halts its unit instead (`questions-late`, `next:` the manual command).
 
@@ -154,11 +159,21 @@ result is its `next:` or `done` line.
 
 ## Wave
 
-`wave` step → while it returns `waiting …`: one `task` step per listed task, in parallel where the environment allows
-(all in one message, each on its tier's model; a task whose `Needs` names a tool this session lacks goes to the
-session fallback), wait for all, then the `wave` step again (the resume). A task step that returns a stop
-(`tier-mismatch`, `capability-missing`) halts the unit; do not resume. A task ID run 3 times in one dispatch (once and
-two fix requests) and listed again → halt the unit `step-failed`.
+`wave` step → while it returns `waiting …`, for the tasks it lists:
+
+1. Launch one `task` step for every listed task that can run here as a subagent of its tier (its `Needs` tools are in
+   this session), in parallel where the environment allows: all in one message, each on its tier's model. Wait until
+   every one of them has returned.
+2. Only then: each listed task that cannot run here goes to "Session fallback".
+3. No task of 1 returned a stop (`tier-mismatch`, `capability-missing`, …) and no task of 2 was halted → the `wave`
+   step again (the resume). Otherwise halt the unit with the first such stop or halt, and do not resume: the commits
+   of the other tasks stay on their branches, and the next `/wave-auto <start>` · `$wave-auto <start>` resumes the
+   wave, where they return `already committed`.
+
+A task ID run 3 times in one dispatch (once and two fix requests) and listed again → halt the unit `step-failed`.
+
+A halt never ends the run and prints no `Stop` line: the unit goes to "Halts", and the loop navigates again with that
+unit skipped ("Loop").
 
 When the navigator line is `next: tasks …`, the wave is already waiting: start from the `task` steps of that line.
 
@@ -176,7 +191,8 @@ missing): when the environment can start a session with a model of that tier who
 there with the skill's command in its normal form, `flow autonomous` included
 (`/wave-plan flow autonomous <index path> part <K>`, `/wave-run <plan folder> <N>`,
 `/wave-run <plan folder> <N> task <ID>`), in the repository, and wait for its result. The session runs the skill
-normally, so a whole wave in a session uses its own subagents. Then navigate again; the session's text is not kept.
+normally, so a whole wave in a session uses its own subagents. Then go on: for a task, with item 3 of "Wave"; for any
+other step, navigate again. The session's text is not kept.
 
 Otherwise halt the unit `tier-missing` or `capability-missing`, `next:` that command in both forms, "in a fresh
 session with <models>", then `/wave-auto <start>` · `$wave-auto <start>` again.
@@ -186,7 +202,9 @@ session with <models>", then `/wave-auto <start>` · `$wave-auto <start>` again.
 Checked before every step except `navigate` and `status`:
 
 - `until`: no step starts at or after that time, read from the clock;
-- `steps`: at most N steps; default 60; `navigate` and `status` do not count.
+- `steps`: at most N steps; default 60. The count is the number of step subagents this run has launched for steps
+  other than `navigate` and `status`: each agent call whose prompt has the line `Coordinated run · step <step> · …`.
+  Count them again in this conversation before each step; never carry the count in mind.
 
 Reaching one ends the run with its final report, `ended by rail: …`. A step already running is not cut short. A wave
 left waiting by a rail stays 🔄 with its claim marked waiting: the next `/wave-auto <start>` · `$wave-auto <start>`
@@ -222,8 +240,9 @@ Run: <n> steps · ended by <done | rail: until <time> | rail: steps <N> | stop <
 Started: <…> · Finished: <…> (<duration>)
 ```
 
-The Steps table has a row per step that counts toward `steps` (not `navigate` and `status`). Halts lists the `halt`
-lines the navigator returned and the units halted by "Results of steps".
+The Steps table has one row per step this run launched other than `navigate` and `status`, in the order launched;
+`<n>` in `Run:` is the number of its rows, counted after the table is written, never from memory. Halts lists the
+`halt` lines the navigator returned and the units halted by "Results of steps".
 
 The final report is this template and nothing else: no paragraph, section or note is added between or inside its
 parts, the `status` report is copied verbatim, and nothing follows the `Started: … · Finished: …` line. `### Next`
@@ -241,11 +260,12 @@ Stops that end the run:
 | Code | When | Next |
 |---|---|---|
 | `no-start` | the command has no `<start>` | `/wave-auto <list>`<br>`$wave-auto <list>`<br>`/wave-auto plans/<date>-<topic>/index.md`<br>`$wave-auto plans/<date>-<topic>/index.md`<br>`/wave-auto <plan folder>`<br>`$wave-auto <plan folder>` |
-| `capability-missing` | the session has neither subagents nor a way to start a session | `/wave-triage <list>`<br>`$wave-triage <list>`<br>`/wave-plan <index path> part <K>`<br>`$wave-plan <index path> part <K>`<br>`/wave-run <plan folder> <N>`<br>`$wave-run <plan folder> <N>` |
+| `no-subagents` | the session has neither subagents nor a way to start a session | `/wave-triage <list>`<br>`$wave-triage <list>`<br>`/wave-plan <index path> part <K>`<br>`$wave-plan <index path> part <K>`<br>`/wave-run <plan folder> <N>`<br>`$wave-run <plan folder> <N>` |
 | `wave-running` | the coordinator claim is refused and the user said the holder is not gone | wait for the holder, or release `refs/wave-method/claims/auto/<name>` once sure no `wave-auto` session runs, then `/wave-auto <start>`<br>`$wave-auto <start>` |
 | `target-unsafe`, `target-conflict`, `target-unmerged`, any `triage-*` stop | passed through from a step ("Results of steps") | the `next:` of the step's own stop line |
 
-Halts of one unit; the run goes on with the other units and ends with them in "Halts":
+Halts of one unit. A halt is not a stop: it prints no `Stop` line and does not end the run, whatever its code; the
+run goes on with the other units and ends with them in "Halts":
 
 | Code | When | Next |
 |---|---|---|
@@ -260,5 +280,5 @@ Halts of one unit; the run goes on with the other units and ends with them in "H
 
 The same command in a new session: the start phase takes the claim (the old session released it, or the user confirms
 the takeover), and the navigator finds where the state is. A list start resumes with
-`/wave-auto plans/<date>-<topic>/index.md` · `$wave-auto plans/<date>-<topic>/index.md`; the coordinator prints that
-command right after `triage-ask`.
+`/wave-auto plans/<date>-<topic>/index.md` · `$wave-auto plans/<date>-<topic>/index.md`; the coordinator writes it as
+the `Resume:` line right after the progress line of `triage-ask` ("Start phase", 2).

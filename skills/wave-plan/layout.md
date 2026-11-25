@@ -448,7 +448,12 @@ take no claim.
 
   PowerShell: `$oid = "<holder line>" | git hash-object -w --stdin`, then the same `git update-ref`. When
   `git rev-parse --show-object-format` prints `sha256`, the zero ID has 64 zeros. Keep the oid: every later step of
-  the claim needs it.
+  the claim needs it. Print it (`echo "$oid"`; PowerShell `$oid`), keep it in the conversation and
+  write it out literally in each later command (wait, takeover, release): shell variables do not survive from one
+  command to the next, and a file is shared by every run on the machine, so a second run would overwrite it and the
+  first could no longer release its claim. Never store the token or the oid in a file, not even in a temp folder. A lost oid is
+  recomputed from the exact holder line by the take's first command without `-w`
+  (`printf '%s\n' "<holder line>" | git hash-object --stdin`).
 - **Refused** (the ref exists): read the holder with `git cat-file -p refs/wave-method/claims/integration/<name>` and
   stop `wave-running`, naming the holder line; nothing written. Only a resume takes over a held claim ("Take over"
   below).
