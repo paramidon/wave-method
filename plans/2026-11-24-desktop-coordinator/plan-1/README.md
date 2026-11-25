@@ -17,7 +17,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3), N (4), O (4), P (4), Q (4), R (5), S (5), T (5) | acceptance tests 1–10 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J, K, N, R and S are in place, status-check and driver tests and the three examples pass, and the CLI (L, O, P, Q, T) and desktop (M) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | ⚠️ I13, I14, I15, I18, I19, I20, I26 | wave 5 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
+| F1 | `in-session-coordinator` | One command, `/wave-auto`, runs triage, plans and waves in the current session, delegating every step to subagents | P1 | A (1), B (1), C (1), D (1), E (1), J (3), K (3), L (3), M (3), N (4), O (4), P (4), Q (4), R (5), S (5), T (5) | acceptance tests 1–10 of `solutions/P1-in-session-coordinator.md` hold: the contract texts of tasks A–E, J, K, N, R and S are in place, status-check and driver tests and the three examples pass, and the CLI (L, O, P, Q, T) and desktop (M) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | ⚠️ I18, I27, I28 | I18, I27, I28 | `feat/desktop-coordinator-p1/F1-in-session-coordinator` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -28,8 +28,8 @@ Merged: short hash of the merge commit into the main branch.
 | 1 | `waves/w01.md` | A, B, C, D, E | ✅ (I1 fixed by J, wave 3) |
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
 | 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ✅ (I3 accepted by the user) |
-| 4 | `waves/w04.md` | N, O (after N), P (after N), Q (after N) | ⚠️ I13, I14, I15, I18, I19, I20, I26 |
-| 5 | `waves/w05.md` | R, S, T (after R, S) | 🔄 since 2026-11-25 21:35 |
+| 4 | `waves/w04.md` | N, O (after N), P (after N), Q (after N) | ⚠️ I18 |
+| 5 | `waves/w05.md` | R, S, T (after R, S) | ⚠️ I18, I27, I28 |
 
 ## Tasks
 
@@ -49,12 +49,12 @@ Merged: short hash of the merge commit into the main branch.
 | L | `coordinator-cli-record` | F1 | 3 | medium | ✅ (I2, I4, I5 closed in wave 4; I3 accepted by the user) |
 | M | `coordinator-desktop-record` | F1 | 3 | medium | ✅ (I4, I7, I8 fixed by N; I9 verified by O, P, Q; wave 4) |
 | N | `coordinator-report-rules` | F1 | 4 | low | ✅ (I3 accepted by the user) |
-| O | `coordinator-flow-rehearsal` | F1 | 4 | medium | ⚠️ I13, I14, I15 |
-| P | `coordinator-stops-rehearsal` | F1 | 4 | medium | ⚠️ I18, I19, I20 |
-| Q | `coordinator-triage-rehearsal` | F1 | 4 | medium | ⚠️ I26 |
-| R | `coordinator-halt-claim-fixes` | F1 | 5 | high | 🔄 |
-| S | `status-triage-waiting-forms` | F1 | 5 | high | 🔄 |
-| T | `coordinator-fix-rehearsal` | F1 | 5 | high | 🔄 |
+| O | `coordinator-flow-rehearsal` | F1 | 4 | medium | ✅ (I13, I15 fixed by R, I14 by S, wave 5) |
+| P | `coordinator-stops-rehearsal` | F1 | 4 | medium | ⚠️ I18 |
+| Q | `coordinator-triage-rehearsal` | F1 | 4 | medium | ✅ (I26 fixed by S, wave 5) |
+| R | `coordinator-halt-claim-fixes` | F1 | 5 | high | ⚠️ I18, I27 |
+| S | `status-triage-waiting-forms` | F1 | 5 | high | ✅ |
+| T | `coordinator-fix-rehearsal` | F1 | 5 | high | ⚠️ I28 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`

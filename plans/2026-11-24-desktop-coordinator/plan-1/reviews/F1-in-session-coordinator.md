@@ -17,6 +17,7 @@
 - O (wave 4) — the CLI rehearsal of the flow (rail, resume, already committed tasks, re-plan, two merged features) is recorded in `docs/rehearsals/coordinator-cli-flow.md`: the pipeline works, six deviations from the skill texts (I10–I15).
 - P (wave 4) — the CLI rehearsal of early stops (missing tool, halted unit, `until` rail, killed session and resume without the plugin) is recorded in `docs/rehearsals/coordinator-cli-stops.md`: stops and resume work, eight findings (I16–I23).
 - Q (wave 4) — a ten-problem triage with clusters and the Codex links of both installers are recorded in `docs/rehearsals/coordinator-cli-triage.md`: triage and installers work, three findings (I24–I26).
+- S (wave 5) — the waiting line of task mode now needs both command forms for each task, and `wave-status` shows a triage in progress instead of offering to remove its worktree.
 
 ## How to test
 
@@ -31,3 +32,4 @@
 - O: open `docs/rehearsals/coordinator-cli-flow.md` → Results marks every expectation of O1–O5 and every report check Pass or Finding, with evidence.
 - P: open `docs/rehearsals/coordinator-cli-stops.md` → Results marks every expectation of P1–P5b and every report check Pass or Finding, with evidence.
 - Q: `/wave-auto steps 3 <ten problems>`, answer the questions, then `/wave-auto steps 2 plans/<date>-<topic>/index.md` in a new session → the first run stops after one cluster, the second does only the other one and merges the index with records P1–P10.
+- S: run `/wave-status` in a repository whose index exists only on `triage/<topic>` → a block `<index path> · triage in progress` with `Next: /wave-auto <index path> · $wave-auto <index path>` (autonomous), and its worktree is not listed as a leftover.
