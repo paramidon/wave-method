@@ -13,6 +13,10 @@
 - K (wave 3) — the installers and the plugin files install the fifth skill `wave-auto`, and the README and the changelog describe `/wave-auto`.
 - L (wave 3) — the rehearsal of `/wave-auto` in the Claude Code CLI on a small fixture project is recorded in `docs/rehearsals/coordinator-cli.md`: questions asked once, a rail, a resume in a new session, a claim takeover, two merged features and green tests; it found three issues (I2–I4).
 - M (wave 3) — the desktop-app rehearsal of `/wave-auto` is recorded in `docs/rehearsals/coordinator-desktop.md`: from a list to both features merged into the integration branch in a separate session, and a second session that found nothing left to run; it found two new issues (I7, I8) and repeated I4.
+- N (wave 4) — the wording of `wave-auto` and `layout.md` was tightened: progress lines with a clock time, the claim released before the final status, a final report that is the template only; the rehearsals show that progress lines are still skipped (I3).
+- O (wave 4) — the CLI rehearsal of the flow (rail, resume, already committed tasks, re-plan, two merged features) is recorded in `docs/rehearsals/coordinator-cli-flow.md`: the pipeline works, six deviations from the skill texts (I10–I15).
+- P (wave 4) — the CLI rehearsal of early stops (missing tool, halted unit, `until` rail, killed session and resume without the plugin) is recorded in `docs/rehearsals/coordinator-cli-stops.md`: stops and resume work, eight findings (I16–I23).
+- Q (wave 4) — a ten-problem triage with clusters and the Codex links of both installers are recorded in `docs/rehearsals/coordinator-cli-triage.md`: triage and installers work, three findings (I24–I26).
 
 ## How to test
 
@@ -24,3 +28,6 @@
 - K: `grep -n "wave-auto" install.sh install.ps1 .claude-plugin/plugin.json` → one line each; README has the subsection "One command in one session: wave-auto"; after the installer runs in a fresh project, `.claude/skills` holds five folders including `wave-auto`.
 - L: open `docs/rehearsals/coordinator-cli.md` → sections Setup, Runs, Results, Not verified, Repeat; Results show every expectation as Pass or Finding with commit hashes and quoted lines.
 - M: open `docs/rehearsals/coordinator-desktop.md` → Results shows every Rehearsal I expectation as Pass, Finding or Not run, with evidence.
+- O: open `docs/rehearsals/coordinator-cli-flow.md` → Results marks every expectation of O1–O5 and every report check Pass or Finding, with evidence.
+- P: open `docs/rehearsals/coordinator-cli-stops.md` → Results marks every expectation of P1–P5b and every report check Pass or Finding, with evidence.
+- Q: `/wave-auto steps 3 <ten problems>`, answer the questions, then `/wave-auto steps 2 plans/<date>-<topic>/index.md` in a new session → the first run stops after one cluster, the second does only the other one and merges the index with records P1–P10.

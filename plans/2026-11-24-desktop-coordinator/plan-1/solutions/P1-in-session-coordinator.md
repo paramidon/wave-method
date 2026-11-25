@@ -773,6 +773,134 @@ Each record has the sections `## Setup`, `## Runs`, `## Results` (expectation | 
 A difference from an expectation is a finding, never fixed in the rehearsal; each finding is one `Problems:` line of
 the task's report. `Not checked:` holds only runs of the task's own procedure that could not be completed.
 
+## Fixes after the second rehearsal (tasks R, S, T)
+
+Entries I13, I14, I15, I18, I19, I20 and I26 of wave 4 (rehearsals O, P, Q). Re-plan 3 is round 2 of F1 ("Re-plan
+escalation"): every disputed assumption below was checked by running commands (section "Evidence"), and every new
+task is `high`. The exact edits are in the prompts of `waves/w05.md`; the rules they establish:
+
+- **Claim oid (I13; task R).** The oid and token of a claim live in the conversation only. The command that takes a
+  claim prints the oid; every later command that needs it (wait, takeover, release) carries it written out literally.
+  No file holds it, not even in a temp folder: a fixed file name is shared by every run on the machine, so a second
+  run overwrites it and the first can no longer release its claim (Evidence E1). A lost oid is recomputed from the
+  exact holder line with `git hash-object --stdin` (without `-w`): the oid of a blob depends only on its content. The
+  rule goes into `layout.md`, "Target claim" (it holds for `wave-run` and `wave-plan` too) and into the coordinator's
+  "Hard rules".
+- **Both command forms in the waiting line (I14; task S).** `task-mode.md` gets a literal example of the waiting line,
+  one `/wave-run … task <ID> · $wave-run … task <ID>` pair per ID, the pairs separated by `; `. The navigator reads
+  only the IDs before ` — ` (`navigator.md`, "Plan rules" 3), so the longer `next:` part changes nothing for it.
+- **Step count (I15; task R).** The `steps` rail and `Run: <n> steps` count the step subagents this run launched for
+  steps other than `navigate` and `status`: each agent call whose prompt names `Coordinated run · step <step>`.
+  Before each step the coordinator counts them again in its own conversation, never from a number kept in mind; the
+  final report's `<n>` is the number of rows of its Steps table, which has one row per such step. Not chosen:
+  counting progress lines, because skipped progress lines are an accepted limit (I10, I16, I24) and would make the
+  rail undercount.
+- **Resume line after `triage-ask` (I18; task R).** The rule moves from the claim item (Start phase 3) to the
+  `triage-ask` item (Start phase 2), as its own line `Resume: /wave-auto <index path> · $wave-auto <index path>`
+  written right after the progress line of `triage-ask`, with or without questions. The records show it printed in
+  both runs that asked questions and missing in the run with `questions 0` (Evidence E4). Start phase 4 also says what
+  to do when the navigator returns `next: ask <index>` and the index has no `Q` lines: ask nothing and run
+  `triage-answers` with `Answers: none` (a gap of the same item that rehearsal T would otherwise hit).
+- **A unit halt never ends the run (I19; task R).** The run-ending stop of a session with neither subagents nor
+  session start is renamed `no-subagents`, so no code appears in both tables of "Stops" (Evidence E5). "Stops" says
+  that a halt prints no `Stop` line and does not end the run, whatever its code; "Wave" says the loop navigates again
+  with the halted unit skipped.
+- **Order inside a launch group (I20; task R).** "Wave" becomes three numbered steps: launch every listed task that
+  can run here and wait for all of them; only then send the others to "Session fallback"; then resume when no task
+  returned a stop or was halted by the fallback, else halt the unit without resuming. The tasks that committed are
+  kept: the next `/wave-auto <start>` resumes the wave and they return `already committed`. Not chosen: a resume right
+  after the halt to merge them at once, which `Wave` forbade for stopped tasks and which would add a path that no
+  rehearsal has run.
+- **`wave-status` sees a triage in progress (I26; task S).** A branch `triage/<topic>` whose index is not on
+  `<main branch>` is a triage in progress. `wave-status` reads its index header and records and prints a block for
+  it: branch, worktree, phase (the triage rules of `navigator.md`, "Index start" 2, written into `wave-status`) and
+  `Next:` — `/wave-auto <index path>` in both forms for an index with `- Flow: autonomous`, else a wait line. Its
+  branch and worktree are never leftovers; a triage worktree whose branch is merged into `<main branch>` is one. A
+  repository with no plan, index or triage gets one line instead of a free-text report.
+
+### Evidence (re-plan 2026-11-25, round 2)
+
+Commands run on 2026-11-25 in a scratch folder outside the repository and on the feature branch at be54998.
+
+- **E1 · I13.** Assumption: "Keep the oid" (`layout.md`, "Target claim") is enough; a run keeps it between commands.
+  Commands: `bash -c 'oid=abc'` then `bash -c 'echo "[$oid]"'` → `next shell sees oid=[]`. Two claims
+  `refs/wave-method/claims/auto/a` and `…/b` taken by two "runs" that both write their oid to one file `wa_oid`, then
+  `git update-ref -d refs/wave-method/claims/auto/a "$(cat wa_oid)"` → `error: cannot lock ref
+  'refs/wave-method/claims/auto/a': is at ec76e36… but expected 510c8c4…`, exit 1, both refs still listed.
+  `printf '%s\n' "<holder line of a>" | git hash-object --stdin` → `ec76e36…`, the oid of claim a; the release with
+  that literal oid → exit 0, only claim b left. Conclusion: shell state does not carry the oid, a shared file breaks
+  the release of the other run's claim, and the holder line is enough to recompute the oid.
+- **E2 · I14.** Assumption: the waiting line's template makes both forms explicit. `git grep -n "Waiting: task mode"
+  -- skills` → the only template, `skills/wave-run/task-mode.md:9`, ends `— next: <commands>`; the two forms are
+  spelled out only for the report to the user (line 11), and `wave-status` copies the line as "Last stop"
+  (`skills/wave-status/SKILL.md:112`). Conclusion: `<commands>` leaves the form open; two of three waiting commits of
+  rehearsal O gave both forms, one gave `/wave-run` only.
+- **E3 · I15.** Assumption: the coordinator counts its steps correctly without a rule for how. The O4 progress lines of
+  `docs/rehearsals/coordinator-cli-flow.md`, extracted with `awk '/^### O4/,/^### O5/' … | grep -E '^  [0-9]{2}:[0-9]{2}
+  · '` → `all: 13  navigate: 4  counted: 9`, against `Run: 6 steps` in its final report. `git grep` in
+  `skills/wave-auto/SKILL.md` → the count is defined only as "at most N steps; … `navigate` and `status` do not count"
+  (line 189) and the Steps table as "a row per step that counts" (line 225). Conclusion: nothing says what to count or
+  when; the coordinator's own agent calls are the one record that is complete even when progress lines are skipped.
+- **E4 · I18.** Assumption: the resume rule is found where it stands. `git grep -n "right after \`triage-ask\`"` →
+  `skills/wave-auto/SKILL.md:108`, the last sentence of Start phase 3 (the claim). `grep -n "questions 0\|resume
+  command" docs/rehearsals/coordinator-cli-*.md` → printed in O1 and Q1 (both asked questions), missing in P1
+  (`questions 0`). Conclusion: the rule is tied to the claim item and is followed only when the run stops to ask.
+- **E5 · I19.** Assumption: "Stops" makes a missing `Needs` tool a halt of one unit. `git grep -n "^| \`capability-missing\`"
+  -- skills/wave-auto/SKILL.md` → line 244 in "Stops that end the run" and line 256 in "Halts of one unit". P2's
+  coordinator printed `Stop capability-missing: …` and ended the run. Conclusion: one code in both tables; the run
+  ended by the first table.
+- **E6 · I20.** Assumption: "Wave" says when the other tasks run. `git grep -n "goes to the\|halts the unit; do not
+  resume"` → lines 158–160: the missing-tool task "goes to the session fallback" inside the launch sentence, and a
+  stopped task "halts the unit; do not resume", with no order between them. The two P2 calls did opposite things (B
+  ran in the cut call, not in the repeat). Conclusion: the order is not stated.
+- **E7 · I26.** Assumption: the reads of `wave-status` ("Input", "What to read") show every unfinished pipeline state.
+  A scratch repository with an autonomous index committed only on `triage/text-helpers`, its worktree
+  `../textkit.worktrees/text-helpers-triage` and one untracked record: `ls plans` → no such folder;
+  `git branch --list "plan/*" "feat/*" "task/*"` → nothing; `git worktree list --porcelain` → the triage worktree on
+  `refs/heads/triage/text-helpers`, which no rule explains (so it looked like a leftover). The proposed reads:
+  `git branch --list "triage/*"` → `triage/text-helpers`; `git ls-tree --name-only triage/text-helpers plans/` →
+  `plans/2026-11-25-text-helpers`; `git cat-file -e main:plans/2026-11-25-text-helpers/index.md` → exit 128 (not on
+  `main`); `git show triage/text-helpers:<index>` → `- Flow: autonomous · target: integration/text-helpers`;
+  `git -C <worktree> status --porcelain --untracked-files=all` → `?? plans/2026-11-25-text-helpers/triage/P1.md`.
+  Conclusion: the triage is invisible to the current reads and fully visible to the proposed ones.
+
+Not verified by running: how a coordinator model follows the new wording. That is what rehearsal T checks.
+
+### Third rehearsal (task T, `docs/rehearsals/coordinator-cli-fixes.md`)
+
+The user chose on 2026-11-25 to check the fixes in real runs, cap 8 USD for the `claude -p` calls. Fixture and calls:
+"Fixture (both)" and "Shared setup (O, P, Q)", with the cap 8 USD and the list of "Task P — stops" (it gave
+`questions 0` and one wave of two tasks A and B in two features in rehearsal P).
+
+| Run | Repository | Action | Expected |
+|---|---|---|---|
+| T1 | `textkit` | `/wave-auto steps 1 <list>` | one `triage-ask` step; right after its progress line, in the same text, `Resume: /wave-auto <index path> · $wave-auto <index path>`; `Run: 1 steps · ended by rail: steps 1`; the Status part has a block for the index as a triage in progress, with `Next:` `/wave-auto <index path>` in both forms, and suggests no `git worktree remove` or `git branch -d` for the triage worktree or branch |
+| T2 | `textkit` | `/wave-auto steps 3 <index path>` | no question to the user; steps `triage-answers` (with `Answers: none`), `triage-finish`, `plan`; `Run: 3 steps · ended by rail: steps 3`; the Steps table has three rows |
+| T-copy | — | as "P-copy" of "Task P — stops", one copy `textkit-needs` | both repositories hold the same branches |
+| T3 | `textkit-needs` | the "P2 setup" of "Task P — stops" (task A needs `labelprint`), then `/wave-auto <index path>` | `wave` returns `waiting A:<tier> needs …; B:<tier>`; a `task` step for B, launched before the unit halts, returns `committed …`; no `task` step for A; no `Stop` line; Halts lists the unit with `capability-missing` and `/wave-run <plan folder> 1 task A` in both forms, then `/wave-auto <index path>`; no `wave` step after B's task; a later `navigate` returns `done`; `ended by done`; the wave file's Execution ends with a `Waiting: task mode A, B — next: …` line that has both forms for each ID |
+| T4 | `textkit` | `/wave-auto <index path>` | runs to the end, `ended by done`; every feature `✅ merged` into `integration/<topic>`; `Run: <n> steps` equals the rows of the Steps table and the agent calls of counted steps in the stream; every "waiting for task mode" commit of the tracking branch has both forms for each ID in its waiting line |
+
+When the plan of T2 has fewer than two tasks in wave 1, record T3's B part as Not run with the reason. When a run asks a
+question its row does not expect, answer as "Shared setup" says and record it as a finding.
+
+Report checks of every run with a final report, one Results row each:
+
+1. Claim: no Bash call of the coordinator (events with no `parent_tool_use_id`) writes a file — no `>` or `>>` to a
+   path other than `/dev/null`, no `tee`, `Out-File`, `Set-Content` or `Add-Content` — and its release command has the
+   oid as 40 literal hex characters; after the run `git for-each-ref refs/wave-method/claims/auto/` prints nothing; the
+   Status part names no `claims/auto` ref.
+2. Count: `Run: <n> steps` equals the number of rows of the Steps table and the number of agent calls whose prompt
+   names `Coordinated run · step` with a step other than `navigate` and `status`.
+3. Template: the parts `Run:`, `### Steps`, `### Halts`, `### Status`, `### Next`, the times line last.
+
+Accepted by the user as known limits; never a finding and never under "Not checked": skipped progress lines, extra
+remarks, the task ID as the unit of `task` lines, a changed `### Next` after an `until` rail, a `status` report not
+copied verbatim, end times a minute or two off (I3, I10–I12, I16, I17, I21–I25), and the limits of "Second rehearsal"
+(the interactive TUI, an answer typed by a person, a first message of exactly `/wave-auto <list>`, permission modes
+other than `auto`, the cost in USD in the desktop app).
+
+Record: sections `## Setup`, `## Runs`, `## Results`, `## Not verified`, `## Repeat`, as "Record and report (O, P, Q)".
+
 ## Limits
 
 - Known limits of the rehearsals, accepted by the user on 2026-11-25: the interactive TUI, an answer typed by a person,
@@ -810,3 +938,6 @@ the task's report. `Not checked:` holds only runs of the task's own procedure th
 8. The texts of "Fixes after the rehearsals" are in `wave-auto/SKILL.md` and `layout.md` (task N).
 9. Second rehearsal: the three records of tasks O, P and Q; every run of "Second rehearsal" Pass, a Finding with an
    open problem entry, or Not run with its reason.
+10. The rules of "Fixes after the second rehearsal" are in `wave-auto/SKILL.md`, `layout.md`, `task-mode.md` and
+    `wave-status/SKILL.md` (tasks R and S); the record of task T has every run of "Third rehearsal" Pass, a Finding
+    with an open problem entry, or Not run with its reason.
