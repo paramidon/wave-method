@@ -51,7 +51,9 @@ Next ID: I19
   status: open
 - **[I15 · wave 2 / task D / feature F1] Not checked: whether the pipeline works with other Codex permissions** — where: `docs/rehearsals/coordinator-codex-cli.md`, "Not verified";
   expected / got: the permissions it needs are known / neither the bypass option (forbidden by the user for this run) nor an extra writable root for `.git` was tried;
-  proposal: try the extra writable root for `.git` first, since it keeps the sandbox on;
+  proposal: an extra writable root for `.git` was tried by the coordinator on 2026-11-26 and does not help (wave 2,
+  Execution: Codex lists `.git` as both `write` and `read`, and the write is refused); not tried: a custom permission
+  profile or a git directory elsewhere;
   status: open
 - **[I16 · wave 2 / task D / feature F1] Not checked: the model lookup of "Vendors" inside the Codex sandbox** — where: `skills/wave-plan/layout.md`, "Vendors"; `docs/rehearsals/coordinator-codex-cli.md`;
   expected / got: the lookup prints a model ID in a sandboxed thread / no thread ran it;
