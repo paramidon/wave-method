@@ -2,15 +2,17 @@
 
 - Plan: `plans/2026-11-24-desktop-coordinator/plan-2/` · slug: `desktop-coordinator-p2` · tracking branch: `plan/desktop-coordinator-p2` · created 2026-11-25 · base: 56cd0f9 · planned 2026-11-25 23:19 – 2026-11-25 23:46
 - Index: `plans/2026-11-24-desktop-coordinator/index.md` part 2
-- Re-plans: none
+- Re-plans:
+  - 2026-11-26 at 376b527, 01:01 – 01:08: I1, I5, I6 → P2, task H; I2, I3 → P2, task I; new wave 4 (H, I);
+    wave 3 dropped, F and G superseded by J and K in wave 5 · fixes: F1 (I1, I2, I3, I5, I6)
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit | P2 | A (1), B (1), D (2), E (2) | acceptance tests 1–7 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A and B are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, and the Codex CLI (D) and desktop app (E) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason | ⚠️ blocked (I1, I2, I3, I5, I6) | I1, I2, I3, I5, I6 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
-| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3), G (3) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 3 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
+| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit | P2 | A (1), B (1), D (2), E (2), H (4), I (4) | acceptance tests 1–8 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A and B are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI (D) and desktop app (E) rehearsals are recorded with every expectation Pass, a finding with an open entry or Not run with its reason, and the fixes of H and I are in place | ⚠️ blocked (I1, I2, I3, I5, I6 → wave 4) | wave 2 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
+| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5), K (5) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 5 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -20,19 +22,25 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C | ⚠️ I1, I2, I3, I5, I6 |
 | 2 | `waves/w02.md` | D, E | ⬜ |
-| 3 | `waves/w03.md` | F, G (needs F1 merged) | ⬜ |
+| 3 | `waves/w03.md` | F, G (needs F1 merged) | ➖ dropped (tasks → wave 5) |
+| 4 | `waves/w04.md` | H, I | ⬜ |
+| 5 | `waves/w05.md` | J, K (needs F1 merged) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I1, I2, I3 |
-| B | `codex-launch-rules` | F1 | 1 | medium | ⚠️ I5, I6 |
+| A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I1, I2, I3 → tasks H, I |
+| B | `codex-launch-rules` | F1 | 1 | medium | ⚠️ I5, I6 → task H |
 | C | `remove-driver-files` | F2 | 1 | low | ✅ |
 | D | `codex-cli-rehearsal` | F1 | 2 | medium | ⬜ |
 | E | `codex-desktop-rehearsal` | F1 | 2 | medium | ⬜ |
-| F | `unattended-runs-readme` | F2 | 3 | medium | ⬜ |
-| G | `driver-mentions-cleanup` | F2 | 3 | low | ⬜ |
+| F | `unattended-runs-readme` | F2 | 3 | medium | ➖ superseded by J |
+| G | `driver-mentions-cleanup` | F2 | 3 | low | ➖ superseded by K |
+| H | `codex-text-fixes` | F1 | 4 | low | ⬜ |
+| I | `codex-claims-plugin-check` | F1 | 4 | medium | ⬜ |
+| J | `unattended-runs-readme-v2` | F2 | 5 | medium | ⬜ |
+| K | `driver-mentions-cleanup-v2` | F2 | 5 | low | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p2`
@@ -64,6 +72,9 @@ and reach the main branch with each feature merge.
 
 - none (`main` at 56cd0f9, 2026-11-25: 39 status-check tests and 59 driver tests OK, all three examples pass,
   `git diff --check` clean); every task of waves 1 and 2 starts from it or from its feature branch
+- none on the feature branches at the re-plan of 2026-11-26: F1 at bbfbe18 (status-check and driver tests, three
+  examples, `git diff --check main`) and F2 at abfd0a5 (the same without the driver tests); waves 4 and 5 start from
+  them
 
 ## Assumptions
 
@@ -82,7 +93,14 @@ and reach the main branch with each feature merge.
 - The `- Unreleased` changelog item announced the driver, which never reached a release; its sentence is deleted there.
 - The end-to-end rehearsal records stay, with a history note; the driver docs and print-mode records are deleted (git
   history keeps them).
-- Wave 3 waits for F1 merged: F2 edits `README.md`, `layout.md` and `CHANGELOG.md` on top of F1, and its README takes
+- Wave 3 waited for F1 merged: F2 edits `README.md`, `layout.md` and `CHANGELOG.md` on top of F1, and its README takes
   the Codex sandbox and permission mode from F1's rehearsal records.
 - Codex shows no cost in USD; each rehearsal is capped at 3 hours instead.
 - The plan runs in manual flow (no `Flow:` line): the user reviews F1 and F2.
+- Re-plan 2026-11-26: F1's fixes need a wave after wave 2, and `wave-run` starts a wave only when every earlier wave
+  is ✅, ⚠️ or ➖; wave 3 waits for F1 merged, so it is dropped, and its tasks F and G return unchanged as J and K in
+  wave 5.
+- I3's "Markdown viewed rendered" is left to the user's review of F1; task I checks the section by the Markdown rules
+  and runs both plugin commands with a scratch `CODEX_HOME`, so the user's Codex settings stay untouched.
+- Task H also adds "or GPT-6.2-Astra" to the `wave-plan` and `wave-triage` descriptions (not in I1), as `wave-auto`'s
+  already has it.

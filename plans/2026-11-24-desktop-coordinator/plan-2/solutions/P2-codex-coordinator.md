@@ -350,3 +350,119 @@ into the report's `Problems:`.
 6. Rehearsal D: X0–X5 and checks 1–5 recorded; every expectation Pass, a Finding with an open problem entry, or Not
    run with its reason (task D).
 7. Rehearsal E: E0–E4 and its checks recorded likewise (task E).
+8. Re-plan 2026-11-26 (tasks H and I): the five edits of "Text fixes (task H)" are in place; README, layout and
+   changelog claim exactly the Codex rehearsals the records show; `## Plugin install` of the CLI record is Pass, a
+   Finding with an open entry, or Not run with its reason.
+
+## Fixes after wave 1 (re-plan 2026-11-26)
+
+Open entries of wave 1, all of feature F1, round 1. Line numbers are those of
+`feat/desktop-coordinator-p2/F1-codex-coordinator` at bbfbe18; tasks D and E (wave 2) add only their two records, so
+the numbers stay valid for wave 4.
+
+| Entry | Essence | Fixed by |
+|---|---|---|
+| I1 | the `wave-run` description names "GPT-6.1 SOL" | task H, "Text fixes (task H)", item 1 |
+| I5 | the Codex `Capabilities:` example of `wave-auto` is a 133-character prose line | task H, item 4 |
+| I6 | the "Launch groups" row of `wave-run` splits "at once" from the limit | task H, item 5 |
+| I2 | README and layout claim Codex rehearsals before D and E recorded them | task I, "Claims after the rehearsals (task I)" |
+| I3 | the README's two `codex plugin` commands were never run | task I, "Plugin install check (task I)" |
+
+### Text fixes (task H)
+
+1. `skills/wave-run/SKILL.md:3` (frontmatter `description`): `(Sonnet 5.5 / GPT-6.1 SOL)` → `(Sonnet 5.5 / GPT-6.2-Sol)`.
+2. `skills/wave-plan/SKILL.md:3`: `Recommended model: high complexity (Opus-class), because` →
+   `Recommended model: high complexity (Opus-class or GPT-6.2-Astra), because`.
+3. `skills/wave-triage/SKILL.md:3`: `Recommended model: high complexity (Opus-class) — misjudged` →
+   `Recommended model: high complexity (Opus-class or GPT-6.2-Astra) — misjudged`.
+   Items 2 and 3 are not in I1; they make every high-tier description name the GPT model as `wave-auto`'s already
+   does (task B), since Codex shows these descriptions when it lists skills.
+4. `skills/wave-auto/SKILL.md:67-70`, the four lines from `Print one line` through the Codex example and its period,
+   become the text below: the two example lines inside a fenced block, without backticks or a final period. A fenced
+   block may hold lines over 120 characters, as the lookup commands of `layout.md` do.
+
+   ````
+   Print one line `Capabilities: …`, for example in Claude Code and in Codex:
+
+   ```
+   Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no
+   Capabilities: subagents · parallel 3 · model choice (low gpt-6-luna, medium gpt-6.2-sol, high gpt-6.2-astra) · session start no
+   ```
+
+   ````
+
+   A blank line follows the block; then the line `Neither subagents nor starting a session → stop …`, unchanged.
+5. `skills/wave-run/SKILL.md:217`, row "Launch groups": `A group launches at once; up to the parallel limit, the rest
+   as earlier tasks return; without parallel subagents, its tasks run one after another with the same worktrees and
+   checks.` → `A group launches at once, up to the parallel limit; the rest start as earlier tasks return. Without
+   parallel subagents, its tasks run one after another with the same worktrees and checks.` (the row stays one line).
+
+### Claims after the rehearsals (task I)
+
+Read the `## Results` tables of `docs/rehearsals/coordinator-codex-cli.md` (task D) and
+`docs/rehearsals/coordinator-codex-desktop.md` (task E). Definitions:
+
+- **CLI rehearsed**: the CLI record exists and its rows for X2, X3 and X4 are each Pass or Finding (none Not run).
+- **Desktop rehearsed**: the desktop record exists and its rows for E1 and E2 are each Pass or Finding.
+- **Desktop session start**: the `session start` value of the `Capabilities:` line that run E1 quotes: `yes` (with the
+  tool the record names for it, if any), `no`, or not recorded (E1 Not run, or no such line quoted).
+
+Edits, each exactly one of its variants:
+
+1. `README.md:434-435`, Limitations bullet `- **wave-auto** was rehearsed …` (rewrap to at most 120 characters, two-space
+   continuation indent):
+
+   | Case | Bullet |
+   |---|---|
+   | CLI and desktop rehearsed | unchanged |
+   | only CLI | `- **wave-auto** was rehearsed in the Claude Code CLI and desktop app and in the Codex CLI ([rehearsals](docs/rehearsals/)); the Codex desktop app is not rehearsed yet. Its rails (`until`, `steps`) are rules of the skill, not enforced limits.` |
+   | only desktop | `- **wave-auto** was rehearsed in the Claude Code CLI and desktop app and in the Codex desktop app ([rehearsals](docs/rehearsals/)); the Codex CLI is not rehearsed yet. Its rails (`until`, `steps`) are rules of the skill, not enforced limits.` |
+   | neither | `- **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)); in Codex it is not rehearsed yet. Its rails (`until`, `steps`) are rules of the skill, not enforced limits.` |
+
+2. `skills/wave-plan/layout.md:160`, "Vendors" row `starting a session`, Codex cell
+   `none in the CLI; the desktop app as its rehearsal recorded (`docs/rehearsals/coordinator-codex-desktop.md`)`:
+
+   | Desktop session start | Codex cell |
+   |---|---|
+   | `yes`, tool named | `none in the CLI; the desktop app: `<tool>` (`docs/rehearsals/coordinator-codex-desktop.md`)` |
+   | `yes`, no tool named | `none in the CLI; the desktop app: yes (`docs/rehearsals/coordinator-codex-desktop.md`)` |
+   | `no` | `none in the CLI or the desktop app (`docs/rehearsals/coordinator-codex-desktop.md`)` |
+   | not recorded | `none in the CLI; the desktop app not verified, so treat it as missing` |
+
+3. `skills/wave-plan/CHANGELOG.md:45-46`, the end of the Codex sentence of the `- Unreleased` item,
+   `README shows the Codex plugin install;` and `rehearsals of `$wave-auto` in the Codex CLI and desktop app.`:
+
+   | Case | End of the sentence |
+   |---|---|
+   | CLI and desktop rehearsed | unchanged |
+   | only CLI | `…; README shows the Codex plugin install; a rehearsal of `$wave-auto` in the Codex CLI.` |
+   | only desktop | `…; README shows the Codex plugin install; a rehearsal of `$wave-auto` in the Codex desktop app.` |
+   | neither | `…; README shows the Codex plugin install.` |
+
+   Rewrap only the last lines of that item, at most 120 characters, two-space indent.
+
+Nothing else of the README, layout or changelog changes: the other Codex sentences describe what the skills support,
+not what was rehearsed.
+
+### Plugin install check (task I)
+
+Proves the two commands of README "Codex plugin (recommended for Codex)" without touching the user's Codex settings:
+Codex reads its home from `CODEX_HOME` (default `~/.codex`, "Vendors"), so the check runs with a fresh one in a scratch
+folder.
+
+1. `<codex>` as in Rehearsal D. None → result `Not run (Codex CLI missing)`.
+2. Hash `~/.codex/config.toml` (`sha256sum`, PowerShell `Get-FileHash`) before; keep it.
+3. `export CODEX_HOME=<scratch>/codex-home` (create the folder first); every call with stdin closed (`< /dev/null`):
+   `<codex> plugin marketplace add paramidon/wave-method`, then `<codex> plugin add wave-method@wave-method`, then
+   `<codex> plugin list`.
+4. Expected: both commands exit 0; `plugin list` prints a line with `wave-method@wave-method` and `installed`; the hash
+   of `~/.codex/config.toml` after is the one before.
+5. A command that Codex rejects as unknown or malformed is a Finding (the README commands are wrong); do not try other
+   commands. A failure for another reason (network, sign-in) is Not run, with the error quoted.
+6. Markdown of that README section, by `layout.md` "Markdown rules": a blank line before and after the fenced block and
+   the paragraphs; its heading level `###`, like `### Claude Code plugin (recommended for Claude Code)`. Its rendered
+   view is left to the user's review of F1.
+
+Recorded as a new last section `## Plugin install` of `docs/rehearsals/coordinator-codex-cli.md`: the Codex version,
+each command with its exit and deciding output lines, whether the two hashes are equal (not the hash values), the
+Markdown check, and one result line: Pass, Finding or Not run. Paths as `<scratch>` and `~`.
