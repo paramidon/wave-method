@@ -40,3 +40,22 @@
   current folder.
 - Feature branch at b3b69ff checked green before writing: 39 status-check tests, 59 driver tests, the three examples,
   `git diff --check main`.
+
+## Re-plan 3 · 2026-11-25 at be54998
+
+- Open entries: I13, I14, I15, I18, I19, I20, I26 (wave 4). The other entries of wave 4 were accepted by the user as
+  known limits before this re-plan (commit 99a7ba1). All seven are defects of P1's texts, so they stay in P1.
+- F1 is at round 2 of "Re-plan escalation" (re-plan 2 named it under `fixes:`): escalated. Every disputed assumption
+  was checked by running commands in a scratch folder and on the feature branch; the evidence is in the solution,
+  "Fixes after the second rehearsal", "Evidence" (E1–E7). Every new task is `high`. The plan stays in manual flow, so
+  there is no `manual review:` list to extend.
+- I13, I15, I18, I19, I20 → task R (`wave-auto/SKILL.md`, `layout.md`); I14, I26 → task S (`task-mode.md`,
+  `wave-status/SKILL.md`). Two design choices beyond the entries' proposals: the run-ending `capability-missing` of the
+  coordinator is renamed `no-subagents`, so no code appears in both tables of "Stops"; the step count follows the
+  coordinator's agent calls, not its progress lines, because skipped progress lines are an accepted limit. One gap
+  closed in passing: Start phase 4 now says to ask nothing when the index has no question.
+- The user was asked whether to check the fixes in real runs; the answer, 2026-11-25: «Fixes + short rehearsal
+  (Recommended)» → task T, a CLI rehearsal of four runs, 8 USD cap for its `claude -p` calls. A finding of T is a new
+  entry of F1 and makes the next re-plan round 3: held until the user's `override F1: <direction>`.
+- Feature branch at be54998 checked green before writing: 39 status-check tests, 59 driver tests, the three examples,
+  `git diff --check main`.
