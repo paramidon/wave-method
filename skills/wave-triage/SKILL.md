@@ -111,9 +111,9 @@ subagent, re-judging and dependency procedure below applies to lists of more tha
 mode, use the same checklist, difficulty criteria and dependency checks on the inline records.
 
 For more than 8 problems, when the environment has subagents (`layout.md`, "Environment capabilities"), run
-one read-only subagent per cluster, tier `medium`, all at once where the environment allows parallel
-subagents, otherwise one after another. In a coordinated run the coordinator launches them (`cluster` form of
-"Coordinated phases"). Read-only applies to project code; the only permitted writes
+one read-only subagent per cluster, tier `medium`, all at once up to the parallel limit (`layout.md`,
+"Environment capabilities"), otherwise one after another. In a coordinated run the coordinator launches them
+(`cluster` form of "Coordinated phases"). Read-only applies to project code; the only permitted writes
 are that subagent's assigned `triage/P<n>.md` records. Its prompt must include:
 - The cluster's problems with their one-line restatements, the user's words and the answers.
 - The checklist above (Where, Likely cause, Difficulty with `difficulty.md`, Size, Depends on).

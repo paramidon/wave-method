@@ -39,6 +39,11 @@ and no other file carries a version. Changes since the last tag go into a line
   start. `wave-triage` gains the phases `ask`, `answers`, `cluster` and `finish`; a task-mode session puts its report
   block into its last commit's body, does not redo a committed task and takes fix requests from the wave file;
   `wave-run` stops `manual-flow` in a coordinated run of a manual plan. Installers and the plugin list the fifth skill.
+  Codex: the model tiers name GPT models with exact IDs (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`); a Codex agent,
+  which cannot name its model, takes it from the rollout of its thread for the tier gate (`layout.md`, "Vendors",
+  model lookup); `layout.md` "Vendors" says how each capability is reached in Claude Code and Codex, and every skill
+  launches at most the environment's parallel limit of subagents at once; README shows the Codex plugin install;
+  rehearsals of `$wave-auto` in the Codex CLI and desktop app.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has
