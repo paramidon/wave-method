@@ -29,7 +29,7 @@ Merged: short hash of the merge commit into the main branch.
 | 4 | `waves/w04.md` | H, I | ➖ dropped (tasks → waves 6, 7) |
 | 5 | `waves/w05.md` | J, K (needs F1 merged) | ➖ dropped (tasks → wave 8) |
 | 6 | `waves/w06.md` | L, M | ✅ |
-| 7 | `waves/w07.md` | N, O, P (after N, O) | ⬜ |
+| 7 | `waves/w07.md` | N, O, P (after N, O) | 🔄 since 2026-11-26 03:16 |
 | 8 | `waves/w08.md` | Q, R (needs F1 merged) | ⬜ |
 
 ## Tasks
@@ -49,9 +49,9 @@ Merged: short hash of the merge commit into the main branch.
 | K | `driver-mentions-cleanup-v2` | F2 | 5 | low | ➖ superseded by R |
 | L | `codex-permissions-gate` | F1 | 6 | high | ✅ |
 | M | `wave-auto-codex-rules` | F1 | 6 | high | ✅ |
-| N | `codex-cli-rehearsal-v2` | F1 | 7 | high | ⬜ |
-| O | `codex-desktop-rehearsal-v2` | F1 | 7 | high | ⬜ |
-| P | `codex-claims-after-rehearsals` | F1 | 7 | high | ⬜ |
+| N | `codex-cli-rehearsal-v2` | F1 | 7 | high | 🔄 |
+| O | `codex-desktop-rehearsal-v2` | F1 | 7 | high | 🔄 |
+| P | `codex-claims-after-rehearsals` | F1 | 7 | high | 🔄 |
 | Q | `unattended-runs-readme-v3` | F2 | 8 | medium | ⬜ |
 | R | `driver-mentions-cleanup-v3` | F2 | 8 | low | ⬜ |
 
