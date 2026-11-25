@@ -24,6 +24,8 @@ Pipeline: `wave-triage` → `wave-plan` (one run per part, fresh session each) �
   keep it for the run. Manual: every step below as written. Autonomous: the answers of that subsection replace every
   question below; never ask the user. A stop is the first line after `Started:`:
   `Stop <code>: <one line> — next: <command or action>`.
+- **Coordinated run** (`layout.md`, "Coordinated runs"; steps `plan` and `re-plan`): autonomous flow of planning; ask
+  nothing; end with the return line of that section instead of the answer of step 9.
 - **A part of an index** — both forms (`layout.md`, "Commands"):
   `/wave-plan plans/<date>-<topic>/index.md part <K>` · `$wave-plan plans/<date>-<topic>/index.md part <K>`.
   Read `index.md` and, when they exist, the records `triage/P<n>.md` of part K's problems only. The index and
@@ -288,7 +290,8 @@ round (escalated, or held with its override command in both forms), and **the ne
 `/wave-run <plan folder> 1` · `$wave-run <plan folder> 1`, in a fresh session. The coordinator is always medium.
 Say which tasks may need task mode (`Needs`, or a tier the environment may lack). If the plan came from an
 index, also list the index's other parts and their commands, saying which can be planned now and which
-wait for a merge. End with the `Started: … · Finished: …` line (`layout.md`, "Run times").
+wait for a merge. End with the `Started: … · Finished: …` line (`layout.md`, "Run times"). In a coordinated run
+(`layout.md`, "Coordinated runs") end with its return line instead of this answer.
 
 In autonomous flow include every `Assumed (autonomous, not asked)` line, with no remaining questions. Say that the
 plan is on `integration/<name>` until the user merges that branch, and mark the other parts by the chain check.

@@ -8,7 +8,7 @@
     {
       "name": "wave-method",
       "source": "./",
-      "description": "Triage a list of problems, plan it into waves of parallel subagent tasks, run them in git worktrees and merge finished features."
+      "description": "Triage a list of problems, plan it into waves of parallel subagent tasks, run them in git worktrees and merge finished features, or run it all from one command in one session."
     }
   ]
 }

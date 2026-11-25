@@ -1,7 +1,7 @@
 {
   "name": "wave-method",
   "version": "2.12.0",
-  "description": "Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished: wave-triage, wave-plan, wave-run and wave-status skills.",
+  "description": "Plan once with a strong model, execute in parallel with cheaper ones, merge only what is finished: wave-triage, wave-plan, wave-run, wave-status and wave-auto skills.",
   "author": {
     "name": "paramidon",
     "url": "https://github.com/paramidon"

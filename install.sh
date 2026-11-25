@@ -29,7 +29,7 @@ done
 source_dir=$(cd "$(dirname "$0")/skills" && pwd)
 claude_skills="$target/.claude/skills"
 agent_skills="$target/.agents/skills"
-skills="wave-triage wave-plan wave-run wave-status"
+skills="wave-triage wave-plan wave-run wave-status wave-auto"
 
 mkdir -p "$claude_skills"
 for name in $skills; do
