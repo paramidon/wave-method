@@ -50,7 +50,8 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
   and read the clock.
 - It writes the user only what this skill names: the `Started:` and `Capabilities:` lines, the progress lines, the
   `Resume:` line, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
-  summary, comment or explanation of its own.
+  summary, comment or explanation of its own. Its first message starts with the `Started:` line: no sentence comes
+  before it.
 
 ## Capabilities
 
@@ -60,23 +61,32 @@ At the start, from the tools this session has (`wave-plan/layout.md`, "Environme
 - parallel subagents, and their limit (`wave-plan/layout.md`, "Environment capabilities", "Parallel limit");
 - model choice per subagent: which choice names a model of each tier, from the row of this vendor in
   `wave-plan/layout.md`, "Vendors" (Claude Code `haiku`, `sonnet`, `opus`; Codex the model IDs of "Model tiers"); a
-  README `Models:` line may only name a tier or higher;
+  README `Models:` line may only name a tier or higher. Name each tier's model as that row says, also when the tool
+  does not list it; never launch a step on another tier's model;
 - starting a session;
+- git writes: whether this session may write the main checkout's `.git` and the folder that holds it — in Codex,
+  from the sandbox and writable folders its environment states (`wave-plan/layout.md`, "Vendors", "Permissions in
+  Codex"); no → stop `git-read-only` before any step;
 - the tools a task's `Needs` names (checked when a task needs one).
 
-Print one line `Capabilities: …`, for example
-`Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no`
-or, in Codex,
-`Capabilities: subagents · parallel 3 · model choice (low gpt-6-luna, medium gpt-6.2-sol, high gpt-6.2-astra) · session start no`.
+Print one line `Capabilities: …`, for example in Claude Code and in Codex:
+
+```
+Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no
+Capabilities: subagents · parallel 3 · model choice (low gpt-6-luna, medium gpt-6.2-sol, high gpt-6.2-astra) · session start no
+```
+
 Neither subagents nor starting a session → stop `no-subagents`, `next:` the manual commands (`/wave-triage`,
 `/wave-plan`, `/wave-run`, in both forms).
 
 ## Step prompt
 
-Every step's subagent gets exactly this prompt (the first line only for a medium or high step):
+Every step's subagent gets exactly this prompt (the first line only for a medium or high step; the second only for
+such a step where the vendor states no model ID: `wave-plan/layout.md`, "Tier gate", "Lookup line"):
 
 ```
 Required tier: <tier> — <models of that tier or higher>. Stop if this session runs a weaker model.
+Model lookup: this environment states no model ID; before reading or changing anything, run this command and take its one output line as the exact model you run on: <command>
 Coordinated run · step <step> · unit <unit> · return: wave-plan/layout.md, "Coordinated runs"
 Skills folder: <absolute wave skills folder>
 Repository: <absolute path of the main checkout>
@@ -250,6 +260,11 @@ The Steps table has one row per step this run launched other than `navigate` and
 `<n>` in `Run:` is the number of its rows, counted after the table is written, never from memory. Halts lists the
 `halt` lines the navigator returned and the units halted by "Results of steps".
 
+`<start>` in the title and in `Continue:` is the start as typed: for a list start the index path once `triage-ask`
+returned one, else the list verbatim; never a summary, a title of its own or a placeholder such as
+`<original list>`. The Result cell is the step's return line, verbatim. Every Halts line ends with
+`— next: <command or action>`.
+
 The final report is this template and nothing else: no paragraph, section or note is added between or inside its
 parts, the `status` report is copied verbatim, and nothing follows the `Started: … · Finished: …` line. `### Next`
 holds only the `Continue:` line, or `- none` when nothing is halted, waiting or cut by a rail. After the `status` step
@@ -267,6 +282,7 @@ Stops that end the run:
 |---|---|---|
 | `no-start` | the command has no `<start>` | `/wave-auto <list>`<br>`$wave-auto <list>`<br>`/wave-auto plans/<date>-<topic>/index.md`<br>`$wave-auto plans/<date>-<topic>/index.md`<br>`/wave-auto <plan folder>`<br>`$wave-auto <plan folder>` |
 | `no-subagents` | the session has neither subagents nor a way to start a session | `/wave-triage <list>`<br>`$wave-triage <list>`<br>`/wave-plan <index path> part <K>`<br>`$wave-plan <index path> part <K>`<br>`/wave-run <plan folder> <N>`<br>`$wave-run <plan folder> <N>` |
+| `git-read-only` | the session cannot write the main checkout's `.git` ("Capabilities"), or a step returns it | grant the permissions of `wave-plan/layout.md`, "Vendors", "Permissions in Codex", then `/wave-auto <start>`<br>`$wave-auto <start>` |
 | `wave-running` | the coordinator claim is refused and the user said the holder is not gone | wait for the holder, or release `refs/wave-method/claims/auto/<name>` once sure no `wave-auto` session runs, then `/wave-auto <start>`<br>`$wave-auto <start>` |
 | `target-unsafe`, `target-conflict`, `target-unmerged`, any `triage-*` stop | passed through from a step ("Results of steps") | the `next:` of the step's own stop line |
 
