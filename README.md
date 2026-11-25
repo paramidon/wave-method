@@ -59,6 +59,24 @@ codex plugin add wave-method@wave-method
 
 Type the commands with `$` in Codex (`$wave-plan …`).
 
+### Codex permissions
+
+The skills write branches and commits in `.git` and create worktrees next to the project
+(`../<project>.worktrees/`). Codex's default `workspace-write` sandbox keeps `.git` read-only, so give Codex this
+permission profile in `<project>/.codex/config.toml` (absolute paths; `<parent>` is the folder that holds the
+project):
+
+```toml
+default_permissions = "wave"
+
+[permissions.wave]
+filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<project>/.codex" = "read" }
+```
+
+The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep the file
+out of git (add `.codex/config.toml` to `.git/info/exclude`). Where the profile cannot be used, full access works
+too (`codex -s danger-full-access`). Details: `skills/wave-plan/layout.md`, "Vendors".
+
 ### Installer (a copy inside the project)
 
 Clone this repository and run the installer against your project. It copies the skills into `<project>/.claude/skills/` and links them into
