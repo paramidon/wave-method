@@ -69,7 +69,7 @@ an escalated re-plan in autonomous flow adds features to its `manual review:` li
 A plan is created from, and merged into, `<main>`: the main branch in manual flow, the integration branch in
 autonomous flow.
 
-Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.1 SOL). They implement
+Core idea: executors are medium-complexity models (Sonnet 5.5, GPT-6.2-Sol). They implement
 a given solution well and design poorly. So every design decision is made here and written into the plan.
 If a task prompt says "figure out how", the design is not finished.
 

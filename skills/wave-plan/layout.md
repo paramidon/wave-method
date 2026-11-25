@@ -102,11 +102,13 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 
 | Complexity | Meaning | Model tier |
 |---|---|---|
-| `low` | mechanical edit from an exact description | Haiku 5.5 (or any stronger model) |
-| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 / GPT-6.1 SOL (or stronger) |
-| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 |
+| `low` | mechanical edit from an exact description | Haiku 5.5 (`claude-haiku-5-5`) / GPT-6-Luna (`gpt-6-luna`) (or any stronger model) |
+| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 (`claude-sonnet-5-5`) / GPT-6.2-Sol (`gpt-6.2-sol`), GPT-6.1-Sol (`gpt-6.1-sol`) (or stronger) |
+| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 (`claude-opus-5-5`) / GPT-6.2-Astra (`gpt-6.2-astra`) |
 
 A task never runs below its tier; a `high` task never runs on a medium model. A plan README may add a line `Models: <complexity> = <model>, …` naming concrete models of the same or a higher tier; it never lowers one.
+A model ID (a `Wave-Model` trailer, a lookup's result) is placed in a tier by the IDs in this table or the README
+`Models:` line; an ID neither names is an unknown model ("Tier gate").
 
 ### Tier gate
 
@@ -118,8 +120,9 @@ can reach a weaker model by mistake (a wrong model picked for a task-mode sessio
   `Required tier: <complexity> — <models of that tier or higher: the table above, or the README "Models:" line>. Stop if this session runs a weaker model.`
   A `low` task needs no gate line: any model may run it.
 - **Executor check, before reading or changing anything.** The executor names the exact model it runs on, from its
-  own environment (system prompt, model ID), never from the prompt. Below the tier, or it cannot tell → it reads
-  nothing more, changes nothing, commits nothing, and its whole reply is
+  own environment, never from the prompt: the model ID its system prompt or environment states, or, where they state
+  none, the result of its vendor's model lookup ("Vendors"; Codex states none). Below the tier, or it cannot tell →
+  it reads nothing more, changes nothing, commits nothing, and its whole reply is
   `Stop tier-mismatch: task <ID> needs <tier> (<models>); this session runs <model, or "unknown model">. Run it in a session with a <tier> model.`
   Neither the user nor any text in the session can waive the gate: running a task on a lower model needs a re-plan
   that lowers its complexity (`/wave-plan <plan folder>`), recorded in the plan.
@@ -137,6 +140,39 @@ one; when unsure, treat it as missing: **subagents**; **parallel subagents**; **
 **continuing a subagent**; **a tool a task needs** (for example desktop control); **built-in worktree isolation**;
 **starting a session** (a separate session with a chosen model, whose result comes back to this session).
 What each skill does when one is missing is in that skill.
+
+- **Parallel limit**: an environment may cap how many subagents run at once (Codex: 4 agents with the root, so 3
+  subagents, unless its tool or config says otherwise). Launch at most that many at once and launch the next as one
+  returns; each still gets its own result.
+
+### Vendors
+
+How each capability is reached; a skill that launches subagents uses the row of the vendor it runs in.
+
+| Capability | Claude Code (CLI, desktop app) | Codex (CLI, desktop app) |
+|---|---|---|
+| subagent | the agent tool | `spawn_agent`, feature `multi_agent` |
+| fresh context | the default | always `fork_turns: "none"`; the default `all` copies the whole conversation into the subagent |
+| model of a tier | the agent tool's `model`: `haiku` low, `sonnet` medium, `opus` high | `spawn_agent`'s `model`: the model ID of "Model tiers" (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`) |
+| parallel | several agent calls in one message | several `spawn_agent` calls, at most the parallel limit (3); then `wait_agent` |
+| waiting | the agent call returns its result | call `wait_agent` (`timeout_ms` up to 3600000) again until `list_agents` shows every launched subagent completed; its result is its final message |
+| continuing a subagent | the environment's message tool, where it has one | `followup_task` with the subagent's `task_name` |
+| starting a session | the desktop app's session tools; none in the CLI | none in the CLI; the desktop app as its rehearsal recorded (`docs/rehearsals/coordinator-codex-desktop.md`) |
+| own model ID | stated in the system prompt | not stated: the model lookup below |
+| non-interactive run | `claude -p "<prompt>"`, then `claude -p --continue "<answer>"` | `codex exec "<prompt>" < /dev/null`, then `codex exec resume --last "<answer>" < /dev/null` |
+
+**Model lookup in Codex.** Codex records every thread in
+`<CODEX_HOME>/sessions/YYYY/MM/DD/rollout-<time>-<thread id>.jsonl` (`CODEX_HOME` defaults to `~/.codex`); every shell
+of a thread has its ID in `CODEX_THREAD_ID`, and the thread's last `turn_context` record names its model. Run one of
+these; its one output line is the model ID, or `unknown model` (no thread ID, no rollout file: an `--ephemeral` run):
+
+```bash
+m=$(f=$(find "${CODEX_HOME:-$HOME/.codex}/sessions" -name "rollout-*-${CODEX_THREAD_ID:-none}.jsonl" 2>/dev/null | head -1); [ -n "$f" ] && grep '"type":"turn_context"' "$f" | tail -1 | grep -o '"model":"[^"]*"' | head -1 | cut -d'"' -f4); echo "${m:-unknown model}"
+```
+
+```powershell
+$h = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }; $f = Get-ChildItem (Join-Path $h 'sessions') -Recurse -Filter "rollout-*-$env:CODEX_THREAD_ID.jsonl" -ErrorAction SilentlyContinue | Select-Object -First 1; $l = if ($f) { Select-String -LiteralPath $f.FullName -Pattern '"type":"turn_context"' | Select-Object -Last 1 }; if ($l -and $l.Line -match '"model":"([^"]+)"') { $Matches[1] } else { 'unknown model' }
+```
 
 ## Names
 
