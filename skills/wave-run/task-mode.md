@@ -6,10 +6,19 @@ One task in one fresh session, whose model is of the task's tier or higher and w
 
 - Coordinator: in step 4 prepare the task's worktree (task worktree or feature worktree, see `SKILL.md` step 4) but
   do not launch it. When the other tasks of the wave are merged and checked, end the wave file's Execution with
-  `Waiting: task mode <ID>[ (fix <k>/2)], … — next: <commands>`, commit `Plan <plan>: wave <N> waiting for task mode` (the wave
-  stays 🔄), and report one command per task in launch-group order, in both forms (`layout.md`, "Commands"):
-  `/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>` —
-  "fresh session, model: <models of the task's tier> (<tier>), needs <tool>".
+  `Waiting: task mode <ID>[ (fix <k>/2)], … — next: <commands>`, where `<commands>` is one pair
+  `/wave-run <plan folder> <N> task <ID> · $wave-run <plan folder> <N> task <ID>` per ID, in the order of the IDs,
+  the pairs separated by `; `, with the plan folder and the wave number written out, never one form alone, for
+  example
+
+  ```
+  Waiting: task mode A, B (fix 1/2) — next: /wave-run plans/2026-11-02-hop-tuning 3 task A · $wave-run plans/2026-11-02-hop-tuning 3 task A; /wave-run plans/2026-11-02-hop-tuning 3 task B · $wave-run plans/2026-11-02-hop-tuning 3 task B
+  ```
+
+  commit `Plan <plan>: wave <N> waiting for task mode` (the wave stays 🔄), and report one command per task in
+  launch-group order, in both forms (`layout.md`, "Commands"): `/wave-run <plan folder> <N> task <ID>` ·
+  `$wave-run <plan folder> <N> task <ID>` — "fresh session, model: <models of the task's tier> (<tier>), needs
+  <tool>".
 - Task session (`/wave-run <plan folder> <N> task <ID>` · `$wave-run <plan folder> <N> task <ID>`):
   first apply the tier gate (`layout.md`, "Tier gate"): name the exact model this session runs on; below the
   task's tier, or unknown → stop `tier-mismatch` and do nothing else. Then check the wave is 🔄 with
