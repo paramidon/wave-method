@@ -1,6 +1,6 @@
 ---
 name: wave-auto
-description: Runs the whole wave pipeline from one command inside one session — triage of a list (its clarifying questions asked once, at the start), the plan of every part and every wave, in autonomous flow — as a coordinator that delegates each step to a subagent and keeps one line per step. Git and plans/ are its only memory, so the same command in a new session continues where the last one stopped. Use when the user runs "/wave-auto <list | index | plan folder>" or "$wave-auto …", or asks to run the pipeline unattended in one session ("запусти всё сам", "прогони от списка до мержа"). Recommended model: high complexity (Opus-class) — a subagent without a model choice inherits it.
+description: Runs the whole wave pipeline from one command inside one session — triage of a list (its clarifying questions asked once, at the start), the plan of every part and every wave, in autonomous flow — as a coordinator that delegates each step to a subagent and keeps one line per step. Git and plans/ are its only memory, so the same command in a new session continues where the last one stopped. Use when the user runs "/wave-auto <list | index | plan folder>" or "$wave-auto …", or asks to run the pipeline unattended in one session ("запусти всё сам", "прогони от списка до мержа"). Recommended model: high complexity (Opus-class or GPT-6.2-Astra) — a subagent without a model choice inherits it.
 ---
 
 # wave-auto — run triage, plans and waves from one session
@@ -57,14 +57,17 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
 At the start, from the tools this session has (`wave-plan/layout.md`, "Environment capabilities"), find out:
 
 - subagents;
-- parallel subagents;
-- model choice per subagent: which choice names a model of each tier. In Claude Code the agent tool's `haiku` = low,
-  `sonnet` = medium, `opus` = high; a README `Models:` line may only name a tier or higher;
+- parallel subagents, and their limit (`wave-plan/layout.md`, "Environment capabilities", "Parallel limit");
+- model choice per subagent: which choice names a model of each tier, from the row of this vendor in
+  `wave-plan/layout.md`, "Vendors" (Claude Code `haiku`, `sonnet`, `opus`; Codex the model IDs of "Model tiers"); a
+  README `Models:` line may only name a tier or higher;
 - starting a session;
 - the tools a task's `Needs` names (checked when a task needs one).
 
 Print one line `Capabilities: …`, for example
-`Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no`.
+`Capabilities: subagents · parallel · model choice (low haiku, medium sonnet, high opus) · session start no`
+or, in Codex,
+`Capabilities: subagents · parallel 3 · model choice (low gpt-6-luna, medium gpt-6.2-sol, high gpt-6.2-astra) · session start no`.
 Neither subagents nor starting a session → stop `no-subagents`, `next:` the manual commands (`/wave-triage`,
 `/wave-plan`, `/wave-run`, in both forms).
 
@@ -90,6 +93,8 @@ runs"; `<tier>` is its Tier column, and `<models of that tier or higher>` come f
 `<skill>` and `<arguments>` and replaces the last three lines with
 `Read <skills folder>/wave-auto/navigator.md and follow it with: start <start> · skip <units, or none>`.
 The `triage-answers` step appends `Answers:` and the user's answer verbatim. Model: the tier's model choice.
+Launch every step with a fresh context and its tier's model, as the row of this vendor in `wave-plan/layout.md`,
+"Vendors", says (Codex: `fork_turns: "none"`, `model: <model ID>`), and wait for its result as that row says.
 
 `<unit>`: a plan folder; for an index part not planned yet, the folder its plan will have
 (`plans/<date>-<topic>/plan-<K>`); before the index has parts, the index path; for `triage-ask` of a list start, which
@@ -134,7 +139,7 @@ repeat:
 | Navigator line | Dispatch |
 |---|---|
 | `next: ask <index path>` | start phase only: the questions of 4 of the start phase, then `triage-answers` |
-| `next: triage-cluster <index path> <cluster> …` | one `triage-cluster` step per cluster, in parallel where possible, then `triage-finish` |
+| `next: triage-cluster <index path> <cluster> …` | one `triage-cluster` step per cluster, in parallel up to the parallel limit, then `triage-finish` |
 | `next: triage-finish <index path>` | `triage-finish` |
 | `next: plan <index path> part <K>` | `plan` |
 | `next: ask-flow <plan folder>` | start phase only: 4 of the start phase |
@@ -162,8 +167,9 @@ result is its `next:` or `done` line.
 `wave` step → while it returns `waiting …`, for the tasks it lists:
 
 1. Launch one `task` step for every listed task that can run here as a subagent of its tier (its `Needs` tools are in
-   this session), in parallel where the environment allows: all in one message, each on its tier's model. Wait until
-   every one of them has returned.
+   this session), in parallel up to the parallel limit, each on its tier's model: all of them at once when the limit
+   allows (in Claude Code in one message), otherwise the next as one returns. Wait until every one of them has
+   returned.
 2. Only then: each listed task that cannot run here goes to "Session fallback".
 3. No task of 1 returned a stop (`tier-mismatch`, `capability-missing`, …) and no task of 2 was halted → the `wave`
    step again (the resume). Otherwise halt the unit with the first such stop or halt, and do not resume: the commits

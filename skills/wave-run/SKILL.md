@@ -78,8 +78,8 @@ file's Execution (`Capabilities: …`).
 | Capability | Used for | If missing |
 |---|---|---|
 | subagents | every task | every task runs in task mode |
-| parallel subagents | one launch group at once | launch the group's tasks one after another; same worktrees and checks |
-| model choice per subagent | tiers | a task whose tier is at most the default subagent model's tier runs as usual; a higher task runs in task mode on a model of its tier; no such model in the environment → stop `tier-missing` |
+| parallel subagents | one launch group at once, up to the parallel limit (`layout.md`, "Environment capabilities") | launch the group's tasks one after another; same worktrees and checks |
+| model choice per subagent | tiers; the model of a tier per vendor: `layout.md`, "Vendors" | a task whose tier is at most the default subagent model's tier runs as usual; a higher task runs in task mode on a model of its tier; no such model in the environment → stop `tier-missing` |
 | continuing a subagent | commit requests, fixes, conflicts | a new subagent of the same tier gets the original prompt, the previous report, the diff of its work and the error text; it counts as an attempt |
 | a tool from the task's `Needs` | that task | the task runs in task mode, in a session that has the tool |
 | built-in worktree isolation | optional | `git worktree add` as in step 4 (the default) |
@@ -214,7 +214,7 @@ For each feature that has a task in this wave:
 
 | Rule | What it says |
 |---|---|
-| Launch groups | Group 1 is every task whose `After` is `—`. A task starts when every task in its `After` is in its feature branch and the check command is green. A group launches at once; without parallel subagents, its tasks run one after another with the same worktrees and checks. |
+| Launch groups | Group 1 is every task whose `After` is `—`. A task starts when every task in its `After` is in its feature branch and the check command is green. A group launches at once; up to the parallel limit, the rest as earlier tasks return; without parallel subagents, its tasks run one after another with the same worktrees and checks. |
 | Placement | A task runs **direct** (feature worktree, feature branch) unless another task of its feature is in the same group; then each such task gets a task worktree and branch (`layout.md`, "Names"). Direct tasks of different features may share a group. |
 | Task mode | A task that step 1 sent to task mode is prepared in its worktree but not launched (`task-mode.md`). |
 
