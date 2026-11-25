@@ -29,7 +29,7 @@ Merged: short hash of the merge commit into the main branch.
 | 2 | `waves/w02.md` | F, G, H, I | ➖ dropped (tasks → wave 3) |
 | 3 | `waves/w03.md` | J, K, L (after J, K), M (after J, K) | ✅ (I3 accepted by the user) |
 | 4 | `waves/w04.md` | N, O (after N), P (after N), Q (after N) | ⚠️ I13, I14, I15, I18, I19, I20, I26 |
-| 5 | `waves/w05.md` | R, S, T (after R, S) | ⬜ |
+| 5 | `waves/w05.md` | R, S, T (after R, S) | 🔄 since 2026-11-25 21:35 |
 
 ## Tasks
 
@@ -52,9 +52,9 @@ Merged: short hash of the merge commit into the main branch.
 | O | `coordinator-flow-rehearsal` | F1 | 4 | medium | ⚠️ I13, I14, I15 |
 | P | `coordinator-stops-rehearsal` | F1 | 4 | medium | ⚠️ I18, I19, I20 |
 | Q | `coordinator-triage-rehearsal` | F1 | 4 | medium | ⚠️ I26 |
-| R | `coordinator-halt-claim-fixes` | F1 | 5 | high | ⬜ |
-| S | `status-triage-waiting-forms` | F1 | 5 | high | ⬜ |
-| T | `coordinator-fix-rehearsal` | F1 | 5 | high | ⬜ |
+| R | `coordinator-halt-claim-fixes` | F1 | 5 | high | 🔄 |
+| S | `status-triage-waiting-forms` | F1 | 5 | high | 🔄 |
+| T | `coordinator-fix-rehearsal` | F1 | 5 | high | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p1`
