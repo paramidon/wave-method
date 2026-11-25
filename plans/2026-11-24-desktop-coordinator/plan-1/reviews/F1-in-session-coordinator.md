@@ -1,6 +1,30 @@
 # F1 · In-session coordinator
 
 - Branch: `feat/desktop-coordinator-p1/F1-in-session-coordinator` · worktree: `D:/Documents/orbits/wave-method.worktrees/desktop-coordinator-p1-F1`
+- 👀 review since 2026-11-25 22:53
+
+## Essence
+
+Before: only `python scripts/wave_driver.py` chained the pipeline steps, from a terminal, and it never triaged. After:
+`/wave-auto <list>` in an interactive Claude Code session asks its questions once, then triages, plans and runs the
+waves through subagents and merges the features into an integration branch.
+
+## How to test
+
+1. Type `/wave-auto` and a list of two or three small changes → the questions come once (or not at all), then the steps
+   run on their own and a status report shows the features `✅ merged` into `integration/<topic>`; `main` is unchanged.
+2. Close the session mid-run and type `/wave-auto plans/<date>-<topic>/index.md` in a new one → it continues where it
+   stopped.
+3. Type `/wave-auto steps 1 <list>` → it ends with `ended by rail: steps 1`, and the status shows a triage in progress
+   with the `/wave-auto <index path>` command.
+
+## Worth a look
+
+- Accepted limits: some progress lines are skipped and extra remarks appear; no `Resume:` line after a triage without
+  questions, so after closing early take the command from `/wave-status`.
+- Task mode of `wave-run` changed for every user, not only for the coordinator.
+- The last rehearsal ran in the CLI with a Sonnet 5.5 coordinator only; the desktop app was not rehearsed again after
+  the later fixes.
 
 ## Tasks
 
@@ -17,17 +41,12 @@
 - O (wave 4) — the CLI rehearsal of the flow (rail, resume, already committed tasks, re-plan, two merged features) is recorded in `docs/rehearsals/coordinator-cli-flow.md`: the pipeline works, six deviations from the skill texts (I10–I15).
 - P (wave 4) — the CLI rehearsal of early stops (missing tool, halted unit, `until` rail, killed session and resume without the plugin) is recorded in `docs/rehearsals/coordinator-cli-stops.md`: stops and resume work, eight findings (I16–I23).
 - Q (wave 4) — a ten-problem triage with clusters and the Codex links of both installers are recorded in `docs/rehearsals/coordinator-cli-triage.md`: triage and installers work, three findings (I24–I26).
+- R (wave 5) — the coordinator keeps its claim oid in the conversation only, counts steps from its own agent calls, does not end the run on a halt of one unit and runs the tasks of a wave in a fixed order; it is also told to write the `Resume:` line, which it still skips (I28, accepted).
+- S (wave 5) — the waiting line of task mode now needs both command forms for each task, and `wave-status` shows a triage in progress instead of offering to remove its worktree.
+- T (wave 5) — the fixes of R and S were checked in real CLI runs and recorded in `docs/rehearsals/coordinator-cli-fixes.md`, with one finding.
 
-## How to test
+## Check
 
-- B: open `skills/wave-run/SKILL.md` and `skills/wave-run/task-mode.md` → the stops table has the row `manual-flow`, the paragraph "Coordinated run" follows "Flow form", task mode has the rule "already committed", the waiting line with `(fix <k>/2)` and the section "Fix requests".
-- C: open `skills/wave-triage/SKILL.md` → after "Flow of planning" stands "Coordinated phases" with the table of four forms; steps 4 and 8 mention the coordinated run.
-- D: read `skills/wave-auto/navigator.md` → an index on `triage/<topic>` with `- Triage: waiting for answers` gives `next: ask <index>`; part 2 after a merged part 1 gives `next: plan <index> part 2`; a wave 🔄 with `Waiting: task mode B (fix 1/2), C` gives `next: tasks <plan folder> 2 B:<tier>; C:<tier>`; all waves ✅ or ⚠️ with an open entry for F2 gives `next: re-plan <plan folder>`.
-- E: `head -4 skills/wave-auto/SKILL.md` → frontmatter with `name: wave-auto`; `grep -n "^## " skills/wave-auto/SKILL.md` → Layout, Input, Hard rules, Capabilities, Step prompt, Start phase, Loop, Wave, Results of steps, Session fallback, Rails, End of the run, Stops, Resume.
-- J: `grep -n "one per halted unit" skills/wave-auto/navigator.md skills/wave-plan/layout.md` → one line in each file; `grep -n "claims/auto/" skills/wave-status/SKILL.md` → the read bullet and the Leftovers suggestion.
-- K: `grep -n "wave-auto" install.sh install.ps1 .claude-plugin/plugin.json` → one line each; README has the subsection "One command in one session: wave-auto"; after the installer runs in a fresh project, `.claude/skills` holds five folders including `wave-auto`.
-- L: open `docs/rehearsals/coordinator-cli.md` → sections Setup, Runs, Results, Not verified, Repeat; Results show every expectation as Pass or Finding with commit hashes and quoted lines.
-- M: open `docs/rehearsals/coordinator-desktop.md` → Results shows every Rehearsal I expectation as Pass, Finding or Not run, with evidence.
-- O: open `docs/rehearsals/coordinator-cli-flow.md` → Results marks every expectation of O1–O5 and every report check Pass or Finding, with evidence.
-- P: open `docs/rehearsals/coordinator-cli-stops.md` → Results marks every expectation of P1–P5b and every report check Pass or Finding, with evidence.
-- Q: `/wave-auto steps 3 <ten problems>`, answer the questions, then `/wave-auto steps 2 plans/<date>-<topic>/index.md` in a new session → the first run stops after one cluster, the second does only the other one and merges the index with records P1–P10.
+`python skills/wave-plan/scripts/test_status_check.py; python -m unittest discover -s scripts/tests; status_check.py on
+examples/*/; git diff --check` → green on 5ec38bd (39 status-check tests, 59 driver tests, three examples); tests added
+or changed: none
