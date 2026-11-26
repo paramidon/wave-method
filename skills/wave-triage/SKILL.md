@@ -1,6 +1,6 @@
 ---
 name: wave-triage
-description: First stage of the wave-triage → wave-plan → wave-run pipeline. Take the user's whole list of problems/features, ask all clarifying questions once, look into the code just deep enough to locate each problem and judge its difficulty, find dependencies, and split the work into parts small enough for one wave-plan run each. It clusters large lists and runs one read-only subagent per cluster. Writes an index and, for more than 8 problems, separate problem records in its own folder under plans/ and prints a short wave-plan command per part. Use when the user brings a list of tasks to analyse ("/wave-triage", "$wave-triage", "разбери задачи", "проанализируй список"), especially a long or hard one. Recommended model: high complexity (Opus-class) — misjudged difficulty or dependencies break every later stage; the session itself stays short because it does not design.
+description: First stage of the wave-triage → wave-plan → wave-run pipeline. Take the user's whole list of problems/features, ask all clarifying questions once, look into the code just deep enough to locate each problem and judge its difficulty, find dependencies, and split the work into parts small enough for one wave-plan run each. It clusters large lists and runs one read-only subagent per cluster. Writes an index and, for more than 8 problems, separate problem records in its own folder under plans/ and prints a short wave-plan command per part. Use when the user brings a list of tasks to analyse ("/wave-triage", "$wave-triage", "разбери задачи", "проанализируй список"), especially a long or hard one. Recommended model: high complexity (Opus-class or GPT-6.2-Astra) — misjudged difficulty or dependencies break every later stage; the session itself stays short because it does not design.
 ---
 
 # wave-triage — analyse a task list and split it into plannable parts
@@ -111,9 +111,9 @@ subagent, re-judging and dependency procedure below applies to lists of more tha
 mode, use the same checklist, difficulty criteria and dependency checks on the inline records.
 
 For more than 8 problems, when the environment has subagents (`layout.md`, "Environment capabilities"), run
-one read-only subagent per cluster, tier `medium`, all at once where the environment allows parallel
-subagents, otherwise one after another. In a coordinated run the coordinator launches them (`cluster` form of
-"Coordinated phases"). Read-only applies to project code; the only permitted writes
+one read-only subagent per cluster, tier `medium`, all at once up to the parallel limit (`layout.md`,
+"Environment capabilities"), otherwise one after another. In a coordinated run the coordinator launches them
+(`cluster` form of "Coordinated phases"). Read-only applies to project code; the only permitted writes
 are that subagent's assigned `triage/P<n>.md` records. Its prompt must include:
 - The cluster's problems with their one-line restatements, the user's words and the answers.
 - The checklist above (Where, Likely cause, Difficulty with `difficulty.md`, Size, Depends on).
