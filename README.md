@@ -84,7 +84,8 @@ trust_level = "trusted"
 
 The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep
 `.codex/config.toml` out of git (add it to `.git/info/exclude`). Where the profile cannot be used, full access works
-too (`codex -s danger-full-access`). Details: `skills/wave-plan/layout.md`, "Vendors".
+too (`codex -s danger-full-access`). The Codex desktop app is not rehearsed with it yet. Details:
+`skills/wave-plan/layout.md`, "Vendors".
 
 ### Installer (a copy inside the project)
 
@@ -458,8 +459,11 @@ agents load them as usual, and the planner takes them into account when it write
   command you provide.
 - **Autonomous flow and the driver** were rehearsed with Claude Code on Windows ([rehearsals](docs/rehearsals/)).
   The driver requires the Claude Code CLI and has no Codex counterpart.
-- **wave-auto** was rehearsed in the Claude Code CLI and desktop app and in the Codex CLI and desktop app
-  ([rehearsals](docs/rehearsals/)); its rails (`until`, `steps`) are rules of the skill, not enforced limits.
+- **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)), and in the
+  Codex CLI up to the start of a wave: triage, the questions, the plan and the launch of a wave's tasks passed,
+  while the end of a wave in Codex (task commits, the merge into `integration/<topic>`, auto-approval) is not
+  verified yet. The Codex desktop app is not rehearsed. Its rails (`until`, `steps`) are rules of the skill, not
+  enforced limits.
 - **An overnight run consumes usage.** Set `--max-usd`, `--deadline`, or `--max-calls`. On a subscription, the
   run counts toward usage limits.
 

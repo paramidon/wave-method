@@ -10,6 +10,12 @@ Rehearsal E2 of feature F1 (the wave skills run in Codex), with the permission p
 request), so E0–E4 and every check are Not run, and nothing is known yet about whether the desktop app applies the
 project's profile.
 
+## Not rehearsed by decision
+
+On 2026-11-26 the user decided not to rehearse the Codex desktop app in this feature: this record stays as it is,
+and README and `skills/wave-plan/layout.md` call the app not rehearsed. Whether the app applies a project's
+permission profile and trust entry (README "Codex permissions") is not known.
+
 ## Setup
 
 - `<scratch>`: `~/wave-rehearsal-desktop-20261126-0416`, a new empty folder outside every repository and outside the

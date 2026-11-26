@@ -43,7 +43,7 @@ and no other file carries a version. Changes since the last tag go into a line
   which cannot name its model, takes it from the rollout of its thread for the tier gate (`layout.md`, "Vendors",
   model lookup); `layout.md` "Vendors" says how each capability is reached in Claude Code and Codex, and every skill
   launches at most the environment's parallel limit of subagents at once; README shows the Codex plugin install;
-  rehearsals of `$wave-auto` in the Codex CLI and desktop app.
+  a rehearsal of `$wave-auto` in the Codex CLI up to the start of a wave.
   Codex permissions: a permission profile that writes only the folder holding the repository (`layout.md`,
   "Vendors"; README "Codex permissions"); a git write the sandbox refuses stops `git-read-only`; prompts to Codex
   subagents carry the model lookup right after the gate line.

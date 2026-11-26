@@ -330,7 +330,7 @@ python <scratch>/trust_entry.py remove ~/.codex/config.toml '<scratch>'
 - The Codex desktop app: not rehearsed, by the user's decision of 2026-11-26.
 - The end of a wave in Codex: task returns and commits, `Wave-Model` trailers (check 3), the wave's merge and
   auto-approval into `integration/<topic>`, `ended by done`, the claim release after X4, and X5 (merge and tests):
-  cut by the usage limit (T1).
+  cut by the usage limit (T1). The user accepted this gap on 2026-11-26: the feature is merged without it.
 - More than two parallel subagents (the plan had two tasks).
 - macOS and Linux.
 

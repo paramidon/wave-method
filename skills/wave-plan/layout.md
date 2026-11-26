@@ -162,7 +162,7 @@ How each capability is reached; a skill that launches subagents uses the row of 
 | parallel | several agent calls in one message | several `spawn_agent` calls, at most the parallel limit (3); then `wait_agent` |
 | waiting | the agent call returns its result | call `wait_agent` (`timeout_ms` up to 3600000) again until `list_agents` shows every launched subagent completed; its result is its final message |
 | continuing a subagent | the environment's message tool, where it has one | `followup_task` with the subagent's `task_name` |
-| starting a session | the desktop app's session tools; none in the CLI | none in the CLI; the desktop app as its rehearsal recorded (`docs/rehearsals/coordinator-codex-desktop.md`) |
+| starting a session | the desktop app's session tools; none in the CLI | none in the CLI; the desktop app not verified, so treat it as missing |
 | own model ID | stated in the system prompt | not stated: the model lookup below |
 | git writes | a permission mode that allows git and file writes in the repository and in `../<repo-folder>.worktrees/` (`auto` does) | the permission profile of "Permissions in Codex", in a trusted project; the default `workspace-write` keeps `.git` read-only |
 | non-interactive run | `claude -p "<prompt>"`, then `claude -p --continue "<answer>"` | `codex exec "<prompt>" < /dev/null`, then `codex exec resume --last "<answer>" < /dev/null` |
