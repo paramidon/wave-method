@@ -734,3 +734,207 @@ and O, plus edit 4. Definitions added:
 11. The CLI record (task N) shows X1 Pass under the profile, X2–X5 and checks 1–9 each Pass, a Finding with an entry,
     or Not run with its reason, and `## Plugin install`; the desktop record (task O) likewise for E0–E4.
 12. README, layout and changelog claim exactly what the two records show (task P).
+
+## Evidence (re-plan 2026-11-26, round 3)
+
+Override of F1 by the user (direction quoted in `history.md`): trust only the test project, adding its entry to
+`~/.codex/config.toml` and removing it afterwards. Run in the re-planning session with `<codex>` =
+`codex-cli 0.167.0-alpha.3.2` on task N's fixture `<scratch>/textkit` (`<scratch>` = `~/wave-rehearsal-20261126-0319`,
+the profile of README "Codex permissions" in `<scratch>/textkit/.codex/config.toml`). Every run: `<codex> exec -m
+gpt-6.2-astra -C <scratch>/textkit -c 'approval_policy="never"' --json`, stdin closed, the X1 prompt of Rehearsal D2
+(`Get-Location`, `git worktree add -b probe ../textkit.worktrees/probe main`, a file and a commit there). The hash of
+`~/.codex/config.toml` was taken before T0 and compared after every run; each probe worktree and branch was removed.
+
+| Entry | Disputed assumption | Run | Deciding output | Conclusion |
+|---|---|---|---|---|
+| I21 | (baseline) an untrusted project's profile is ignored | T0: no trust entry | `sandbox_policy` `{"type":"read-only"}`, `active_permission_profile` `:read-only`; `fatal: cannot lock ref 'refs/heads/probe' … Permission denied`; hash unchanged | N1 reproduces |
+| I21 | the missing trust is the cause | T1: `[projects.'<scratch>\textkit']` with `trust_level = "trusted"` appended to `~/.codex/config.toml` (Windows path, upper-case drive and folder names) | `sandbox_policy` `workspace-write`, `writable_roots` `["<scratch>"]`, `active_permission_profile` `wave`; `[probe f66842b] probe`; worktree `<scratch>/textkit.worktrees/probe` | confirmed: a trusted project gets its profile; the entry was removed and the hash equals the one before |
+| I21 | trust can be given for one run without changing the file | T2: no entry; `-c "projects={'<scratch>\textkit'={trust_level=\"trusted\"}}"` | `active_permission_profile` `wave`; `[probe aedba23] probe`; hash unchanged | a one-run alternative for `codex exec` |
+| I21 | a profile given at user level also needs trust | T3: no entry; `-c 'default_permissions="wave"' -c "permissions.wave.filesystem={\":root\"=\"read\", '<scratch>'=\"write\", \":tmpdir\"=\"write\"}"` | `active_permission_profile` `wave`; `[probe 93da6ed] probe`; `~/.codex/config.toml` got `[projects.'c:\users\…\textkit']` `trust_level = "trusted"` (lower case), written by Codex | a user-level profile applies without trust, and Codex then trusts the folder itself (as in I13); the entry was removed with `trust_entry.py` below and the hash equals the one before. The `[permissions]` form in `~/.codex/config.toml` itself was not tried: the user permitted only the test project's entry |
+
+Side notes: a first T1 attempt wrote a malformed key (the shell expanded `\t` and `\U` in the path); its run was
+discarded and the file restored from the copy taken before T0 (hash equal). Every run with the profile also listed
+`<scratch>\textkit\.codex` as `read`, T3 included, whose `-c` profile did not name it. Codex compares the trust path
+without letter case: T1's upper-case entry and T3's lower-case one both name the same folder. The desktop app: not
+verifiable by running here, and by the user's direction not rehearsed.
+
+## Fixes after wave 7 (re-plan 2026-11-26, round 3, override)
+
+F1 is past the re-plan limit and re-planned by the user's override: escalated, every new task `high`. Wave 7 ran N, O
+and P: N's rehearsal stopped at X1 because the untrusted project ran read-only (I21), O was not run (desktop control
+denied, I19), P changed nothing ("CLI profile works" false). Line numbers are those of
+`feat/desktop-coordinator-p2/F1-codex-coordinator` at 89a4ecb.
+
+| Entry | Essence | Fixed by |
+|---|---|---|
+| I21, I8 | the project's profile needs a trusted project; the docs do not say how | task S, "Trust docs (task S)"; verified by task T, run X1 |
+| I15 | permissions the pipeline works with | evidence above (trust entry, `-c` trust, user-level profile); task T, X1–X4 |
+| I14 | the rest of the CLI pipeline | task T, X2–X5 |
+| I9, I18 | shells start in the project | task T, check 7; outside the user profile verified in round 2; macOS and Linux go to the record's "Not verified" |
+| I10, I11, I12, I16, I17 | model of `low` steps, the model lookup, the coordinator's texts, prompts judged by behaviour | task T, checks 1, 6 and 8 |
+| I2 | claims match the records | task U, "Claims after the rehearsal (task U)" |
+| I19 | the desktop app rehearsal | not rehearsed by the user's decision; task U records it |
+
+`trust_entry.py`, the helper task T writes into `<scratch>` (never into the repository), tested in planning on a copy
+of `~/.codex/config.toml`: `add` then `remove` gives back the same hash; a `remove` with nothing to remove changes
+nothing:
+
+```python
+"""usage: python trust_entry.py add <config.toml> <project path>
+       python trust_entry.py remove <config.toml> <scratch folder>"""
+import re
+import sys
+
+action, config, path = sys.argv[1], sys.argv[2], sys.argv[3].rstrip("\\/")
+text = open(config, encoding="utf-8", newline="").read()
+nl = "\r\n" if "\r\n" in text else "\n"
+if action == "add":
+    if text and not text.endswith(nl):
+        text += nl
+    text += f"[projects.'{path}']{nl}trust_level = \"trusted\"{nl}{nl}"
+elif action == "remove":
+    key = path.lower().replace("/", "\\")
+    header = re.compile(r"^\[projects\.'([^']*)'\]\s*$")
+    lines, out, i = text.split(nl), [], 0
+    while i < len(lines):
+        m = header.match(lines[i])
+        p = m.group(1).lower().replace("/", "\\") if m else ""
+        if m and (p == key or p.startswith(key + "\\")):
+            print("removed", lines[i])
+            i += 1
+            while i < len(lines) and lines[i].strip() and not lines[i].startswith("["):
+                i += 1
+            if i < len(lines) and not lines[i].strip():
+                i += 1
+            continue
+        out.append(lines[i])
+        i += 1
+    text = nl.join(out)
+else:
+    sys.exit("usage: trust_entry.py add|remove <config.toml> <path>")
+open(config, "w", encoding="utf-8", newline="").write(text)
+```
+
+### Trust docs (task S)
+
+Files: `README.md`, `skills/wave-plan/layout.md`, `skills/wave-plan/CHANGELOG.md`. Lines at most 120 characters,
+except table rows and lines inside fenced blocks.
+
+1. `README.md`, section `### Codex permissions` (lines 62-78): after the closing fence of its `toml` block and the
+   blank line after it, before `The sandbox stays on: Codex reads everything …`, insert (a blank line after it):
+
+   ````
+   Codex reads this file only in a project it trusts; in any other folder it runs read-only and the skills stop
+   `git-read-only`. To trust the project, add its entry to `~/.codex/config.toml`, with the absolute path of the
+   project folder in single quotes (on Windows with backslashes, as `'C:\Users\me\textkit'`):
+
+   ```toml
+   [projects.'<project>']
+   trust_level = "trusted"
+   ```
+   ````
+
+   In the paragraph that follows, `Keep the file out of git (add `.codex/config.toml` to `.git/info/exclude`).` →
+   `Keep `.codex/config.toml` out of git (add it to `.git/info/exclude`).`; rewrap that paragraph only.
+2. `skills/wave-plan/layout.md`, "Permissions in Codex" (lines 183-202): `in `<repository>/.codex/config.toml` (Codex
+   reads it for a trusted project) or in `~/.codex/config.toml`.` → `in `<repository>/.codex/config.toml` of a trusted
+   project ("Trust" below) or in `~/.codex/config.toml`.`; after the closing fence of its `toml` block, before `The
+   sandbox stays on: the agent reads everything …`, insert (blank lines before and after each part):
+
+   ````
+   **Trust.** Codex applies a project's `.codex/config.toml` only when `~/.codex/config.toml` trusts the project: an
+   entry under the absolute path of the repository root, in single quotes (Windows paths with backslashes, any letter
+   case):
+
+   ```toml
+   [projects.'<repository>']
+   trust_level = "trusted"
+   ```
+
+   In a project without it Codex runs the thread with its built-in `:read-only` profile, and every git write stops
+   `git-read-only`. For one `codex exec` run, `-c "projects={'<repository>'={trust_level=\"trusted\"}}"` (bash quoting)
+   trusts it without changing the file. A profile given on the command line (`-c 'default_permissions="wave"'` with
+   `-c 'permissions.wave.filesystem={…}'`) applies without trust; Codex then adds the entry itself, as it does when a
+   run in a new folder gets write access.
+   ````
+
+   Rewrap only the sentence of the first change.
+3. `layout.md`, "Vendors", row `git writes` (line 167), Codex cell: `the permission profile of "Permissions in Codex";
+   the default `workspace-write` keeps `.git` read-only` → `the permission profile of "Permissions in Codex", in a
+   trusted project; the default `workspace-write` keeps `.git` read-only` (one physical line).
+4. `skills/wave-plan/CHANGELOG.md`, the `- Unreleased` item: after its last line (`subagents carry the model lookup
+   right after the gate line.`), two continuation lines with a two-space indent:
+
+   ```
+     Codex applies a project's profile only in a trusted project: README "Codex permissions" and `layout.md`
+     ("Permissions in Codex", "Trust") show the entry of `~/.codex/config.toml` that trusts it.
+   ```
+
+Nothing else changes; the rehearsal claims are task U's.
+
+### Rehearsal D3 — Codex CLI in a trusted test project (task T)
+
+Rehearsal D2 again ("Rehearsal D2 — Codex CLI with the permission profile", which changes Rehearsal D), with these
+changes; the record replaces `docs/rehearsals/coordinator-codex-cli.md`.
+
+- `<scratch>`: a new empty folder `~/wave-rehearsal-<YYYYMMDD-HHMM>`, outside every repository and the temp folder,
+  never used by Codex. Fixture, skills with the Codex links and `<scratch>/textkit/.codex/config.toml` as in D2,
+  following README "Codex permissions" of the working folder (which task S extended with the trust entry).
+- `<trusted>`: the Windows form of `<scratch>/textkit` (`cygpath -w`), e.g. `C:\Users\<name>\wave-rehearsal-…\textkit`.
+- Before X0: copy `~/.codex/config.toml` to `<scratch>/calls/config.before.toml` (a safety copy, never committed), keep
+  its SHA-256 and its `[projects.` lines; write `trust_entry.py` (above) to `<scratch>/trust_entry.py`; then
+  `python <scratch>/trust_entry.py add ~/.codex/config.toml '<trusted>'`. This is the only change to that file that the
+  user permitted: one entry for the test project, removed afterwards. Never add or change any other entry or key.
+- Removal, right after the last Codex call, and also before any early stop of the task (a failed X1, the cap, an error):
+  `python <scratch>/trust_entry.py remove ~/.codex/config.toml '<Windows form of <scratch>>'`. It also removes the
+  entries Codex adds itself for folders below `<scratch>` (worktrees, I13). Then the SHA-256 must equal the one before.
+  Equal → check 9 Pass. Not equal → a finding: quote `diff <scratch>/calls/config.before.toml ~/.codex/config.toml`
+  with paths replaced; never restore the safety copy over the file (other changes may be the user's or an app's); name
+  the copy in the report.
+- `<mode>` as in D2 (`-C <scratch>/textkit -c 'approval_policy="never"'`, no `-s`, no `sandbox_mode`, no bypass, no
+  `danger-full-access`); never the `-c "projects=…"` option: the rehearsal tests the documented entry.
+- X1 expected: `Get-Location` is the project; `sandbox_policy` `workspace-write` with `writable_roots` `["<scratch>"]`
+  and `active_permission_profile` `wave` in the `turn_context`; the worktree and commit exist. A failure is a finding;
+  then remove the entry, and X2–X5 are Not run.
+- X2–X5 and checks 1–9 as in D2; check 9 is the removal above plus the list of `[projects.` lines the run added (paths
+  as `<scratch>`), which must all lie below `<scratch>`.
+- `## Plugin install`: keep the section of the record on the branch (task N, 2026-11-26) unchanged as the last section;
+  do not run the plugin commands again (I3 is closed).
+- Record, after the header paragraph: `## Earlier attempts (2026-11-26)`, at most eight lines: under `workspace-write`
+  the pipeline stopped at its first step (findings D1–D6, commit 7bcdaf1); with the project's profile in a project
+  Codex did not trust, the thread ran read-only and X1 failed (finding N1, commit d794ad8). Then `## Setup` (with the
+  trust entry, written as `[projects.'<scratch>\textkit']`), `## Runs` (X0–X5), `## Results`, `## Not verified` (the
+  Codex desktop app: not rehearsed by the user's decision of 2026-11-26; macOS and Linux), `## Repeat` (with the
+  `trust_entry.py` add and remove commands), `## Plugin install`.
+- Caps: 3 hours of Codex calls. Leave `<scratch>` in place and name it in the report.
+
+### Claims after the rehearsal (task U)
+
+The definitions and edits 1–4 of "Claims after the rehearsals (task P)" (which take edits 1–3 and the first three
+definitions from "Claims after the rehearsals (task I)"), unchanged, read from the CLI record of task T and the
+desktop record of task O. The desktop record is not rehearsed again (the user's decision of 2026-11-26), so
+"Desktop rehearsed" is false, "Desktop session start" is not recorded and edit 4 takes its last row, unless the
+record says otherwise. If "CLI profile works" is false, change nothing and stop, as for P.
+
+5. `docs/rehearsals/coordinator-codex-desktop.md`: after its header paragraphs, before `## Setup`, insert:
+
+   ```
+   ## Not rehearsed by decision
+
+   On 2026-11-26 the user decided not to rehearse the Codex desktop app in this feature: this record stays as it is,
+   and README and `skills/wave-plan/layout.md` call the app not rehearsed. Whether the app applies a project's
+   permission profile and trust entry (README "Codex permissions") is not known.
+   ```
+
+## Acceptance tests (re-plan 2026-11-26, round 3)
+
+Tests 11 and 12 are superseded by 14 and 15.
+
+13. README "Codex permissions" has the trust paragraph and the `[projects.'<project>']` block; `layout.md` "Permissions
+    in Codex" has "Trust" with its block and the `-c` sentence; the `git writes` cell names a trusted project; the
+    changelog has the two trust lines (task S).
+14. The CLI record (task T) shows X1 Pass under the profile in the trusted test project, X2–X5 and checks 1–9 each
+    Pass, a Finding with an entry, or Not run with its reason, the earlier attempts and `## Plugin install`; check 9
+    shows the hash of `~/.codex/config.toml` equal before and after (task T).
+15. README, layout and changelog claim exactly what the CLI record shows and call the Codex desktop app not
+    rehearsed; the desktop record has "Not rehearsed by decision" (task U).
