@@ -11,14 +11,18 @@
   - 2026-11-26 at addada4, 18:57 – 19:10: override of F1 (trust only the test project; no desktop app): I8, I21 →
     S, T (wave 9); I9–I12, I14–I18 → T; I2, I19 → U (wave 10); N, O, P superseded; wave 8 dropped, Q, R → V, W in
     wave 11 · fixes: F1 (I2, I8, I9, I10, I11, I12, I14, I15, I16, I17, I18, I19, I21) · escalated: F1 · override: F1
+  - 2026-11-26 at a97d73e, 20:36 – 20:43: override of F1 (split F1): I14 accepted; I2, I19 → X (wave 12); I12, I22,
+    I23 → new F3, AA and AB (wave 14); U superseded by X, wave 10 dropped; wave 11 dropped, V, W → Y, Z in wave 13 ·
+    fixes: F1 (I2, I19), F3 (I12, I22, I23) · escalated: F1 · override: F1
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2), E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7) ➖, O (7) ➖, P (7) ➖, S (9), T (9), U (10) | acceptance tests 1–5, 9, 10 and 13–15 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L, M and S are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI rehearsal (T) in a trusted test project is recorded with every expectation Pass, a finding with an open entry or Not run with its reason, the Codex desktop app is recorded as not rehearsed, and U's claims match the records | ⚠️ blocked (I2, I12, I14, I19, I22, I23) | wave 10 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
-| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11), W (11) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 11 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
+| F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2) ➖, E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7) ➖, O (7) ➖, P (7) ➖, S (9), T (9), U (10) ➖, X (12) | acceptance tests 1–5, 9, 10, 13, 14 and 16 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L, M and S are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI rehearsal (T) is recorded as it ran (up to the start of a wave; the end of a wave not verified, accepted by the user), and X's claims match that record and call the Codex desktop app not rehearsed | ⚠️ blocked (I2, I19) | wave 12 | `feat/desktop-coordinator-p2/F1-codex-coordinator` | |
+| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11) ➖, W (11) ➖, Y (13), Z (13) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 13 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
+| F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14) | acceptance test 17 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA and AB are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ⬜ | wave 14 | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -27,16 +31,19 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C | ⚠️ I2 |
-| 2 | `waves/w02.md` | D, E | ⚠️ I12, I14, I19 |
+| 2 | `waves/w02.md` | D, E | ⚠️ I12, I19 |
 | 3 | `waves/w03.md` | F, G (needs F1 merged) | ➖ dropped (tasks → wave 5) |
 | 4 | `waves/w04.md` | H, I | ➖ dropped (tasks → waves 6, 7) |
 | 5 | `waves/w05.md` | J, K (needs F1 merged) | ➖ dropped (tasks → wave 8) |
 | 6 | `waves/w06.md` | L, M | ✅ |
 | 7 | `waves/w07.md` | N, O, P (after N, O) | ⚠️ I2, I19 |
 | 8 | `waves/w08.md` | Q, R (needs F1 merged) | ➖ dropped (tasks → wave 11) |
-| 9 | `waves/w09.md` | S, T (after S) | ⚠️ I12, I14, I22, I23 |
-| 10 | `waves/w10.md` | U | ⬜ |
-| 11 | `waves/w11.md` | V, W (needs F1 merged) | ⬜ |
+| 9 | `waves/w09.md` | S, T (after S) | ⚠️ I12, I22, I23 |
+| 10 | `waves/w10.md` | U | ➖ dropped (tasks → wave 12) |
+| 11 | `waves/w11.md` | V, W (needs F1 merged) | ➖ dropped (tasks → wave 13) |
+| 12 | `waves/w12.md` | X | ⬜ |
+| 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ⬜ |
+| 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⬜ |
 
 ## Tasks
 
@@ -45,7 +52,7 @@ Merged: short hash of the merge commit into the main branch.
 | A | `codex-tiers-vendors-layout` | F1 | 1 | medium | ⚠️ I2 |
 | B | `codex-launch-rules` | F1 | 1 | medium | ✅ (fixed by L, M, wave 6) |
 | C | `remove-driver-files` | F2 | 1 | low | ✅ |
-| D | `codex-cli-rehearsal` | F1 | 2 | medium | ⚠️ I12, I14 |
+| D | `codex-cli-rehearsal` | F1 | 2 | medium | ➖ superseded by T |
 | E | `codex-desktop-rehearsal` | F1 | 2 | medium | ➖ superseded by O |
 | F | `unattended-runs-readme` | F2 | 3 | medium | ➖ superseded by J |
 | G | `driver-mentions-cleanup` | F2 | 3 | low | ➖ superseded by K |
@@ -61,10 +68,15 @@ Merged: short hash of the merge commit into the main branch.
 | Q | `unattended-runs-readme-v3` | F2 | 8 | medium | ➖ superseded by V |
 | R | `driver-mentions-cleanup-v3` | F2 | 8 | low | ➖ superseded by W |
 | S | `codex-trust-docs` | F1 | 9 | high | ✅ |
-| T | `codex-cli-rehearsal-v3` | F1 | 9 | high | ⚠️ I12, I14, I22, I23 |
-| U | `codex-claims-final` | F1 | 10 | high | ⬜ |
-| V | `unattended-runs-readme-v4` | F2 | 11 | medium | ⬜ |
-| W | `driver-mentions-cleanup-v4` | F2 | 11 | low | ⬜ |
+| T | `codex-cli-rehearsal-v3` | F1 | 9 | high | ✅ (I14 accepted; I12, I22, I23 → F3) |
+| U | `codex-claims-final` | F1 | 10 | high | ➖ superseded by X |
+| V | `unattended-runs-readme-v4` | F2 | 11 | medium | ➖ superseded by Y |
+| W | `driver-mentions-cleanup-v4` | F2 | 11 | low | ➖ superseded by Z |
+| X | `codex-claims-split` | F1 | 12 | high | ⬜ |
+| Y | `unattended-runs-readme-v5` | F2 | 13 | medium | ⬜ |
+| Z | `driver-mentions-cleanup-v5` | F2 | 13 | low | ⬜ |
+| AA | `wave-auto-codex-output` | F3 | 14 | low | ⬜ |
+| AB | `codex-sandbox-ownership` | F3 | 14 | low | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p2`
@@ -72,7 +84,7 @@ and reach the main branch with each feature merge.
 
 ## User problems
 
-- P2 — The same coordinator, `$wave-auto`, should work from the Codex CLI and the Codex desktop app → F1 ·
+- P2 — The same coordinator, `$wave-auto`, should work from the Codex CLI and the Codex desktop app → F1, F3 ·
   `solutions/P2-codex-coordinator.md`
 - P3 — One place in the docs says how to start an unattended run from the console and from the desktop apps of
   Claude Code and Codex → F2 · `solutions/lite.md` (low)
@@ -85,28 +97,27 @@ and reach the main branch with each feature merge.
   profile of README "Codex permissions" in `<project>/.codex/config.toml` and the project's trust entry from that
   section in `~/.codex/config.toml`, start `codex -m gpt-6.2-astra` in the project and type `$wave-auto` and a list of
   two small changes → it prints `Capabilities:` with a GPT model ID per tier, asks its questions once, prints one line
-  per step and ends with the features merged into `integration/<topic>`; `git log integration/<topic>` shows task
-  commits with `Wave-Model: gpt-6.2-sol` or another GPT ID of the task's tier; README Limitations says the Codex
-  desktop app is not rehearsed; remove the trust entry afterwards; before: a Codex agent could not name its model, so
-  the tier gate stopped every medium and high step, `wave-auto` named only Claude models, and without the profile and
-  the trust entry `$wave-auto` stopped at its first step (`.git` read-only).
+  per step through triage and planning and starts the first wave; README Limitations says the Codex CLI was
+  rehearsed up to the start of a wave and the Codex desktop app is not rehearsed; remove the trust entry afterwards;
+  before: a Codex agent could not name its model, so the tier gate stopped every medium and high step, `wave-auto`
+  named only Claude models, and without the profile and the trust entry `$wave-auto` stopped at its first step (`.git`
+  read-only).
 - F2 — open `README.md`, section "Overnight runs" → "Unattended runs: wave-auto" has a table of where to start it
   (Claude Code CLI and desktop app, Codex CLI and desktop app), two lines for a start from a script, and "In the
   morning" without a driver; the folder `scripts/` is gone; before: the README taught `python scripts/wave_driver.py`
   and its morning `report.md`.
+- F3 — `git grep -n -E "request_user_input_async|dubious ownership" -- skills README.md` → the step 4 rule in
+  `skills/wave-auto/SKILL.md` and the sandbox-ownership paragraph in README "Codex permissions" and layout
+  "Permissions in Codex"; before: nothing. The behaviour in Codex is not rehearsed in this plan: a later Codex run
+  shows it, and its findings go to a new plan.
 
 ## Known test failures before start
 
 - none (`main` at 56cd0f9, 2026-11-25: 39 status-check tests and 59 driver tests OK, all three examples pass,
   `git diff --check` clean); every task of waves 1 and 2 starts from it or from its feature branch
-- none on the feature branches at the re-plan of 2026-11-26: F1 at bbfbe18 (status-check and driver tests, three
-  examples, `git diff --check main`) and F2 at abfd0a5 (the same without the driver tests); waves 4 and 5 start from
-  them
-- none at the re-plan of 2026-11-26, round 2: F1 at 4d0d1f7 and F2 at abfd0a5, the same checks; waves 6 and 7 start
-  from F1, wave 8 from F2 after `main` (with F1) is merged in
-- none at the re-plan of 2026-11-26, round 3: F1 at 89a4ecb (39 status-check and 59 driver tests, three examples,
-  `git diff --check main`) and F2 at abfd0a5 (39 tests, three examples, `git diff --check main`); waves 9 and 10
-  start from F1, wave 11 from F2 after `main` (with F1) is merged in
+- none at the re-plan of 2026-11-26, round 4: F1 at bcd3b0d (39 status-check and 59 driver tests, three examples,
+  `git diff --check main`) and F2 at abfd0a5 (39 tests, three examples, `git diff --check main`); wave 12 starts from
+  F1, waves 13 and 14 from F2 and F3 after `main` (with F1) is merged in
 
 ## Assumptions
 
@@ -128,22 +139,11 @@ and reach the main branch with each feature merge.
 - Wave 3 waited for F1 merged: F2 edits `README.md`, `layout.md` and `CHANGELOG.md` on top of F1, and its README takes
   the Codex sandbox and permission mode from F1's rehearsal records.
 - Codex shows no cost in USD; each rehearsal is capped at 3 hours instead.
-- The plan runs in manual flow (no `Flow:` line): the user reviews F1 and F2.
-- Re-plan 2026-11-26: F1's fixes need a wave after wave 2, and `wave-run` starts a wave only when every earlier wave
-  is ✅, ⚠️ or ➖; wave 3 waits for F1 merged, so it is dropped, and its tasks F and G return unchanged as J and K in
-  wave 5.
-- I3's "Markdown viewed rendered" is left to the user's review of F1; task I checks the section by the Markdown rules
-  and runs both plugin commands with a scratch `CODEX_HOME`, so the user's Codex settings stay untouched.
-- Task H also adds "or GPT-6.2-Astra" to the `wave-plan` and `wave-triage` descriptions (not in I1), as `wave-auto`'s
-  already has it.
-- Re-plan 2026-11-26, round 2 of F1 (escalated; evidence in `solutions/P2-codex-coordinator.md`): the user chose the
-  Codex permission profile (sandbox on, writes only below the folder that holds the repository) with full access as
-  the documented fallback; rehearsals use the profile only. The user chose to rehearse the desktop app again (task O);
-  a full-access mode there still needs the user's separate permission. I13 was accepted by the user.
-- Every new F1 task is high (escalated re-plan, round 2): waves 6 and 7 need Opus 5.5 or GPT-6.2-Astra. Waves 4 and 5
-  are dropped for the reason of the first re-plan; their tasks return in waves 6–8 (details in `history.md`).
-- Re-plan 2026-11-26, round 3 of F1, by the user's override (direction in `history.md`; evidence in
-  `solutions/P2-codex-coordinator.md`): Codex applies a project's profile only in a trusted project. Task T trusts
-  only its test project, with one entry in `~/.codex/config.toml` that it removes afterwards; the Codex desktop app is
-  not rehearsed, and task U records that. S, T and U are high (waves 9 and 10 need Opus 5.5 or GPT-6.2-Astra); wave 8
-  is dropped because F1 needs waves 9 and 10 first, and Q, R return unchanged as V, W in wave 11.
+- The plan runs in manual flow (no `Flow:` line): the user reviews F1, F2 and F3.
+- Re-plan 2026-11-26, round 4 of F1, by the user's override "split F1" (direction in `history.md`; evidence in
+  `solutions/P2-codex-coordinator.md`): F1 is merged with task T's rehearsal as recorded; the unverified end of a wave
+  in Codex (I14) is accepted and named in README Limitations by task X (high, wave 12; needs Opus 5.5 or
+  GPT-6.2-Astra), which replaces U because U's definitions would call the Codex CLI not rehearsed. I12, I22 and I23
+  move to the new feature F3 (tasks AA, AB, low, wave 14, after F1 is merged), whose acceptance is the text only: no
+  Codex run. F3 is round 1 of its own. Wave 11 is dropped because F1 needs wave 12 first; V and W return unchanged as
+  Y and Z in wave 13.
