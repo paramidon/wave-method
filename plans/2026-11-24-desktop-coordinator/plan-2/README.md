@@ -34,7 +34,7 @@ Merged: short hash of the merge commit into the main branch.
 | 6 | `waves/w06.md` | L, M | ✅ |
 | 7 | `waves/w07.md` | N, O, P (after N, O) | ⚠️ I2, I19, I21 |
 | 8 | `waves/w08.md` | Q, R (needs F1 merged) | ➖ dropped (tasks → wave 11) |
-| 9 | `waves/w09.md` | S, T (after S) | ⬜ |
+| 9 | `waves/w09.md` | S, T (after S) | 🔄 since 2026-11-26 19:51 |
 | 10 | `waves/w10.md` | U | ⬜ |
 | 11 | `waves/w11.md` | V, W (needs F1 merged) | ⬜ |
 
@@ -60,8 +60,8 @@ Merged: short hash of the merge commit into the main branch.
 | P | `codex-claims-after-rehearsals` | F1 | 7 | high | ➖ superseded by U |
 | Q | `unattended-runs-readme-v3` | F2 | 8 | medium | ➖ superseded by V |
 | R | `driver-mentions-cleanup-v3` | F2 | 8 | low | ➖ superseded by W |
-| S | `codex-trust-docs` | F1 | 9 | high | ⬜ |
-| T | `codex-cli-rehearsal-v3` | F1 | 9 | high | ⬜ |
+| S | `codex-trust-docs` | F1 | 9 | high | 🔄 |
+| T | `codex-cli-rehearsal-v3` | F1 | 9 | high | 🔄 |
 | U | `codex-claims-final` | F1 | 10 | high | ⬜ |
 | V | `unattended-runs-readme-v4` | F2 | 11 | medium | ⬜ |
 | W | `driver-mentions-cleanup-v4` | F2 | 11 | low | ⬜ |
