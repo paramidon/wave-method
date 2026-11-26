@@ -1,13 +1,6 @@
 # Open problems
 Next ID: I24
 
-- **[I2 · wave 1 / task A / feature F1] README and layout already claim Codex rehearsals that are not recorded yet** —
-  where: `README.md:434`, `skills/wave-plan/layout.md:160`; expected / got: claims backed by records in
-  `docs/rehearsals/` / the texts of the solution, taken verbatim, while tasks D and E have not run; since wave 7 both
-  records exist and show runs X2–X5 and E1–E4 as Not run, and task P changed nothing (I21), so the claims are still
-  unbacked; proposal: run the rehearsals before F1 is merged, and correct both sentences if a rehearsal is recorded as
-  Not run; re-plan round 4: U is superseded by X;
-  status: → task X (wave 12)
 - **[I12 · wave 2 / task D / feature F3] The Codex coordinator leaves the fixed output texts** — where: `skills/wave-auto/SKILL.md:41`, `:51-53`, `:225`, `:232`, `:236`, `:244`; run X2;
   expected / got: `Started:` first, the given title, return lines, `next:` in Halts, the real start in `Continue:` / a preamble, an invented title, a retold result, no `next:`, a placeholder `<original list>`;
   proposal: tighten these rules at the next `wave-auto` edit and check them again in Codex;
@@ -19,16 +12,6 @@ Next ID: I24
   date, and forbid text of its own;
   re-plan round 4: moved from F1 to the new feature F3 by the user's direction;
   status: → task AA (wave 14)
-- **[I19 · wave 2 / task E / feature F1] The Codex desktop app rehearsal was not run** — where:
-  `docs/rehearsals/coordinator-codex-desktop.md`, `solutions/P2-codex-coordinator.md`, "Rehearsal E";
-  expected / got: a recorded run in the app / the user closed wave 2 without it on 2026-11-26, since it likely meets I8;
-  wave 7 (task O): not run again, desktop control of the app (listed as `ChatGPT`) was denied (`user_denied`); the
-  record exists with every step Not run, so it is still unknown whether the app applies the profile;
-  proposal: decide I21 first, then plan the desktop rehearsal again or record the app as not rehearsed (see I2); a
-  full-access mode of the app needs the user's explicit permission;
-  re-plan round 3: the user decided on 2026-11-26 not to rehearse the desktop app and to record that (task U);
-  re-plan round 4: U is superseded by X;
-  status: → task X (wave 12)
 - **[I22 · wave 9 / task T / feature F3] In `codex exec` the coordinator's questions first go to
   `request_user_input_async`** — where: `skills/wave-auto/SKILL.md:129`; finding T4 in
   `docs/rehearsals/coordinator-codex-cli.md`; expected / got: all questions in one message, then wait / the tool call
