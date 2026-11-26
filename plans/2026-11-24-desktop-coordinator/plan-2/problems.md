@@ -1,5 +1,5 @@
 # Open problems
-Next ID: I24
+Next ID: I30
 
 - **[I12 · wave 2 / task D / feature F3] The Codex coordinator leaves the fixed output texts** — where: `skills/wave-auto/SKILL.md:41`, `:51-53`, `:225`, `:232`, `:236`, `:244`; run X2;
   expected / got: `Started:` first, the given title, return lines, `next:` in Halts, the real start in `Continue:` / a preamble, an invented title, a retold result, no `next:`, a placeholder `<original list>`;
@@ -26,3 +26,17 @@ Next ID: I24
   proposal: describe it in "Codex permissions" and "Permissions in Codex" (`safe.directory`, or review through the
   main checkout), or check whether it can be avoided; re-plan round 4: moved from F1 to the new feature F3 by the user's direction;
   status: → task AB (wave 14)
+- **[I24 · wave 13 / task Y / feature F2] The Codex desktop app row of "Where to run it" points to permissions guidance
+  that does not exist** — where: `README.md:272` (target `README.md:87`); expected / got: the row says "permissions as
+  Codex permissions says for the desktop app" / that section only says the desktop app is not rehearsed with the
+  profile and says nothing about what to set there (`skills/wave-plan/layout.md`, "Permissions in Codex", neither);
+  the text is the solution's own (`solutions/lite.md`, "P3"); proposal: reword the cell to say the desktop app's
+  permissions are not rehearsed, or add one sentence to "### Codex permissions";
+  status: → task AC (wave 15)
+- **[I25 · wave 13 / task Y / feature F2] The script lines of "Unattended runs" work only in a POSIX shell** — where:
+  `README.md:279-290`; expected / got: a reader on Windows can start a run from a script / in PowerShell
+  `< /dev/null` is a parse error and `\$` does not escape `$`, and the README names no shell; proposal: say "bash or
+  zsh" before the block, or add a PowerShell form of the Codex lines after trying it;
+  re-plan 2026-11-27: Git Bash on Windows also turns the argument `/wave-auto …` into a Windows path, so the POSIX
+  `claude` line fails there too (`solutions/lite.md`, "P5");
+  status: → task AC (wave 15)
