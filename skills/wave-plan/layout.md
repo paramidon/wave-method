@@ -164,7 +164,7 @@ How each capability is reached; a skill that launches subagents uses the row of 
 | continuing a subagent | the environment's message tool, where it has one | `followup_task` with the subagent's `task_name` |
 | starting a session | the desktop app's session tools; none in the CLI | none in the CLI; the desktop app as its rehearsal recorded (`docs/rehearsals/coordinator-codex-desktop.md`) |
 | own model ID | stated in the system prompt | not stated: the model lookup below |
-| git writes | a permission mode that allows git and file writes in the repository and in `../<repo-folder>.worktrees/` (`auto` does) | the permission profile of "Permissions in Codex"; the default `workspace-write` keeps `.git` read-only |
+| git writes | a permission mode that allows git and file writes in the repository and in `../<repo-folder>.worktrees/` (`auto` does) | the permission profile of "Permissions in Codex", in a trusted project; the default `workspace-write` keeps `.git` read-only |
 | non-interactive run | `claude -p "<prompt>"`, then `claude -p --continue "<answer>"` | `codex exec "<prompt>" < /dev/null`, then `codex exec resume --last "<answer>" < /dev/null` |
 
 **Model lookup in Codex.** Codex records every thread in
@@ -182,8 +182,8 @@ $h = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' };
 
 **Permissions in Codex.** The wave skills write branches, refs and commits in `.git` and create worktrees next to
 the repository (`../<repo-folder>.worktrees/`). Codex's `workspace-write` sandbox keeps the `.git` of every writable
-folder read-only, so they need this permission profile, in `<repository>/.codex/config.toml` (Codex reads it for a
-trusted project) or in `~/.codex/config.toml`. Paths are absolute (`~/…` allowed); `<parent>` is the folder that
+folder read-only, so they need this permission profile, in `<repository>/.codex/config.toml` of a trusted project
+("Trust" below) or in `~/.codex/config.toml`. Paths are absolute (`~/…` allowed); `<parent>` is the folder that
 holds the repository:
 
 ```toml
@@ -192,6 +192,21 @@ default_permissions = "wave"
 [permissions.wave]
 filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<repository>/.codex" = "read" }
 ```
+
+**Trust.** Codex applies a project's `.codex/config.toml` only when `~/.codex/config.toml` trusts the project: an
+entry under the absolute path of the repository root, in single quotes (Windows paths with backslashes, any letter
+case):
+
+```toml
+[projects.'<repository>']
+trust_level = "trusted"
+```
+
+In a project without it Codex runs the thread with its built-in `:read-only` profile, and every git write stops
+`git-read-only`. For one `codex exec` run, `-c "projects={'<repository>'={trust_level=\"trusted\"}}"` (bash quoting)
+trusts it without changing the file. A profile given on the command line (`-c 'default_permissions="wave"'` with
+`-c 'permissions.wave.filesystem={…}'`) applies without trust; Codex then adds the entry itself, as it does when a
+run in a new folder gets write access.
 
 The sandbox stays on: the agent reads everything, writes only below `<parent>` and in the temp folder, and cannot
 change its own profile. Subagents inherit it. Keep the file out of git (`.git/info/exclude`): its paths belong to

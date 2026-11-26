@@ -73,8 +73,17 @@ default_permissions = "wave"
 filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<project>/.codex" = "read" }
 ```
 
-The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep the file
-out of git (add `.codex/config.toml` to `.git/info/exclude`). Where the profile cannot be used, full access works
+Codex reads this file only in a project it trusts; in any other folder it runs read-only and the skills stop
+`git-read-only`. To trust the project, add its entry to `~/.codex/config.toml`, with the absolute path of the
+project folder in single quotes (on Windows with backslashes, as `'C:\Users\me\textkit'`):
+
+```toml
+[projects.'<project>']
+trust_level = "trusted"
+```
+
+The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep
+`.codex/config.toml` out of git (add it to `.git/info/exclude`). Where the profile cannot be used, full access works
 too (`codex -s danger-full-access`). Details: `skills/wave-plan/layout.md`, "Vendors".
 
 ### Installer (a copy inside the project)

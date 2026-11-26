@@ -47,6 +47,8 @@ and no other file carries a version. Changes since the last tag go into a line
   Codex permissions: a permission profile that writes only the folder holding the repository (`layout.md`,
   "Vendors"; README "Codex permissions"); a git write the sandbox refuses stops `git-read-only`; prompts to Codex
   subagents carry the model lookup right after the gate line.
+  Codex applies a project's profile only in a trusted project: README "Codex permissions" and `layout.md`
+  ("Permissions in Codex", "Trust") show the entry of `~/.codex/config.toml` that trusts it.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
   now always shows a waves table next to the tasks and features tables, and keeps every section even when it has
