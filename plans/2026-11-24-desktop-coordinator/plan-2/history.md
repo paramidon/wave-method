@@ -117,3 +117,35 @@
     only its test project, with one entry in `~/.codex/config.toml` that it removes afterwards; the Codex desktop app is
     not rehearsed, and task U records that. S, T and U are high (waves 9 and 10 need Opus 5.5 or GPT-6.2-Astra); wave 8
     is dropped because F1 needs waves 9 and 10 first, and Q, R return unchanged as V, W in wave 11.
+
+## Re-plan 2026-11-27 (round 1 of F2)
+
+- Open entries of wave 13: I24 and I25 (task Y) → task AC, `solutions/lite.md`, "P5". I26, I27 and I28 were accepted
+  by the user, who chose not to run the script lines against Claude Code or Codex.
+- I24's cause: the desktop-app sentence the table pointed to was to be written by task P, which was superseded.
+- Found while planning: Git Bash on Windows rewrites `/wave-auto …` into a Windows path, so the bash form of the
+  `claude` line needed a note too.
+- AD rewraps two places task Z left (a line over 120 characters, a split code span); it fixes no entry and gives the
+  new wave its second task.
+- Order: wave 15 starts only after wave 14 (F3) has run.
+- Check run at the re-plan: F2 at e2df989 green.
+
+## Assumptions of F1, moved from the README on 2026-11-27 (F1 is merged)
+
+- Codex's capabilities were found by running the Codex CLI 0.167 that ships with the desktop app, in planning
+  (evidence in `solutions/P2-codex-coordinator.md`): `spawn_agent` with a `model` per subagent, at most 3 subagents at
+  once, no tool to start a session, and no model ID the agent can name. So the probe the index planned for P2 is done,
+  and F1's tasks are medium; the desktop app and whole runs are rehearsed by D and E.
+- A Codex agent takes its model from its thread's rollout file (`CODEX_THREAD_ID`, record `turn_context`), written by
+  Codex itself: this counts as "its own environment" of the tier gate, not as the prompt. No file → `unknown model` →
+  the gate stops, as before.
+- GPT models per tier, from Codex's model list on 2026-11-25: `gpt-6-luna` low, `gpt-6.2-sol` and `gpt-6.1-sol`
+  medium, `gpt-6.2-astra` high. Like the Claude names they are examples; a README `Models:` line can name others.
+- Codex shows no cost in USD; each rehearsal is capped at 3 hours instead.
+- Re-plan 2026-11-26, round 4 of F1, by the user's override "split F1" (direction in `history.md`; evidence in
+  `solutions/P2-codex-coordinator.md`): F1 is merged with task T's rehearsal as recorded; the unverified end of a wave
+  in Codex (I14) is accepted and named in README Limitations by task X (high, wave 12; needs Opus 5.5 or
+  GPT-6.2-Astra), which replaces U because U's definitions would call the Codex CLI not rehearsed. I12, I22 and I23
+  move to the new feature F3 (tasks AA, AB, low, wave 14, after F1 is merged), whose acceptance is the text only: no
+  Codex run. F3 is round 1 of its own. Wave 11 is dropped because F1 needs wave 12 first; V and W return unchanged as
+  Y and Z in wave 13.
