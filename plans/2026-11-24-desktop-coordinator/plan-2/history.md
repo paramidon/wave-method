@@ -37,3 +37,30 @@
   no longer needed; the user may remove them.
 - Checks run at the re-plan: F1 at 4d0d1f7 and F2 at abfd0a5 green (status-check tests, driver tests on F1, three
   examples, `git diff --check main`).
+
+## Re-plan 2026-11-26, 18:57 (round 3 of F1, override)
+
+- F1 was at the re-plan limit (round 3, held). The user typed the override; the direction, verbatim:
+  `доверить только тестовый проект: разрешаю добавлять запись о нём в ~/.codex/config.toml (при планировании и
+  проверке) и удалять её после; описать в документации, как сделать проект доверенным, и повторить проверку в
+  консольном Codex; приложение не проверять и так и записать`
+  (trust only the test project: adding its entry to `~/.codex/config.toml` is allowed during planning and the check,
+  and it is removed afterwards; document how a project becomes trusted and repeat the check in the Codex CLI; do not
+  check the desktop app, and record that).
+- Open entries: I2, I8–I12, I14–I19 (planned in round 2 as N, O, P; N stopped at X1, O was not run, P changed
+  nothing) and I21 (found by N). All concern F1, so the re-plan is escalated and recorded under `override:`.
+- Evidence, run in this session on task N's fixture: without trust the thread is read-only (N1 reproduces); with the
+  test project's trust entry the profile applies and X1 makes a worktree and a commit; `-c "projects=…"` trusts for
+  one run; a profile given with `-c` applies without trust, and Codex then writes the trust entry itself. Details and
+  the `trust_entry.py` helper: `solutions/P2-codex-coordinator.md`, "Evidence (re-plan 2026-11-26, round 3)".
+- `~/.codex/config.toml` during planning: one entry for the test project added and removed (T1), and one that Codex
+  added itself (T3) removed; a first T1 attempt wrote a malformed key and the file was restored from a copy taken
+  before T0. The hash at the end equals the hash before T0. The fixture `~/wave-rehearsal-20261126-0319` is left as
+  task N left it (no probe branch or worktree).
+- New tasks, all high: S (wave 9) documents trust; T (wave 9, after S) rehearses the CLI in a trusted test project;
+  U (wave 10) makes the claims match the records and records the desktop app as not rehearsed (I2, I19). N and P are
+  superseded by T and U; O is dropped by the direction.
+- Order: wave 8 (Q, R of F2) waits for F1 merged and would block waves 9 and 10, so it is dropped; Q and R return
+  unchanged as V and W in wave 11.
+- Checks run at the re-plan: F1 at 89a4ecb and F2 at abfd0a5 green (39 status-check tests, 59 driver tests on F1,
+  three examples, `git diff --check main`).
