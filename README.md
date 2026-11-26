@@ -47,7 +47,47 @@ with the plugin prefix (`/wave-method:wave-plan`), which you need only if anothe
 share the plugin with your team, commit the marketplace and plugin to the project's `.claude/settings.json`
 (`extraKnownMarketplaces` and `enabledPlugins`).
 
-### Installer (Codex, or a copy inside the project)
+### Codex plugin (recommended for Codex)
+
+In a terminal, add this repository as a Codex plugin marketplace and install the plugin; the Codex CLI and the
+Codex desktop app share it:
+
+```
+codex plugin marketplace add paramidon/wave-method
+codex plugin add wave-method@wave-method
+```
+
+Type the commands with `$` in Codex (`$wave-plan …`).
+
+### Codex permissions
+
+The skills write branches and commits in `.git` and create worktrees next to the project
+(`../<project>.worktrees/`). Codex's default `workspace-write` sandbox keeps `.git` read-only, so give Codex this
+permission profile in `<project>/.codex/config.toml` (absolute paths; `<parent>` is the folder that holds the
+project):
+
+```toml
+default_permissions = "wave"
+
+[permissions.wave]
+filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<project>/.codex" = "read" }
+```
+
+Codex reads this file only in a project it trusts; in any other folder it runs read-only and the skills stop
+`git-read-only`. To trust the project, add its entry to `~/.codex/config.toml`, with the absolute path of the
+project folder in single quotes (on Windows with backslashes, as `'C:\Users\me\textkit'`):
+
+```toml
+[projects.'<project>']
+trust_level = "trusted"
+```
+
+The sandbox stays on: Codex reads everything and writes only below `<parent>` and in the temp folder. Keep
+`.codex/config.toml` out of git (add it to `.git/info/exclude`). Where the profile cannot be used, full access works
+too (`codex -s danger-full-access`). The Codex desktop app is not rehearsed with it yet. Details:
+`skills/wave-plan/layout.md`, "Vendors".
+
+### Installer (a copy inside the project)
 
 Clone this repository and run the installer against your project. It copies the skills into `<project>/.claude/skills/` and links them into
 `<project>/.agents/skills/` for Codex.
@@ -209,8 +249,8 @@ outside auto-approval solely because of condition 5 waits for your review. The
 
 ### One command in one session: wave-auto
 
-`/wave-auto <list>` (Codex: `$wave-auto <list>`) runs the whole pipeline in the session you type it in — the
-Claude Code CLI (`claude`) or the Claude Code desktop app. It asks the triage questions once, at the start, then
+`/wave-auto <list>` (Codex: `$wave-auto <list>`) runs the whole pipeline in the session you type it
+in — the CLI or the desktop app of Claude Code or Codex. It asks the triage questions once, at the start, then
 triages, plans every part and runs every wave in autonomous flow, each step as a subagent on a model of the
 step's tier, printing one line per step. It ends with the `wave-status` report: features merged into
 `integration/<topic>`, features waiting for your review, blocked features and what each waits for.
@@ -321,7 +361,7 @@ Key terms:
 | feature `F<n>` | the smallest set of changes that makes sense on `main` on its own; the unit that gets reviewed and merged, on its own branch `feat/<plan>/<feature>` |
 | task `A`, `B`, … | one prompt for one subagent, with an exact list of files it may change |
 | wave | tasks that can run at the same time (no shared files); only a scheduling unit |
-| tiers | `low` (Haiku-class), `medium` (Sonnet-class / GPT), `high` (Opus-class) |
+| tiers | `low` (Haiku-class / GPT-6-Luna), `medium` (Sonnet-class / GPT-6.2-Sol), `high` (Opus-class / GPT-6.2-Astra) |
 | tracking branch | `plan/<slug>`: the only place where plan status is committed |
 | flow | `manual` (the default) requires you to approve every merge. `autonomous` runs unattended and merges into an integration branch. |
 | integration branch | `integration/<name>` receives autonomous merges. You review it as one diff and merge it into `main`. |
@@ -344,7 +384,7 @@ Finished plans move to `plans/archive/`.
 - **Git** with `worktree` support, and a main branch called `main` or `master`.
 - **Claude Code** (plugin, or skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
   Subagents with a choice of model work best; without them the skills degrade to "one task per fresh session"
-  (task mode). `wave-auto` needs subagents with a choice of model (Claude Code CLI or desktop app).
+  (task mode). `wave-auto` needs subagents with a choice of model: Claude Code or Codex, CLI or desktop app.
 - **Python 3.9+** for the overnight driver (standard library only). Python is optional for the status-check script
   `wave-plan/scripts/status_check.py`. Without it, the check is done by reading.
 - **The Claude Code CLI** (`claude`, signed in) for the overnight driver. Autonomous flow itself also works in
@@ -419,8 +459,11 @@ agents load them as usual, and the planner takes them into account when it write
   command you provide.
 - **Autonomous flow and the driver** were rehearsed with Claude Code on Windows ([rehearsals](docs/rehearsals/)).
   The driver requires the Claude Code CLI and has no Codex counterpart.
-- **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)); its rails
-  (`until`, `steps`) are rules of the skill, not enforced limits.
+- **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)), and in the
+  Codex CLI up to the start of a wave: triage, the questions, the plan and the launch of a wave's tasks passed,
+  while the end of a wave in Codex (task commits, the merge into `integration/<topic>`, auto-approval) is not
+  verified yet. The Codex desktop app is not rehearsed. Its rails (`until`, `steps`) are rules of the skill, not
+  enforced limits.
 - **An overnight run consumes usage.** Set `--max-usd`, `--deadline`, or `--max-calls`. On a subscription, the
   run counts toward usage limits.
 

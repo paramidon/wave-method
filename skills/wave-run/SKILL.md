@@ -1,6 +1,6 @@
 ---
 name: wave-run
-description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, offer each feature whose tasks (possibly spread over several waves) are all done for the user's review on its own branch, merge it into the main branch only when the user approves that feature (in the same session, or later with "/wave-run <plan> merge <F-ID>"), or, in a plan whose flow is autonomous, approve it itself under fixed conditions and merge it into an integration branch the user merges later, and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. Use when the user says "/wave-run <plan> <N>", "запусти волну N", "/wave-run <plan> merge F1", "смержи фичу", or asks to run the next wave of a plan in plans/ or to merge a reviewed feature. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.1 SOL) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
+description: Third stage of the wave-triage → wave-plan → wave-run pipeline. Execute one wave of a plan folder written by wave-plan — run the tasks as subagents (in parallel where the environment allows; a task worktree only for concurrent tasks of one feature), merge each task branch into its feature branch, resolve conflicts, run the tests, record task, wave and feature status plus found problems on the plan's tracking branch, keep earlier statuses current when problems close, offer each feature whose tasks (possibly spread over several waves) are all done for the user's review on its own branch, merge it into the main branch only when the user approves that feature (in the same session, or later with "/wave-run <plan> merge <F-ID>"), or, in a plan whose flow is autonomous, approve it itself under fixed conditions and merge it into an integration branch the user merges later, and archive the plan when it is finished. Uses a run lock and stop codes. Waves of different plans may run at the same time. Use when the user says "/wave-run <plan> <N>", "запусти волну N", "/wave-run <plan> merge F1", "смержи фичу", or asks to run the next wave of a plan in plans/ or to merge a reviewed feature. Recommended model: medium complexity (Sonnet 5.5 / GPT-6.2-Sol) — the coordinator only dispatches, merges, checks and records; but a wave with high tasks needs access to a high-complexity model for its tasks.
 ---
 
 # wave-run — execute one wave of a plan
@@ -78,8 +78,8 @@ file's Execution (`Capabilities: …`).
 | Capability | Used for | If missing |
 |---|---|---|
 | subagents | every task | every task runs in task mode |
-| parallel subagents | one launch group at once | launch the group's tasks one after another; same worktrees and checks |
-| model choice per subagent | tiers | a task whose tier is at most the default subagent model's tier runs as usual; a higher task runs in task mode on a model of its tier; no such model in the environment → stop `tier-missing` |
+| parallel subagents | one launch group at once, up to the parallel limit (`layout.md`, "Environment capabilities") | launch the group's tasks one after another; same worktrees and checks |
+| model choice per subagent | tiers; the model of a tier per vendor: `layout.md`, "Vendors" | a task whose tier is at most the default subagent model's tier runs as usual; a higher task runs in task mode on a model of its tier; no such model in the environment → stop `tier-missing` |
 | continuing a subagent | commit requests, fixes, conflicts | a new subagent of the same tier gets the original prompt, the previous report, the diff of its work and the error text; it counts as an attempt |
 | a tool from the task's `Needs` | that task | the task runs in task mode, in a session that has the tool |
 | built-in worktree isolation | optional | `git worktree add` as in step 4 (the default) |
@@ -113,6 +113,7 @@ appended to `problems.md` on the tracking branch (tracking worktree as in step 2
 | `tier-missing` | no model of a task's tier exists in this environment | re-slice, or run from an environment that has it |
 | `tier-mismatch` | a task-mode session runs a model below the task's tier, or cannot tell its model (`layout.md`, "Tier gate") | run the task again in a fresh session with a model of its tier |
 | `capability-missing` | a needed capability is missing and task mode cannot help | see "Environment capabilities" |
+| `git-read-only` | a git write is refused by the environment (`Permission denied` on `.git`, a ref or the worktrees folder) | grant the permissions of `layout.md`, "Vendors", "Permissions in Codex", then run the same command again |
 | `manual-flow` | a coordinated run of a plan in manual flow | `/wave-run <plan folder> flow autonomous`<br>`$wave-run <plan folder> flow autonomous` |
 | `target-unsafe` | autonomous flow cannot guarantee that merges stay on the integration branch (`layout.md`, "Integration target"); the line names the failed check | fix what the line names (free the integration branch, clean or remove its worktree), then run the same command again |
 | `target-conflict` | merging `<main branch>` into the integration branch conflicts (`wave-run/autonomous.md`) | merge `integration/<name>` into `<main branch>`, or `<main branch>` into it, yourself; then run the same command again |
@@ -214,7 +215,7 @@ For each feature that has a task in this wave:
 
 | Rule | What it says |
 |---|---|
-| Launch groups | Group 1 is every task whose `After` is `—`. A task starts when every task in its `After` is in its feature branch and the check command is green. A group launches at once; without parallel subagents, its tasks run one after another with the same worktrees and checks. |
+| Launch groups | Group 1 is every task whose `After` is `—`. A task starts when every task in its `After` is in its feature branch and the check command is green. A group launches at once, up to the parallel limit; the rest start as earlier tasks return. Without parallel subagents, its tasks run one after another with the same worktrees and checks. |
 | Placement | A task runs **direct** (feature worktree, feature branch) unless another task of its feature is in the same group; then each such task gets a task worktree and branch (`layout.md`, "Names"). Direct tasks of different features may share a group. |
 | Task mode | A task that step 1 sent to task mode is prepared in its worktree but not launched (`task-mode.md`). |
 
@@ -229,10 +230,12 @@ git worktree add -b task/<plan>/<feature-id>-w<N>-<task> ../<repo-folder>.worktr
 Built-in worktree isolation may be used instead, as long as the task starts from its feature branch head and
 ends committed on its own branch named as above. For a direct task, note `H = git -C <feature worktree> rev-parse HEAD` before launch.
 Model = the task's complexity tier. Launch each task as a subagent with this header followed by its code block from the wave file **verbatim**
-(the first line only for a `medium` or `high` task, `layout.md`, "Tier gate"):
+(the first line only for a `medium` or `high` task, the second only for such a task where the vendor states no model
+ID: `layout.md`, "Tier gate"):
 
 ```
 Required tier: <complexity> — <models of that tier or higher>. Stop if this session runs a weaker model.
+Model lookup: this environment states no model ID; before reading or changing anything, run this command and take its one output line as the exact model you run on: <command>
 Working folder: <absolute task worktree path, or the feature worktree for a direct task>.
 Branch: <task branch, or the feature branch for a direct task> (already checked out).
 Report language: <the language of the user's messages in this session>. Everything you write to the

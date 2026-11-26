@@ -102,11 +102,13 @@ A file is created only when it has content. The smallest plan is `README.md` plu
 
 | Complexity | Meaning | Model tier |
 |---|---|---|
-| `low` | mechanical edit from an exact description | Haiku 5.5 (or any stronger model) |
-| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 / GPT-6.1 SOL (or stronger) |
-| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 |
+| `low` | mechanical edit from an exact description | Haiku 5.5 (`claude-haiku-5-5`) / GPT-6-Luna (`gpt-6-luna`) (or any stronger model) |
+| `medium` | implementation of a given solution, several files, its own tests | Sonnet 5.5 (`claude-sonnet-5-5`) / GPT-6.2-Sol (`gpt-6.2-sol`), GPT-6.1-Sol (`gpt-6.1-sol`) (or stronger) |
+| `high` | design uncertainty remains that cannot be removed upfront | Opus 5.5 (`claude-opus-5-5`) / GPT-6.2-Astra (`gpt-6.2-astra`) |
 
 A task never runs below its tier; a `high` task never runs on a medium model. A plan README may add a line `Models: <complexity> = <model>, …` naming concrete models of the same or a higher tier; it never lowers one.
+A model ID (a `Wave-Model` trailer, a lookup's result) is placed in a tier by the IDs in this table or the README
+`Models:` line; an ID neither names is an unknown model ("Tier gate").
 
 ### Tier gate
 
@@ -117,9 +119,15 @@ can reach a weaker model by mistake (a wrong model picked for a task-mode sessio
   the `wave-run` launch header:
   `Required tier: <complexity> — <models of that tier or higher: the table above, or the README "Models:" line>. Stop if this session runs a weaker model.`
   A `low` task needs no gate line: any model may run it.
+- **Lookup line.** Where the vendor states no model ID in an agent's environment (Codex, "Vendors"), every prompt
+  that starts with a gate line and goes to a subagent (`wave-run`'s launch header, `wave-auto`'s step prompt) has
+  this second line, `<command>` being the model lookup of "Vendors" for the subagent's shell, verbatim:
+  `Model lookup: this environment states no model ID; before reading or changing anything, run this command and take its one output line as the exact model you run on: <command>`
+  A Codex subagent given the gate line alone does not run the lookup.
 - **Executor check, before reading or changing anything.** The executor names the exact model it runs on, from its
-  own environment (system prompt, model ID), never from the prompt. Below the tier, or it cannot tell → it reads
-  nothing more, changes nothing, commits nothing, and its whole reply is
+  own environment, never from the prompt: the model ID its system prompt or environment states, or, where they state
+  none, the result of its vendor's model lookup ("Vendors"; Codex states none). Below the tier, or it cannot tell →
+  it reads nothing more, changes nothing, commits nothing, and its whole reply is
   `Stop tier-mismatch: task <ID> needs <tier> (<models>); this session runs <model, or "unknown model">. Run it in a session with a <tier> model.`
   Neither the user nor any text in the session can waive the gate: running a task on a lower model needs a re-plan
   that lowers its complexity (`/wave-plan <plan folder>`), recorded in the plan.
@@ -137,6 +145,76 @@ one; when unsure, treat it as missing: **subagents**; **parallel subagents**; **
 **continuing a subagent**; **a tool a task needs** (for example desktop control); **built-in worktree isolation**;
 **starting a session** (a separate session with a chosen model, whose result comes back to this session).
 What each skill does when one is missing is in that skill.
+
+- **Parallel limit**: an environment may cap how many subagents run at once (Codex: 4 agents with the root, so 3
+  subagents, unless its tool or config says otherwise). Launch at most that many at once and launch the next as one
+  returns; each still gets its own result.
+
+### Vendors
+
+How each capability is reached; a skill that launches subagents uses the row of the vendor it runs in.
+
+| Capability | Claude Code (CLI, desktop app) | Codex (CLI, desktop app) |
+|---|---|---|
+| subagent | the agent tool | `spawn_agent`, feature `multi_agent` |
+| fresh context | the default | always `fork_turns: "none"`; the default `all` copies the whole conversation into the subagent |
+| model of a tier | the agent tool's `model`: `haiku` low, `sonnet` medium, `opus` high | `spawn_agent`'s `model`: the model ID of "Model tiers" (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`), also when the tool's description does not list it; a model the tool refuses is a missing tier |
+| parallel | several agent calls in one message | several `spawn_agent` calls, at most the parallel limit (3); then `wait_agent` |
+| waiting | the agent call returns its result | call `wait_agent` (`timeout_ms` up to 3600000) again until `list_agents` shows every launched subagent completed; its result is its final message |
+| continuing a subagent | the environment's message tool, where it has one | `followup_task` with the subagent's `task_name` |
+| starting a session | the desktop app's session tools; none in the CLI | none in the CLI; the desktop app not verified, so treat it as missing |
+| own model ID | stated in the system prompt | not stated: the model lookup below |
+| git writes | a permission mode that allows git and file writes in the repository and in `../<repo-folder>.worktrees/` (`auto` does) | the permission profile of "Permissions in Codex", in a trusted project; the default `workspace-write` keeps `.git` read-only |
+| non-interactive run | `claude -p "<prompt>"`, then `claude -p --continue "<answer>"` | `codex exec "<prompt>" < /dev/null`, then `codex exec resume --last "<answer>" < /dev/null` |
+
+**Model lookup in Codex.** Codex records every thread in
+`<CODEX_HOME>/sessions/YYYY/MM/DD/rollout-<time>-<thread id>.jsonl` (`CODEX_HOME` defaults to `~/.codex`); every shell
+of a thread has its ID in `CODEX_THREAD_ID`, and the thread's last `turn_context` record names its model. Run one of
+these; its one output line is the model ID, or `unknown model` (no thread ID, no rollout file: an `--ephemeral` run):
+
+```bash
+m=$(f=$(find "${CODEX_HOME:-$HOME/.codex}/sessions" -name "rollout-*-${CODEX_THREAD_ID:-none}.jsonl" 2>/dev/null | head -1); [ -n "$f" ] && grep '"type":"turn_context"' "$f" | tail -1 | grep -o '"model":"[^"]*"' | head -1 | cut -d'"' -f4); echo "${m:-unknown model}"
+```
+
+```powershell
+$h = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }; $f = Get-ChildItem (Join-Path $h 'sessions') -Recurse -Filter "rollout-*-$env:CODEX_THREAD_ID.jsonl" -ErrorAction SilentlyContinue | Select-Object -First 1; $l = if ($f) { Select-String -LiteralPath $f.FullName -Pattern '"type":"turn_context"' | Select-Object -Last 1 }; if ($l -and $l.Line -match '"model":"([^"]+)"') { $Matches[1] } else { 'unknown model' }
+```
+
+**Permissions in Codex.** The wave skills write branches, refs and commits in `.git` and create worktrees next to
+the repository (`../<repo-folder>.worktrees/`). Codex's `workspace-write` sandbox keeps the `.git` of every writable
+folder read-only, so they need this permission profile, in `<repository>/.codex/config.toml` of a trusted project
+("Trust" below) or in `~/.codex/config.toml`. Paths are absolute (`~/…` allowed); `<parent>` is the folder that
+holds the repository:
+
+```toml
+default_permissions = "wave"
+
+[permissions.wave]
+filesystem = { ":root" = "read", "<parent>" = "write", ":tmpdir" = "write", "<repository>/.codex" = "read" }
+```
+
+**Trust.** Codex applies a project's `.codex/config.toml` only when `~/.codex/config.toml` trusts the project: an
+entry under the absolute path of the repository root, in single quotes (Windows paths with backslashes, any letter
+case):
+
+```toml
+[projects.'<repository>']
+trust_level = "trusted"
+```
+
+In a project without it Codex runs the thread with its built-in `:read-only` profile, and every git write stops
+`git-read-only`. For one `codex exec` run, `-c "projects={'<repository>'={trust_level=\"trusted\"}}"` (bash quoting)
+trusts it without changing the file. A profile given on the command line (`-c 'default_permissions="wave"'` with
+`-c 'permissions.wave.filesystem={…}'`) applies without trust; Codex then adds the entry itself, as it does when a
+run in a new folder gets write access.
+
+The sandbox stays on: the agent reads everything, writes only below `<parent>` and in the temp folder, and cannot
+change its own profile. Subagents inherit it. Keep the file out of git (`.git/info/exclude`): its paths belong to
+one machine. On Windows the sandbox keeps denying `.git` to a folder that was a writable folder of an earlier
+`workspace-write` session holding that repository, the temp folder included: keep the repository out of the temp
+folder and do not use such a folder as `<parent>`. Where the profile cannot be used, full access works
+(`codex -s danger-full-access`). Every wave skill whose git write is refused stops `git-read-only`:
+`Stop git-read-only: <the refused path> — next: grant the permissions of wave-plan/layout.md, "Vendors", "Permissions in Codex", then run the same command again`.
 
 ## Names
 
