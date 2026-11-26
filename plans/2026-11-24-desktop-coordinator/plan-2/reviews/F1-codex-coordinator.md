@@ -11,6 +11,8 @@
 - M: `$wave-auto <list>` in Codex with a profile that cannot write `.git` → `Started:` first, then
   `Stop git-read-only: …`; with the right permissions low steps run on `gpt-6-luna`, and a medium or high step runs
   the model lookup first.
+- S: open `README.md`, "Codex permissions" → after the profile block, "Codex reads this file only in a project it
+  trusts…" with a `[projects.'<project>']` block; `layout.md`, "Permissions in Codex" has a "Trust." part.
 
 ## Tasks
 
@@ -23,3 +25,5 @@
   prompts to Codex subagents carry the model lookup line; the GPT model names in the skill descriptions are fixed.
 - M (wave 6) — `wave-auto` takes each tier's own model, checks before the first step that it can write git, passes the
   model lookup to its steps and keeps its fixed output texts.
+- S (wave 9) — the docs say that Codex applies a project's permission profile only in a trusted project, and show
+  how to trust it (the `~/.codex/config.toml` entry, or `-c` for one `codex exec` run).

@@ -938,3 +938,141 @@ Tests 11 and 12 are superseded by 14 and 15.
     shows the hash of `~/.codex/config.toml` equal before and after (task T).
 15. README, layout and changelog claim exactly what the CLI record shows and call the Codex desktop app not
     rehearsed; the desktop record has "Not rehearsed by decision" (task U).
+
+## Evidence (re-plan 2026-11-26, round 4)
+
+Override of F1 by the user's direction (quoted in `history.md`): split F1 — merge it with the rehearsal as recorded,
+accept the unverified end of a wave, move the remaining findings to a new feature F3. Run in the re-planning session in
+a throwaway worktree of `feat/desktop-coordinator-p2/F1-codex-coordinator` at bcd3b0d (removed afterwards).
+
+| Entry | Disputed assumption | Run | Deciding output | Conclusion |
+|---|---|---|---|---|
+| I2 | the definitions of "Claims after the rehearsals (task I)" and "(task P)", applied to task T's record, give claims that match what was rehearsed (task U) | a Python script that reads the `## Results` tables of both records and applies the definitions verbatim | `X1 ['Pass', 'Pass', 'Pass', 'Pass']`; `X4 ['Pass', 'Finding (T1)', 'Not run', 'Pass (up to the cut)', 'Pass', 'Not run']`; `CLI rehearsed: False · CLI profile works: True`; `E1`, `E2` all `Not run`; `Desktop rehearsed: False` | refuted: U would take the case "neither" and write "in Codex it is not rehearsed yet", although X0–X3 passed and X4 started its wave; and no variant names the end of a wave as an accepted gap. Task X replaces U with fixed texts |
+| I2 | the places U edits are where the solution says | `grep -n` on the branch | README `:461` `- **wave-auto** was rehearsed in the Claude Code CLI and desktop app and in the Codex CLI and desktop app`; layout `:165` row `starting a session`; CHANGELOG `:46` ``rehearsals of `$wave-auto` in the Codex CLI and desktop app.``; README `:86-87` `Where the profile cannot be used, full access works` / ``too (`codex -s danger-full-access`).`` (wrapped); desktop record `## Setup` at `:13`; CLI record `:331` `- The end of a wave in Codex: …` | confirmed; X finds each place by its quoted text |
+| I14 | (accepted by the user) | the F1 check on bcd3b0d | 39 and 59 tests `OK`; three examples exit 0; `git diff --check main` exit 0 | F1 is green as it stands; only texts change |
+| I23 | the user can review a branch of a sandbox-made worktree without changing ownership | in `~/wave-rehearsal-20261126-1955`: `git -C <worktree> status`; the same with `git -c safe.directory=<worktree>`; `git -C textkit log -2 integration/text-utilities` from the main checkout | `fatal: detected dubious ownership … owned by: …/CodexSandboxOffline`; with `-c safe.directory=…` exit 0; from the main checkout the log prints `5bb99bc`, `a4c08ac` | both ways work: review from the main checkout, or name the worktree in `safe.directory` (texts of task AB) |
+
+I12 and I22 are behaviour of a GPT model in Codex: not verifiable by running here (the Codex account hit its usage
+limit at 20:12, reset 23:09, and by the direction F3 has no rehearsal); checked instead: the rules they break are
+already explicit (`skills/wave-auto/SKILL.md:51-54`, step 4 at `:129-130`), so F3 states the Codex case in the place
+where the model acts, and its acceptance is the text only.
+
+## Split of F1 (re-plan 2026-11-26, round 4, override)
+
+F1 stops depending on a new live run: its done-when takes task T's record as it is. Findings of a later Codex run go to
+a new plan, never back into F1 or F3.
+
+| Entry | Essence | Fixed by |
+|---|---|---|
+| I14 | the end of a wave in Codex is not verified (usage limit) | accepted by the user on 2026-11-26; task X names it in README Limitations and the CLI record |
+| I2 | claims match the records | task X, "Claims after the split (task X)" |
+| I19 | the desktop app is not rehearsed | the user's decision of round 3; task X records it |
+| I12 | the coordinator's first line and its own sentences | feature F3, task AA |
+| I22 | questions go to `request_user_input_async` in `codex exec` | feature F3, task AA |
+| I23 | git refuses sandbox-made worktrees in the user's shell | feature F3, task AB |
+
+### Claims after the split (task X)
+
+Files: `README.md`, `skills/wave-plan/layout.md`, `skills/wave-plan/CHANGELOG.md`,
+`docs/rehearsals/coordinator-codex-desktop.md`, `docs/rehearsals/coordinator-codex-cli.md`. Find every place by its
+quoted text; lines at most 120 characters except table rows; rewrap only what is edited.
+
+1. `README.md`, Limitations, the bullet `- **wave-auto** was rehearsed in the Claude Code CLI and desktop app and in the
+   Codex CLI and desktop app` with its continuation line → (two-space continuation indent):
+
+   ```
+   - **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)), and in the
+     Codex CLI up to the start of a wave: triage, the questions, the plan and the launch of a wave's tasks passed,
+     while the end of a wave in Codex (task commits, the merge into `integration/<topic>`, auto-approval) is not
+     verified yet. The Codex desktop app is not rehearsed. Its rails (`until`, `steps`) are rules of the skill, not
+     enforced limits.
+   ```
+
+2. `skills/wave-plan/layout.md`, "Vendors", row `starting a session`, Codex cell ``none in the CLI; the desktop app as
+   its rehearsal recorded (`docs/rehearsals/coordinator-codex-desktop.md`)`` → `none in the CLI; the desktop app not
+   verified, so treat it as missing` (one physical line).
+3. `skills/wave-plan/CHANGELOG.md`, the `- Unreleased` item: `README shows the Codex plugin install;` followed by
+   ``rehearsals of `$wave-auto` in the Codex CLI and desktop app.`` → ``README shows the Codex plugin install; a
+   rehearsal of `$wave-auto` in the Codex CLI up to the start of a wave.``; rewrap only these lines, two-space indent.
+4. `README.md`, "### Codex permissions": after the sentence ``Where the profile cannot be used, full access works too
+   (`codex -s danger-full-access`).`` add `The Codex desktop app is not rehearsed with it yet.`; rewrap that paragraph
+   only.
+5. `docs/rehearsals/coordinator-codex-desktop.md`: after its header paragraphs, before `## Setup`, insert (blank lines
+   around it):
+
+   ```
+   ## Not rehearsed by decision
+
+   On 2026-11-26 the user decided not to rehearse the Codex desktop app in this feature: this record stays as it is,
+   and README and `skills/wave-plan/layout.md` call the app not rehearsed. Whether the app applies a project's
+   permission profile and trust entry (README "Codex permissions") is not known.
+   ```
+
+6. `docs/rehearsals/coordinator-codex-cli.md`, "## Not verified", the bullet `- The end of a wave in Codex: …` ending
+   `cut by the usage limit (T1).` → append ` The user accepted this gap on 2026-11-26: the feature is merged without
+   it.` and rewrap that bullet only. Nothing else of the record changes.
+
+Nothing else changes. `git grep -n "as its rehearsal recorded" -- skills README.md` prints nothing afterwards.
+
+### Polish (feature F3, tasks AA and AB)
+
+F3 starts from `main` after F1 is merged, so it sees task X's texts. Text edits only; no Codex run.
+
+Task AA, `skills/wave-auto/SKILL.md`:
+
+1. "Hard rules", the bullet that starts `- It writes the user only what this skill names:` and ends ``Its first message
+   starts with the `Started:` line: no sentence comes before it.`` → append (rewrap that bullet only):
+
+   ```
+   It reads the clock before it writes any text, so that line always carries the time (`Started: 2026-11-26 19:57`):
+   never a `Started:` line without a time, never a second one. It never restates its questions, results or plans in
+   its own words (no table of the questions, no sentence that opens or closes a message); this holds for every model,
+   also one that tends to announce what it will do.
+   ```
+
+2. "Start phase", step 1: ``1. Read the clock (`Started:` line, `wave-plan/layout.md`, "Run times");`` →
+   ``1. Read the clock with a shell command before writing anything, then write the `Started:` line with that time
+   (`wave-plan/layout.md`, "Run times");`` — the rest of the step unchanged; rewrap the step only.
+3. "Start phase", step 4: `ask them all in one message and` / `wait.` → the text below; the next sentence
+   (``With `questions 0`, …``) unchanged; rewrap step 4 only:
+
+   ```
+   ask them all in one message, as the text of your answer, and wait (end the turn). In Codex never use
+   `request_user_input_async` or another input tool for them: in `codex exec` it only sleeps.
+   ```
+
+Task AB, `README.md` and `skills/wave-plan/layout.md`:
+
+1. `README.md`, "### Codex permissions": after the paragraph that ends ``Details: `skills/wave-plan/layout.md`,
+   "Vendors".``, before `### Installer (a copy inside the project)`, insert one paragraph (blank lines around it):
+
+   ```
+   On Windows the worktrees that Codex creates in its sandbox belong to the sandbox account (`CodexSandboxOffline`),
+   and git in your own shell refuses them with `detected dubious ownership`. Review the branches from the main
+   checkout (`git log <branch>`, `git diff main...<branch>`), or allow one worktree for a command with
+   `git -c safe.directory='<worktree path>' …` (or for good with `git config --global --add safe.directory`).
+   ```
+
+2. `skills/wave-plan/layout.md`, "Permissions in Codex": after the sentence `Subagents inherit it.` insert, in the same
+   paragraph, the text below; rewrap that paragraph only:
+
+   ```
+   On Windows the worktrees it creates belong to the sandbox account, and git outside the sandbox refuses them
+   (`detected dubious ownership`): the user reviews a feature branch from the main checkout or names the worktree in
+   `safe.directory`.
+   ```
+
+## Acceptance tests (re-plan 2026-11-26, round 4)
+
+Test 15 is superseded by 16.
+
+16. README Limitations says the Codex CLI was rehearsed up to the start of a wave, that the end of a wave in Codex is
+    not verified and that the desktop app is not rehearsed; the `starting a session` Codex cell is `none in the CLI; the
+    desktop app not verified, so treat it as missing`; the changelog says ``a rehearsal of `$wave-auto` in the Codex CLI
+    up to the start of a wave``; README "Codex permissions" says the desktop app is not rehearsed with it; the desktop
+    record has "Not rehearsed by decision"; the CLI record's "Not verified" says the user accepted the gap; the F1 check
+    is green (task X).
+17. `skills/wave-auto/SKILL.md` has the time rule and the no-restating rule in "Hard rules", step 1 reads the clock
+    before writing, step 4 forbids `request_user_input_async`; README "Codex permissions" and layout "Permissions in
+    Codex" name `detected dubious ownership` and `safe.directory`; the check is green (tasks AA, AB). The behaviour in
+    Codex is not rehearsed in this plan.
