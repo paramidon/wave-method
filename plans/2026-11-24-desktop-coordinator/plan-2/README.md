@@ -41,7 +41,7 @@ Merged: short hash of the merge commit into the main branch.
 | 9 | `waves/w09.md` | S, T (after S) | ⚠️ I12, I22, I23 |
 | 10 | `waves/w10.md` | U | ➖ dropped (tasks → wave 12) |
 | 11 | `waves/w11.md` | V, W (needs F1 merged) | ➖ dropped (tasks → wave 13) |
-| 12 | `waves/w12.md` | X | ⬜ |
+| 12 | `waves/w12.md` | X | 🔄 since 2026-11-26 20:51 |
 | 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ⬜ |
 | 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⬜ |
 
@@ -72,7 +72,7 @@ Merged: short hash of the merge commit into the main branch.
 | U | `codex-claims-final` | F1 | 10 | high | ➖ superseded by X |
 | V | `unattended-runs-readme-v4` | F2 | 11 | medium | ➖ superseded by Y |
 | W | `driver-mentions-cleanup-v4` | F2 | 11 | low | ➖ superseded by Z |
-| X | `codex-claims-split` | F1 | 12 | high | ⬜ |
+| X | `codex-claims-split` | F1 | 12 | high | 🔄 |
 | Y | `unattended-runs-readme-v5` | F2 | 13 | medium | ⬜ |
 | Z | `driver-mentions-cleanup-v5` | F2 | 13 | low | ⬜ |
 | AA | `wave-auto-codex-output` | F3 | 14 | low | ⬜ |
