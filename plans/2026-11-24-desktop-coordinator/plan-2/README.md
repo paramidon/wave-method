@@ -21,7 +21,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2) ➖, E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7) ➖, O (7) ➖, P (7) ➖, S (9), T (9), U (10) ➖, X (12) | acceptance tests 1–5, 9, 10, 13, 14 and 16 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L, M and S are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI rehearsal (T) is recorded as it ran (up to the start of a wave; the end of a wave not verified, accepted by the user), and X's claims match that record and call the Codex desktop app not rehearsed | ✅ merged | | `feat/desktop-coordinator-p2/F1-codex-coordinator` | 8b97145 |
-| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11) ➖, W (11) ➖, Y (13), Z (13) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | 🔄 | wave 13 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
+| F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11) ➖, W (11) ➖, Y (13), Z (13) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` and the check of `solutions/lite.md`, "P3" | ⚠️ blocked (I24, I25, I26, I27, I28) | I24, I25, I26, I27, I28 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
 | F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14) | acceptance test 17 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA and AB are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ⬜ | wave 14 | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | |
 
 Merged: short hash of the merge commit into the main branch.
@@ -42,7 +42,7 @@ Merged: short hash of the merge commit into the main branch.
 | 10 | `waves/w10.md` | U | ➖ dropped (tasks → wave 12) |
 | 11 | `waves/w11.md` | V, W (needs F1 merged) | ➖ dropped (tasks → wave 13) |
 | 12 | `waves/w12.md` | X | ✅ |
-| 13 | `waves/w13.md` | Y, Z (needs F1 merged) | 🔄 since 2026-11-27 02:34 |
+| 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ⚠️ I24, I25, I26, I27, I28 |
 | 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⬜ |
 
 ## Tasks
@@ -73,8 +73,8 @@ Merged: short hash of the merge commit into the main branch.
 | V | `unattended-runs-readme-v4` | F2 | 11 | medium | ➖ superseded by Y |
 | W | `driver-mentions-cleanup-v4` | F2 | 11 | low | ➖ superseded by Z |
 | X | `codex-claims-split` | F1 | 12 | high | ✅ |
-| Y | `unattended-runs-readme-v5` | F2 | 13 | medium | 🔄 |
-| Z | `driver-mentions-cleanup-v5` | F2 | 13 | low | 🔄 |
+| Y | `unattended-runs-readme-v5` | F2 | 13 | medium | ⚠️ I24, I25, I26, I27, I28 |
+| Z | `driver-mentions-cleanup-v5` | F2 | 13 | low | ✅ |
 | AA | `wave-auto-codex-output` | F3 | 14 | low | ⬜ |
 | AB | `codex-sandbox-ownership` | F3 | 14 | low | ⬜ |
 
