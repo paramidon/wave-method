@@ -263,6 +263,9 @@ features merged into `integration/<topic>`, features waiting for your review, bl
 for.
 
 - Start from a list, an index (`/wave-auto plans/<date>-<topic>/index.md`) or a plan folder.
+- Plans of the index that were planned earlier in manual flow are asked about once, at the start: one question lists
+  every such plan with the integration branch it would merge into. Yes switches all of them to autonomous flow; no
+  keeps them all manual, and the run skips them. Switch one later with `/wave-run <plan folder> flow autonomous`.
 - Bound it with `until 07:00` or `steps 40` before the start: `/wave-auto until 07:00 plans/<…>/index.md`.
 - Nothing is kept in the chat: if the window closes or a usage limit stops the session, run
   `/wave-auto plans/<date>-<topic>/index.md` in a new session and it continues where it stopped.
