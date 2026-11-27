@@ -25,7 +25,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2) ➖, E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7) ➖, O (7) ➖, P (7) ➖, S (9), T (9), U (10) ➖, X (12) | acceptance tests 1–5, 9, 10, 13, 14 and 16 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L, M and S are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI rehearsal (T) is recorded as it ran (up to the start of a wave; the end of a wave not verified, accepted by the user), and X's claims match that record and call the Codex desktop app not rehearsed | ✅ merged | | `feat/desktop-coordinator-p2/F1-codex-coordinator` | 8b97145 |
 | F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4, P5 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11) ➖, W (11) ➖, Y (13), Z (13), AC (15), AD (15) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` the check of `solutions/lite.md`, "P3", as "P5" changes its text, and the checks of tasks AC and AD | ✅ merged | | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | 05e88bf |
-| F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14), AE (16) | acceptance tests 17 and 18 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA, AB and AE are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ⚠️ blocked (I33) | wave 16 | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | |
+| F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14), AE (16) | acceptance tests 17 and 18 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA, AB and AE are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ✅ merged | | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | 1b30b0c |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -46,9 +46,9 @@ Merged: short hash of the merge commit into the main branch.
 | 11 | `waves/w11.md` | V, W (needs F1 merged) | ➖ dropped (tasks → wave 13) |
 | 12 | `waves/w12.md` | X | ✅ |
 | 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ✅ (fixed by AC, wave 15) |
-| 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⚠️ I33 |
+| 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ✅ (fixed by AE, wave 16) |
 | 15 | `waves/w15.md` | AC, AD (needs F1 merged) | ✅ |
-| 16 | `waves/w16.md` | AE (needs F1 merged) | ⬜ |
+| 16 | `waves/w16.md` | AE (needs F1 merged) | ✅ |
 
 ## Tasks
 
@@ -81,10 +81,10 @@ Merged: short hash of the merge commit into the main branch.
 | Y | `unattended-runs-readme-v5` | F2 | 13 | medium | ✅ (fixed by AC, wave 15) |
 | Z | `driver-mentions-cleanup-v5` | F2 | 13 | low | ✅ |
 | AA | `wave-auto-codex-output` | F3 | 14 | low | ✅ |
-| AB | `codex-sandbox-ownership` | F3 | 14 | low | ⚠️ I33 |
+| AB | `codex-sandbox-ownership` | F3 | 14 | low | ✅ (fixed by AE, wave 16) |
 | AC | `unattended-runs-script-lines` | F2 | 15 | low | ✅ |
 | AD | `cleanup-line-wrapping` | F2 | 15 | low | ✅ |
-| AE | `safe-directory-path` | F3 | 16 | high | ⬜ |
+| AE | `safe-directory-path` | F3 | 16 | high | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p2`
