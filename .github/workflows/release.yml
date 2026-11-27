@@ -38,14 +38,13 @@ jobs:
       - name: Run checks
         run: |
           python skills/wave-plan/scripts/test_status_check.py
-          python -m unittest discover -s scripts/tests -v
           for plan in examples/*/; do python skills/wave-plan/scripts/status_check.py "${plan%/}"; done
 
       - name: Build archives
         run: |
           name="wave-method-v${VERSION}"
           mkdir -p build dist
-          paths="skills scripts install.sh install.ps1 LICENSE README.md docs .claude-plugin"
+          paths="skills install.sh install.ps1 LICENSE README.md docs .claude-plugin"
           git archive --prefix="$name/" "$GITHUB_REF_NAME" $paths | tar -x -C build
           python .github/scripts/set_plugin_version.py "build/$name/.claude-plugin/plugin.json" "$VERSION"
           (cd build && zip -qr "../dist/$name.zip" "$name" && tar -czf "../dist/$name.tar.gz" "$name")

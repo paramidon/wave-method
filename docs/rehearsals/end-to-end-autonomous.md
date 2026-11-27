@@ -1,5 +1,9 @@
 # Rehearsal: autonomous flow end to end
 
+> History: these runs used the Python overnight driver (`scripts/wave_driver.py`), which has since been removed from
+> the repository; `/wave-auto` replaces it (`skills/wave-auto/SKILL.md`). Its commands are kept as a record and no
+> longer run.
+
 2026-11-18 · Claude Code 2.1.326 · source commit 47e212d · third run
 
 ## Setup
