@@ -4,7 +4,8 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A README line
+- v2.13.0 (2026-11-27) — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A
+  README line
   `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>`
   lets `wave-run` approve a ready feature itself
   when all its tasks are done, its check is green after merging the target, no open entry concerns it, its commits pass
