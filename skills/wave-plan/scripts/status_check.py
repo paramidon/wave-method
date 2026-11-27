@@ -7,6 +7,7 @@ MARK = re.compile(r"⬜|🔄|👀|✅|⚠️|❌|➖")
 ENTRY = re.compile(r"^- \*\*\[(I\d+) · ([^\]]*)\]")
 FLOW = re.compile(r"- Flow: (manual|autonomous(?: · target: (integration/[A-Za-z0-9][A-Za-z0-9._-]*))?"
                   r"(?: · manual review: (F\d+(?:, F\d+)*))?)")
+INDEX = re.compile(r"- Index: `?plans/\d{4}-\d{2}-\d{2}-([A-Za-z0-9][A-Za-z0-9._-]*)/index\.md`? part \d+")
 COLUMNS = {
     "Features": ("ID", "Status", "Merged"),
     "Waves": ("Wave", "Status"),
@@ -84,6 +85,17 @@ def flow(lines, report):
         elif match[1] != "manual":
             return "autonomous", match[2], match[3].split(", ") if match[3] else [], first_line
     return "manual", None, [], first_line
+
+
+def index_topic(lines):
+    """Return the topic of the README header's Index line, or None for a plan without an index."""
+    for text in lines:
+        if text.startswith("## "):
+            break
+        match = INDEX.match(text.rstrip())
+        if match:
+            return match[1]
+    return None
 
 
 def replans(lines, report, feature_ids, flow_name, manual_review):
@@ -166,7 +178,7 @@ def check(folder):
     try:
         readme_lines = readme.read_text(encoding="utf-8").splitlines()
         parsed = tables(readme_lines, report_readme)
-        flow_name, _, manual_review, flow_line = flow(readme_lines, report_readme)
+        flow_name, target, manual_review, flow_line = flow(readme_lines, report_readme)
         lines = problem_file.read_text(encoding="utf-8").splitlines() if problem_file.exists() else []
     except (OSError, UnicodeError, ValueError) as error:
         print(f"{readme}:1: {error}", file=sys.stderr)
@@ -176,6 +188,10 @@ def check(folder):
         if feature_id not in feature_ids:
             report(readme, flow_line, "flow-review-unknown",
                    "manual review names missing feature " + feature_id)
+    topic = index_topic(readme_lines)
+    if flow_name == "autonomous" and topic and target and target != "integration/" + topic:
+        report(readme, flow_line, "flow-target",
+               f"a plan of index part targets integration/{topic}, found {target}")
     replans(readme_lines, report_readme, feature_ids, flow_name, manual_review)
     entries = problems(lines)
     items = {}

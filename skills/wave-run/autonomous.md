@@ -14,8 +14,10 @@ the closest code of `SKILL.md`, "Stops"; its `next:` says what the user must dec
 `$wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]`
 
 1. A wave of the plan is 🔄 (also one waiting for task mode) → stop `wave-running`.
-2. `autonomous`: `<name>` is the `<name>` of the current `target:`, else `<plan>`; run the checks of "Integration
-   target", step 1. `manual`: the integration branch of the current `Flow:` line exists and
+2. `autonomous`: `<name>` is the `<name>` of the current `target:`; else, for a plan of an index part (README header
+   line `- Index: plans/<date>-<topic>/index.md part <K>`), the index `<topic>`, so that the part shares
+   `integration/<topic>` with the other parts of its index; else `<plan>` (`layout.md`, "Names"). Run the checks of
+   "Integration target", step 1. `manual`: the integration branch of the current `Flow:` line exists and
    `git rev-list --count <main branch>..integration/<name>` is not 0 → stop `target-unmerged`.
 3. Tracking worktree as `SKILL.md` step 2, without preparing the integration target or making a "started" commit.
    In the README header write the `Flow:` line,
@@ -31,8 +33,8 @@ the closest code of `SKILL.md`, "Stops"; its `next:` says what the user must dec
 ## Integration target
 
 Step 1, right after the README is read; it writes nothing but the target claim.
-`<name>` comes from `target:`, else it is `<plan>`. Stop
-`target-unsafe` (nothing written), naming the check that failed, when:
+`<name>` comes from `target:`, else from `layout.md`, "Names" (the index topic for a plan of an index part, else
+`<plan>`). Stop `target-unsafe` (nothing written), naming the check that failed, when:
 
 1. `target:` is present and is not `integration/<name>` with a kebab-case `<name>`;
 2. `git worktree list --porcelain` shows `refs/heads/integration/<name>` at a path other than the integration worktree
