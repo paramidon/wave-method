@@ -209,11 +209,13 @@ trusts it without changing the file. A profile given on the command line (`-c 'd
 run in a new folder gets write access.
 
 The sandbox stays on: the agent reads everything, writes only below `<parent>` and in the temp folder, and cannot
-change its own profile. Subagents inherit it. Keep the file out of git (`.git/info/exclude`): its paths belong to
-one machine. On Windows the sandbox keeps denying `.git` to a folder that was a writable folder of an earlier
+change its own profile. Subagents inherit it. On Windows the worktrees it creates belong to the sandbox account, and
+git outside the sandbox refuses them (`detected dubious ownership`): the user reviews a feature branch from the main
+checkout or names the worktree in `safe.directory`. Keep the file out of git (`.git/info/exclude`): its paths belong
+to one machine. On Windows the sandbox keeps denying `.git` to a folder that was a writable folder of an earlier
 `workspace-write` session holding that repository, the temp folder included: keep the repository out of the temp
-folder and do not use such a folder as `<parent>`. Where the profile cannot be used, full access works
-(`codex -s danger-full-access`). Every wave skill whose git write is refused stops `git-read-only`:
+folder and do not use such a folder as `<parent>`. Where the profile cannot be used, full access works (`codex -s
+danger-full-access`). Every wave skill whose git write is refused stops `git-read-only`:
 `Stop git-read-only: <the refused path> — next: grant the permissions of wave-plan/layout.md, "Vendors", "Permissions in Codex", then run the same command again`.
 
 ## Names

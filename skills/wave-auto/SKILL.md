@@ -51,7 +51,10 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
 - It writes the user only what this skill names: the `Started:` and `Capabilities:` lines, the progress lines, the
   `Resume:` line, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
   summary, comment or explanation of its own. Its first message starts with the `Started:` line: no sentence comes
-  before it.
+  before it. It reads the clock before it writes any text, so that line always carries the time (`Started: 2026-11-26
+  19:57`): never a `Started:` line without a time, never a second one. It never restates its questions, results or plans
+  in its own words (no table of the questions, no sentence that opens or closes a message); this holds for every model,
+  also one that tends to announce what it will do.
 
 ## Capabilities
 
@@ -115,8 +118,9 @@ has no index yet, `list`; for `navigate`, the start.
 The only questions of a run. Each kind is asked at most once, all questions of one kind in one message, in the user's
 language.
 
-1. Read the clock (`Started:` line, `wave-plan/layout.md`, "Run times"); resolve the skills folder, the main checkout
-   (`git rev-parse --show-toplevel`) and `<main branch>`; check the capabilities.
+1. Read the clock with a shell command before writing anything, then write the `Started:` line with that time
+   (`wave-plan/layout.md`, "Run times"); resolve the skills folder, the main checkout (`git rev-parse --show-toplevel`)
+   and `<main branch>`; check the capabilities.
 2. List start: run `triage-ask`; its index path gives `<topic>`. Right after its progress line, in the same text and
    before anything else, write the line `Resume: /wave-auto <index path> · $wave-auto <index path>`, whether or not
    questions follow (`questions 0` too).
@@ -126,11 +130,12 @@ language.
    is read for it); `<start>` in the holder line is the index path for a list start. Refused → ask whether the holder
    is gone (quote its holder line); yes → take it over; no → stop `wave-running`, naming the holder.
 4. Questions: after `triage-ask` with `questions <n>` > 0, or when the navigator returns `next: ask <index>`, read the
-   `- Q<n> · …` lines of "Open questions" with `git show triage/<topic>:<index path>`, ask them all in one message and
-   wait. With `questions 0`, or when the index has no `- Q<n>` line, ask nothing and do not wait. Then run
-   `triage-answers` with the answer verbatim (`Answers: none` for 0 questions; the user may answer only some). When
-   the navigator returns `next: ask-flow <plan folder>`: ask whether to switch that plan to autonomous flow; yes →
-   step `flow`; no → halt the unit.
+   `- Q<n> · …` lines of "Open questions" with `git show triage/<topic>:<index path>`, ask them all in one message, as
+   the text of your answer, and wait (end the turn). In Codex never use `request_user_input_async` or another input tool
+   for them: in `codex exec` it only sleeps. With `questions 0`, or when the index has no `- Q<n>` line, ask nothing and
+   do not wait. Then run `triage-answers` with the answer verbatim (`Answers: none` for 0 questions; the user may answer
+   only some). When the navigator returns `next: ask-flow <plan folder>`: ask whether to switch that plan to autonomous
+   flow; yes → step `flow`; no → halt the unit.
 5. The start phase ends with the first step that is not `triage-ask` or `navigate`. From then on a navigator line
    `next: ask …` or `next: ask-flow …` halts its unit instead (`questions-late`, `next:` the manual command).
 
