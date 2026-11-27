@@ -269,21 +269,32 @@ for.
 | Claude Code CLI | `claude` in the project, an Opus-class model, permission mode `auto`; type `/wave-auto <list>` | answer in the same session | `/wave-auto plans/<date>-<topic>/index.md` in a new session |
 | Claude Code desktop app | a new session (Code tab) in the project folder, an Opus-class model, permission mode `auto`; type `/wave-auto <list>` | answer in the same session | the same, in a new session |
 | Codex CLI | `codex -m gpt-6.2-astra` in the project, with the permission profile of [Codex permissions](#codex-permissions); type `$wave-auto <list>` | answer in the same session | `$wave-auto plans/<date>-<topic>/index.md` in a new session |
-| Codex desktop app | a new thread in the project, GPT-6.2-Astra, permissions as [Codex permissions](#codex-permissions) says for the desktop app; type `$wave-auto <list>` | answer in the same thread | the same, in a new thread |
+| Codex desktop app | a new thread in the project, GPT-6.2-Astra; type `$wave-auto <list>`. Not rehearsed, the profile of [Codex permissions](#codex-permissions) included | answer in the same thread | the same, in a new thread |
 
 The worktrees live next to the project (`../<repo>.worktrees/`), so the agent needs write access there. Claude Code's
 `auto` mode allows it. In Codex use the permission profile of [Codex permissions](#codex-permissions).
 
 To start a run from a script, with nobody at the keyboard, start from an index whose questions are answered (or answer
-them in a second call):
+them in a second call). In bash or zsh:
 
-```
+```bash
 claude -p "/wave-auto plans/<date>-<topic>/index.md"
 codex exec -m gpt-6.2-astra "\$wave-auto plans/<date>-<topic>/index.md" < /dev/null
 ```
 
+In PowerShell:
+
+```powershell
+claude -p "/wave-auto plans/<date>-<topic>/index.md"
+$null | codex exec -m gpt-6.2-astra '$wave-auto plans/<date>-<topic>/index.md'
+```
+
+Git Bash on Windows rewrites an argument that starts with `/` into a Windows path: there, put
+`MSYS_NO_PATHCONV=1` before the `claude` command, or use PowerShell.
+
 A list start asks its questions first; answer with `claude -p --continue "<answers>"` or
-`codex exec resume --last "<answers>" < /dev/null`, run in the project folder.
+`codex exec resume --last "<answers>"`, run in the project folder; give Codex the same `< /dev/null` (bash, zsh) or
+`$null |` (PowerShell) as above. None of these script lines has been run as written yet.
 
 ### In the morning
 
