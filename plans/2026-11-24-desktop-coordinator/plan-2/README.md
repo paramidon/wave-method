@@ -48,7 +48,7 @@ Merged: short hash of the merge commit into the main branch.
 | 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ✅ (fixed by AC, wave 15) |
 | 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⚠️ I33 |
 | 15 | `waves/w15.md` | AC, AD (needs F1 merged) | ✅ |
-| 16 | `waves/w16.md` | AE (needs F1 merged) | ⬜ |
+| 16 | `waves/w16.md` | AE (needs F1 merged) | 🔄 since 2026-11-27 22:46 |
 
 ## Tasks
 
@@ -84,7 +84,7 @@ Merged: short hash of the merge commit into the main branch.
 | AB | `codex-sandbox-ownership` | F3 | 14 | low | ⚠️ I33 |
 | AC | `unattended-runs-script-lines` | F2 | 15 | low | ✅ |
 | AD | `cleanup-line-wrapping` | F2 | 15 | low | ✅ |
-| AE | `safe-directory-path` | F3 | 16 | high | ⬜ |
+| AE | `safe-directory-path` | F3 | 16 | high | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p2`
