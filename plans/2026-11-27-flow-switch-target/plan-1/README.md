@@ -9,7 +9,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | 👀 review | review | `feat/flow-switch-target-p1/F1-switch-target-topic` | |
+| F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | ✅ merged | | `feat/flow-switch-target-p1/F1-switch-target-topic` | c2fed10 |
 | F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3 | C (1), D (2), E (2) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; checker tests OK; `git diff --check` clean | ⚠️ blocked (I4) | I4 | `feat/flow-switch-target-p1/F2-one-flow-question` | |
 
 Merged: short hash of the merge commit into the main branch.
