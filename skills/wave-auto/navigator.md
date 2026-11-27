@@ -58,7 +58,8 @@ answers.
    1. Manual plans first. Go through every row in order and, for each unit whose README is found (Sources), apply
       "Plan rules" 1 and 2 only. When rule 2 applies to one or more units, print the one line
       `next: ask-flow <unit> <branch>; <unit> <branch>; …` with every such unit, in the order of the rows, and nothing
-      else: no `halt` line, not even one that rule 1 found (the next reading prints it). That ends the reading.
+      else: no `halt` line, not even one that rule 1 found (a later reading that reaches its row prints it). That ends
+      the reading.
    2. Otherwise go through the rows again, in order. For each row:
       - its README is found → apply "Plan rules" to that unit;
       - not found, `Plan when` is `now` → `next: plan <index path> part <K>`;
