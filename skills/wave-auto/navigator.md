@@ -52,21 +52,26 @@ answers.
      (`git cat-file -e triage/<topic>:<path>`) → `next: triage-cluster <index path> <cluster> …`, naming the `Cluster`
      cell of every such problem once, in the order of the overview;
    - otherwise → `next: triage-finish <index path>`.
-3. The index is on `<main branch>`. Go through the rows of its "Parts" table in order. The unit of a row is
-   `plans/<date>-<topic>/plan-<K>` (the index folder, then `plan-<K>`); a unit in `skip` is passed over. For each
-   other row:
-   - its README is found (Sources) → apply "Plan rules" to that unit;
-   - not found, `Plan when` is `now` → `next: plan <index path> part <K>`;
-   - not found, `Plan when` is `after part <J> merged` (every part number in the cell counts) → part J is merged when
-     its README is found (Sources, with the Plan slug of part J) and every feature of it is ➖, or is `✅ merged` with
-     a `Merged` hash that is an ancestor of `<main branch>` or, when the branch exists, of `integration/<topic>`
-     (`git merge-base --is-ancestor <hash> <branch>`). This is check 3 of `wave-plan/layout.md`, "Chained parts and
-     the integration branch". All parts named are merged → `next: plan <index path> part <K>`; otherwise the part
-     waits, and the row yields nothing.
-
-   The first row that yields a `next:` line ends the reading: print the `halt` lines found before it, then that line.
-   No row yields one → print the `halt` lines found, then `done`. An index whose "Parts" table has no rows yields
+3. The index is on `<main branch>`. The unit of a row of its "Parts" table is `plans/<date>-<topic>/plan-<K>` (the
+   index folder, then `plan-<K>`); a unit in `skip` is passed over. An index whose "Parts" table has no rows yields
    `done`.
+   1. Manual plans first. Go through every row in order and, for each unit whose README is found (Sources), apply
+      "Plan rules" 1 and 2 only. When rule 2 applies to one or more units, print the one line
+      `next: ask-flow <unit> <branch>; <unit> <branch>; …` with every such unit, in the order of the rows, and nothing
+      else: no `halt` line, not even one that rule 1 found (a later reading that reaches its row prints it). That ends
+      the reading.
+   2. Otherwise go through the rows again, in order. For each row:
+      - its README is found → apply "Plan rules" to that unit;
+      - not found, `Plan when` is `now` → `next: plan <index path> part <K>`;
+      - not found, `Plan when` is `after part <J> merged` (every part number in the cell counts) → part J is merged when
+        its README is found (Sources, with the Plan slug of part J) and every feature of it is ➖, or is `✅ merged` with
+        a `Merged` hash that is an ancestor of `<main branch>` or, when the branch exists, of `integration/<topic>`
+        (`git merge-base --is-ancestor <hash> <branch>`). This is check 3 of `wave-plan/layout.md`, "Chained parts and
+        the integration branch". All parts named are merged → `next: plan <index path> part <K>`; otherwise the part
+        waits, and the row yields nothing.
+
+      The first row that yields a `next:` line ends the reading: print the `halt` lines found before it, then that
+      line. No row yields one → print the `halt` lines found, then `done`.
 
 ## Plan rules
 
@@ -80,8 +85,12 @@ In this order; the first rule that applies decides the unit:
 
 1. No tracking branch. Every feature is `✅ merged` or ➖ → the unit is finished (no line). Otherwise
    `halt <unit>: tracking branch plan/<slug> is missing — next: /wave-status <unit> · $wave-status <unit>`.
-2. The README header has no `- Flow: autonomous` line (a missing `Flow:` line or `- Flow: manual`) →
-   `next: ask-flow <unit>`.
+2. The README header has no `- Flow: autonomous` line (a missing `Flow:` line or `- Flow: manual`): the unit is in
+   manual flow → `next: ask-flow <unit> <branch>`. `<branch>` is the integration branch the plan merges into once the
+   flow form switches it (`wave-plan/layout.md`, "Names"): `integration/<topic>` when the README header has a line
+   `- Index: plans/<date>-<topic>/index.md part <K>` (the path in backticks or not; `<topic>` is the index folder name
+   without its `YYYY-MM-DD-` prefix), else `integration/<slug>` with `<slug>` from the README's `slug: ` field. In an
+   index start only step 3.1 of "Index start" reaches this rule, and it lists every such unit in one line.
 3. A wave is 🔄 (the first one, when several are). The last non-empty line of its wave file's Execution starts with
    `Waiting: task mode ` → `next: tasks <unit> <N> <ID>:<tier>[ needs <Needs>]; …`, with one `<ID>:<tier>` for every
    task ID in that line before its ` — ` (a mark `(fix <k>/2)` after an ID is dropped), in the order of the line. The
@@ -126,7 +135,9 @@ lines when no `next:` line follows. Print exactly one `next:` line or `done`, la
 - `next: triage-cluster <index path> <cluster> …` — the clusters whose records are missing, as named in the index;
 - `next: triage-finish <index path>` — the index waits for its re-judging and merge;
 - `next: plan <index path> part <K>` — part K is ready to be planned;
-- `next: ask-flow <plan folder>` — the plan is in manual flow;
+- `next: ask-flow <plan folder> <branch>; …` — the plans in manual flow, each with the integration branch it merges
+  into once switched ("Plan rules", rule 2); entries are joined by `; `, and an index start lists every plan of its
+  index that is in manual flow, at once;
 - `next: wave <plan folder> <N>` — wave N is ready to run;
 - `next: tasks <plan folder> <N> <ID>:<tier>[ needs <Needs>]; …` — wave N waits for these tasks, each with its
   complexity and, when it has one, the tool it needs; entries are joined by `; `;

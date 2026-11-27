@@ -49,7 +49,8 @@ Options come first. A bare `HH:MM` is the next such time after the start of the 
   result. The commands it runs itself only read git and the skill files this skill names, take or release its claim,
   and read the clock.
 - It writes the user only what this skill names: the `Started:` and `Capabilities:` lines, the progress lines, the
-  `Resume:` line, its questions, a line that it waits for running steps, a stop line and the final report. It adds no
+  `Resume:` line, its questions (the flow question in the words of "Flow question"), a line that it waits for running
+  steps, a stop line and the final report. It adds no
   summary, comment or explanation of its own. Its first message starts with the `Started:` line: no sentence comes
   before it. It reads the clock before it writes any text, so that line always carries the time (`Started: 2026-11-26
   19:57`): never a `Started:` line without a time, never a second one. It never restates its questions, results or plans
@@ -134,10 +135,36 @@ language.
    the text of your answer, and wait (end the turn). In Codex never use `request_user_input_async` or another input tool
    for them: in `codex exec` it only sleeps. With `questions 0`, or when the index has no `- Q<n>` line, ask nothing and
    do not wait. Then run `triage-answers` with the answer verbatim (`Answers: none` for 0 questions; the user may answer
-   only some). When the navigator returns `next: ask-flow <plan folder>`: ask whether to switch that plan to autonomous
-   flow; yes → step `flow`; no → halt the unit.
-5. The start phase ends with the first step that is not `triage-ask` or `navigate`. From then on a navigator line
-   `next: ask …` or `next: ask-flow …` halts its unit instead (`questions-late`, `next:` the manual command).
+   only some).
+   When the navigator returns `next: ask-flow <plan folder> <branch>; …`: ask the flow question ("Flow question") once
+   for every plan of that line, as the text of your answer, and wait (end the turn). One answer covers every plan of
+   the line. A plain yes, in any language → one `flow` step per plan of the line, in its order, each with its progress
+   line, then navigate. Any other answer → halt every plan of the line `manual-flow` ("Stops"), then navigate.
+5. The start phase ends with the first step that is not `triage-ask`, `navigate` or a `flow` step of the answer to
+   the flow question. From then on a navigator line `next: ask …` halts its unit, and a line `next: ask-flow …` halts
+   every plan it lists, instead (`questions-late`, `next:` the manual command).
+
+### Flow question
+
+Asked in start phase 4, once, in the user's language: translate the template below, keep plan folders, branch names
+and commands verbatim, and add or leave out nothing. One `- <plan folder> → <branch>` line per entry of the navigator
+line, in its order. `<main branch>` is the one resolved in start phase 1. Every entry of an index start names the same
+branch; if entries name different branches, write the paragraph once per branch, with its plans, in the same message.
+
+```
+These plans are in manual flow:
+- <plan folder> → <branch>
+They were planned without `flow autonomous`, so every ready feature waits for your review and is merged into
+<main branch> only after you approve it. Switched to autonomous flow, this run approves a ready feature itself when
+its tasks are done, its check is green and no problem concerns it, and merges it into <branch>, never into
+<main branch>. Afterwards you review <branch> as one diff (`git diff <main branch>...<branch>`) and merge it into
+<main branch> yourself (`git merge --no-ff <branch>` in the main checkout).
+Switch all of them to autonomous flow? yes — switch them all · no — keep them manual: this run skips them and goes on
+with the rest; one plan can be switched later with `/wave-run <plan folder> flow autonomous` · `$wave-run <plan folder> flow autonomous`.
+```
+
+Never write a step name (`flow`, `ask-flow`, `navigate`), a placeholder such as `integration/…` or a reason of your
+own, and write no sentence before or after the question.
 
 ## Loop
 
@@ -157,7 +184,7 @@ repeat:
 | `next: triage-cluster <index path> <cluster> …` | one `triage-cluster` step per cluster, in parallel up to the parallel limit, then `triage-finish` |
 | `next: triage-finish <index path>` | `triage-finish` |
 | `next: plan <index path> part <K>` | `plan` |
-| `next: ask-flow <plan folder>` | start phase only: 4 of the start phase |
+| `next: ask-flow <plan folder> <branch>; …` | start phase only: 4 of the start phase (the flow question, then one `flow` step per plan or one `manual-flow` halt per plan); later `questions-late` for every plan of the line |
 | `next: wave <plan folder> <N>` | "Wave" below |
 | `next: tasks <plan folder> <N> <ID>:<tier>[ needs <Needs>]; …` | "Wave" below, from its task steps |
 | `next: re-plan <plan folder>` | `re-plan` |
@@ -296,7 +323,8 @@ run goes on with the other units and ends with them in "Halts":
 
 | Code | When | Next |
 |---|---|---|
-| `questions-late` | the navigator returns `next: ask …` or `next: ask-flow …` after the start phase | the manual command of the unit, for example `/wave-triage flow autonomous answers <index path>`<br>`$wave-triage flow autonomous answers <index path>` |
+| `questions-late` | the navigator returns `next: ask …` or `next: ask-flow …` after the start phase; one halt per plan of an `ask-flow` line | the manual command of the unit, for example `/wave-triage flow autonomous answers <index path>`<br>`$wave-triage flow autonomous answers <index path>`; for a plan in manual flow `/wave-run <plan folder> flow autonomous`<br>`$wave-run <plan folder> flow autonomous`, then `/wave-auto <start>`<br>`$wave-auto <start>` |
+| `manual-flow` | the answer to the flow question is not a plain yes; one halt per plan of the line, reason `manual-flow: kept in manual flow by the user's answer` | `/wave-run <plan folder> flow autonomous`<br>`$wave-run <plan folder> flow autonomous`, then `/wave-auto <start>`<br>`$wave-auto <start>` |
 | `no-progress` | the navigator returns the same `next:` line twice in a row | `/wave-status <unit>`<br>`$wave-status <unit>` |
 | `step-failed` | a step's return does not match its form twice, or a task ID is listed again after three runs in one dispatch | `/wave-status <unit>`<br>`$wave-status <unit>` |
 | `tier-missing` | a step needs a model of a tier this session cannot choose and no session can be started for it | its command in both forms ("Session fallback"), in a fresh session with the models of that tier, then `/wave-auto <start>`<br>`$wave-auto <start>` |

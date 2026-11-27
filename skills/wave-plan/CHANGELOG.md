@@ -7,6 +7,9 @@ and no other file carries a version. Changes since the last tag go into a line
 - Unreleased — the flow form `/wave-run <plan folder> flow autonomous` switches a plan of an index part to the
   index's shared `integration/<topic>` instead of `integration/<plan>` (`layout.md`, "Names"); `status_check.py`
   reports `flow-target` for an index part whose `target:` names another branch.
+  `wave-auto` asks one fixed, plain question about every plan of its start that is in manual flow (the navigator's
+  `next: ask-flow` line lists each plan with its integration branch): yes switches them all, any other answer halts
+  them `manual-flow`, and a later manual plan no longer halts `questions-late`.
 - v2.13.0 (2026-11-27) — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A
   README line
   `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>`
