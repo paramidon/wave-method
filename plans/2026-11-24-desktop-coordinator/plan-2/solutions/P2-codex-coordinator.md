@@ -1076,3 +1076,53 @@ Test 15 is superseded by 16.
     before writing, step 4 forbids `request_user_input_async`; README "Codex permissions" and layout "Permissions in
     Codex" name `detected dubious ownership` and `safe.directory`; the check is green (tasks AA, AB). The behaviour in
     Codex is not rehearsed in this plan.
+
+## Evidence (re-plan 2026-11-27, round 2)
+
+Round 2 of F3 (its first round was the split of F1, re-plan of 2026-11-26, round 4 of F1). Open entry I33.
+
+Assumption disputed by I33: the README command `git config --global --add safe.directory` (task AB, edit 1 of
+"Polish") works as written. Run on 2026-11-27 with git 2.52.0.windows.1 in a scratch folder outside the repository
+(`<s>` = the scratch folder, `repo` a fresh repository with one commit, `cfg` an empty config file):
+
+| Command | Deciding output | Exit |
+|---|---|---|
+| `git config --file cfg --add safe.directory` | `error: wrong number of arguments, should be 2` | 129 |
+| `git config --file cfg --add safe.directory "<s>/repo"` | `cfg` gets `[safe]` / `directory = C:/…/repo` | 0 |
+| `GIT_TEST_ASSUME_DIFFERENT_OWNER=1 git -C repo log --oneline` | `fatal: detected dubious ownership in repository at '…/repo'`, then git's hint `git config --global --add safe.directory C:/…/repo` | 128 |
+| `GIT_TEST_ASSUME_DIFFERENT_OWNER=1 git -c safe.directory="<s>/repo" -C repo log --oneline` | `c23e97e init` | 0 |
+| the same with a global config (`GIT_CONFIG_GLOBAL`) holding `safe.directory` = the path | `c23e97e init` | 0 |
+| the same `-c` form with the backslash path `C:\…\repo` | `c23e97e init` | 0 |
+
+Conclusion: the command without a path fails, as I33 says; with the worktree path it works, both for good (global
+config) and for one command (`-c`), with forward or back slashes. The `-c` form of the README is right as written.
+
+Not verifiable by running: a worktree really owned by the Codex sandbox account (`CodexSandboxOffline`); this session
+has no Codex sandbox. Checked instead with git's own test switch `GIT_TEST_ASSUME_DIFFERENT_OWNER=1`, which makes git
+treat the repository as owned by another account and prints the same `detected dubious ownership` error.
+
+## Fix after wave 14 (re-plan 2026-11-27, round 2 of F3)
+
+### Safe-directory command (task AE)
+
+`README.md` on the F3 branch, section "### Codex permissions", the paragraph that starts "On Windows the worktrees
+that Codex creates in its sandbox": its last line
+
+```
+`git -c safe.directory='<worktree path>' …` (or for good with `git config --global --add safe.directory`).
+```
+
+becomes these two lines (the three lines before it stay as they are):
+
+```
+`git -c safe.directory='<worktree path>' …` (or for good with
+`git config --global --add safe.directory '<worktree path>'`).
+```
+
+Nothing else changes: the layout's sentence ("names the worktree in `safe.directory`") gives no command and is right.
+
+## Acceptance tests (re-plan 2026-11-27, round 2)
+
+18. `README.md` has `` `git config --global --add safe.directory '<worktree path>'` `` and no
+    `` --add safe.directory` `` without a path; the paragraph's lines are at most 120 characters; the F3 check is
+    green (task AE).

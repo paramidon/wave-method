@@ -149,3 +149,19 @@
   move to the new feature F3 (tasks AA, AB, low, wave 14, after F1 is merged), whose acceptance is the text only: no
   Codex run. F3 is round 1 of its own. Wave 11 is dropped because F1 needs wave 12 first; V and W return unchanged as
   Y and Z in wave 13.
+
+## Re-plan 2026-11-27 (round 2 of F3, escalated)
+
+- Open entry of wave 14: I33 (task AB): README "Codex permissions" gives `git config --global --add safe.directory`
+  without a path. I24 and I25 already wait for task AC (wave 15); nothing else was open.
+- F3's first round was the split of F1 (re-plan of 2026-11-26, round 4 of F1, `fixes: … F3 (I12, I22, I23)`), so this
+  re-plan is round 2 of F3: escalated. The disputed assumption was checked by running git 2.52 in a scratch folder,
+  with `GIT_TEST_ASSUME_DIFFERENT_OWNER=1` standing in for the Codex sandbox account; evidence in
+  `solutions/P2-codex-coordinator.md`, "Evidence (re-plan 2026-11-27, round 2)".
+- Task AE (wave 16) adds the worktree path to the command. It is `high` only because the escalation rule makes every
+  new task of the feature high; the edit itself is one line. A single-task wave: AE cannot join wave 15, whose task AC
+  also edits `README.md`.
+- The cause: AB copied the solution's own text (`solutions/P2-codex-coordinator.md`, "Polish", task AB, edit 1); the
+  slip was in planning, not in the task.
+- A third round of F3 would hold it (`user: re-plan limit`) until the user's override.
+- Check run at the re-plan: F3 at 884adf9 green (39 tests, three examples, `git diff --check main`).

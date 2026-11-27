@@ -21,4 +21,6 @@ Next ID: I34
   `error: wrong number of arguments, should be 2` (probed by the coordinator with `--file` on a scratch config); the
   text is the solution's own (`solutions/P2-codex-coordinator.md`, "Polish", "Task AB", edit 1);
   proposal: add `'<worktree path>'` at the end of the command;
-  status: open
+  re-plan 2026-11-27 (round 2 of F3): confirmed by running git, and the `-c` form works
+  (`solutions/P2-codex-coordinator.md`, "Evidence (re-plan 2026-11-27, round 2)");
+  status: → task AE (wave 16)

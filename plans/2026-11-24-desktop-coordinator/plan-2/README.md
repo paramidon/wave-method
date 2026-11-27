@@ -16,6 +16,7 @@
     fixes: F1 (I2, I19), F3 (I12, I22, I23) · escalated: F1 · override: F1
   - 2026-11-27 at 3af7fb8, 03:26 – 03:27 (start: the first clock reading of the run): I24, I25 → P5, task AC; task AD
     rewraps two lines; new wave 15; I26–I28 accepted by the user · fixes: F2 (I24, I25)
+  - 2026-11-27 at 5999f53, 21:03 – 21:05: I33 → P2, task AE (high, wave 16) · fixes: F3 (I33) · escalated: F3
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
@@ -24,7 +25,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `codex-coordinator` | `$wave-auto` and the wave skills run in the Codex CLI and desktop app: GPT models per tier, a model lookup for the tier gate, the parallel limit, a permission profile | P2 | A (1), B (1), D (2) ➖, E (2) ➖, H (4) ➖, I (4) ➖, L (6), M (6), N (7) ➖, O (7) ➖, P (7) ➖, S (9), T (9), U (10) ➖, X (12) | acceptance tests 1–5, 9, 10, 13, 14 and 16 of `solutions/P2-codex-coordinator.md` hold: the texts of tasks A, B, L, M and S are in place, both lookup commands print `unknown model` for a missing thread, the checks pass, the Codex CLI rehearsal (T) is recorded as it ran (up to the start of a wave; the end of a wave not verified, accepted by the user), and X's claims match that record and call the Codex desktop app not rehearsed | ✅ merged | | `feat/desktop-coordinator-p2/F1-codex-coordinator` | 8b97145 |
 | F2 | `driver-removal-docs` | The Python overnight driver is removed; the README shows where to start an unattended run in Claude Code and Codex | P3, P4, P5 | C (1), F (3) ➖, G (3) ➖, J (5) ➖, K (5) ➖, Q (8) ➖, R (8) ➖, V (11) ➖, W (11) ➖, Y (13), Z (13), AC (15), AD (15) | acceptance tests 1–4 of `solutions/P4-driver-removal.md` the check of `solutions/lite.md`, "P3", as "P5" changes its text, and the checks of tasks AC and AD | ⚠️ blocked (I24, I25) | wave 15 | `feat/desktop-coordinator-p2/F2-driver-removal-docs` | |
-| F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14) | acceptance test 17 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA and AB are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ⚠️ blocked (I33) | I33 | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | |
+| F3 | `codex-coordinator-polish` | Codex polish found by the CLI rehearsal: the coordinator's first line and own sentences, questions as text in `codex exec`, sandbox-owned worktrees on Windows | P2 | AA (14), AB (14), AE (16) | acceptance tests 17 and 18 of `solutions/P2-codex-coordinator.md`: the texts of tasks AA, AB and AE are in place and the check passes; the behaviour in Codex is not rehearsed in this plan | ⚠️ blocked (I33) | wave 16 | `feat/desktop-coordinator-p2/F3-codex-coordinator-polish` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -47,6 +48,7 @@ Merged: short hash of the merge commit into the main branch.
 | 13 | `waves/w13.md` | Y, Z (needs F1 merged) | ⚠️ I24, I25 |
 | 14 | `waves/w14.md` | AA, AB (needs F1 merged) | ⚠️ I33 |
 | 15 | `waves/w15.md` | AC, AD (needs F1 merged) | ⬜ |
+| 16 | `waves/w16.md` | AE (needs F1 merged) | ⬜ |
 
 ## Tasks
 
@@ -82,6 +84,7 @@ Merged: short hash of the merge commit into the main branch.
 | AB | `codex-sandbox-ownership` | F3 | 14 | low | ⚠️ I33 |
 | AC | `unattended-runs-script-lines` | F2 | 15 | low | ⬜ |
 | AD | `cleanup-line-wrapping` | F2 | 15 | low | ⬜ |
+| AE | `safe-directory-path` | F3 | 16 | high | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/desktop-coordinator-p2`
@@ -127,6 +130,8 @@ and reach the main branch with each feature merge.
   F1, waves 13 and 14 from F2 and F3 after `main` (with F1) is merged in
 - none at the re-plan of 2026-11-27: F2 at e2df989 (39 tests, three examples, `git diff --check main`); wave 15
   starts from it
+- none at the re-plan of 2026-11-27, round 2 of F3: F3 at 884adf9 (39 tests, three examples, `git diff --check
+  main`); wave 16 starts from it
 
 ## Assumptions
 
