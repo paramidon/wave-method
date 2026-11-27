@@ -9,8 +9,8 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
-| F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | 🔄 | wave 1 | | |
-| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3 | C (1), D (2), E (2) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; checker tests OK; `git diff --check` clean | 🔄 | wave 1 | | |
+| F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | 👀 review | review | `feat/flow-switch-target-p1/F1-switch-target-topic` | |
+| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3 | C (1), D (2), E (2) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; checker tests OK; `git diff --check` clean | ⚠️ blocked (I4) | I4 | `feat/flow-switch-target-p1/F2-one-flow-question` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -18,16 +18,16 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C | 🔄 since 2026-11-27 23:45 |
+| 1 | `waves/w01.md` | A, B, C | ⚠️ I4 |
 | 2 | `waves/w02.md` | D, E (needs F1 merged) | ⬜ |
 
 ## Tasks
 
 | ID | Slug | Feature | Wave | Complexity | Status |
 |---|---|---|---|---|---|
-| A | `index-part-target-rule` | F1 | 1 | low | 🔄 |
-| B | `flow-target-check` | F1 | 1 | low | 🔄 |
-| C | `navigator-manual-plans` | F2 | 1 | medium | 🔄 |
+| A | `index-part-target-rule` | F1 | 1 | low | ✅ |
+| B | `flow-target-check` | F1 | 1 | low | ✅ |
+| C | `navigator-manual-plans` | F2 | 1 | medium | ⚠️ I4 |
 | D | `coordinator-flow-question` | F2 | 2 | medium | ⬜ |
 | E | `flow-question-docs` | F2 | 2 | low | ⬜ |
 
