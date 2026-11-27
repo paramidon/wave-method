@@ -21,7 +21,7 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C | ⚠️ I4 |
 | 2 | `waves/w02.md` | D, E (needs F1 merged) | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | F, G (needs F1 merged) | ⬜ |
+| 3 | `waves/w03.md` | F, G (needs F1 merged) | 🔄 since 2026-11-28 00:00 |
 
 ## Tasks
 
@@ -32,8 +32,8 @@ Merged: short hash of the merge commit into the main branch.
 | C | `navigator-manual-plans` | F2 | 1 | medium | ⚠️ I4 |
 | D | `coordinator-flow-question` | F2 | 2 | medium | ➖ superseded by F |
 | E | `flow-question-docs` | F2 | 2 | low | ➖ superseded by G |
-| F | `coordinator-asks-once` | F2 | 3 | medium | ⬜ |
-| G | `flow-docs-halt-wording` | F2 | 3 | low | ⬜ |
+| F | `coordinator-asks-once` | F2 | 3 | medium | 🔄 |
+| G | `flow-docs-halt-wording` | F2 | 3 | low | 🔄 |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-switch-target-p1` and
