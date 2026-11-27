@@ -79,8 +79,9 @@ Wave 1 runs A and C. `wave-run` auto-approves F1 and merges it into `integration
 review. The F1 merge unlocks wave 2, which runs B and D and then auto-merges F2 and F4. `main` stays at its
 starting commit.
 
-In the morning, the final report of `/wave-auto` (or `/wave-status`) shows review blocks for the merged F1, F2, and F4 and a merge command for F3. After
-reviewing F3, run its merge command, inspect the integration diff, and merge the branch from `main`:
+In the morning, the final report of `/wave-auto` (or `/wave-status`) shows review blocks for the merged F1, F2, and F4
+and a merge command for F3. After reviewing F3, run its merge command, inspect the integration diff, and merge the
+branch from `main`:
 
 ```
 /wave-run plans/2026-11-04-wordstat-cli merge F3

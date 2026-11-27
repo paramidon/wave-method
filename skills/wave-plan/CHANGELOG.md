@@ -4,44 +4,45 @@ Releases are git tags `vMAJOR.MINOR.PATCH`; the release workflow copies the tag 
 and no other file carries a version. Changes since the last tag go into a line
 `- Unreleased — …` at the top; a release renames it to the tag and date.
 
-- Unreleased — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A README line `-
-  Flow: autonomous · target: integration/<name> · manual review: <F-IDs>` lets `wave-run` approve a ready feature itself
-  when all its tasks are done, its check is green after merging the target, no open entry concerns it, its commits pass
-  the tier gate and it is not under manual review, and merge it into the integration branch `integration/<name>` instead
-  of the main branch, which autonomous flow never changes. Every question of `wave-run` has a fixed answer (new
-  `wave-run/autonomous.md`); the flow form `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` switches
-  it between waves. `wave-triage` and `wave-plan` take `flow autonomous` as their first words and record assumed
-  readings instead of asking; the parts of an index share one integration branch, a later part is planned against it,
-  and a claim ref `refs/wave-method/claims/integration/<name>` lets one run at a time write it. Reports and
-  `wave-status` show the flow and every merged feature with its review block until the integration branch is merged.
-  `status_check.py` checks the `Flow:` line (`flow-line`, `flow-review-unknown`); new example
-  `examples/03-autonomous-night-run/`. Fixes from the end-to-end runs: a task adds its own files by name and never
-  commits generated files; `wave-run` finds out-of-scope paths in every commit of a task, never cleans them up with a
-  new commit, and auto-approval also needs a clean scope; `status_check.py` reports a Merged hash on a feature that is
-  not ✅ merged (`merged-fields`); a task keeps `Wave-Model` in one trailer block with any other trailer, and the tier
-  gate reads it with git; a `Merged` line of a wave file takes its time from the merge commit, not from the clock;
-  example 01's CI workflow needs no file of another feature; example 01's README session is part of its P2 solution. A
-  plan without a `Flow:` line behaves as before. Re-plan escalation (`layout.md`, "Re-plan escalation"): each README
-  `Re-plans:` sub-item names the features it fixed from wave entries (`fixes:`); a feature's second re-plan is escalated
-  — its assumption verified by running code and recorded as evidence, its new tasks `high`, and in autonomous flow its
-  review manual — and a third is held until the user's `/wave-plan <plan folder> override F<k>: <direction>` (stop
-  `replan-limit`); `wave-run` and `wave-status` show each feature's count, and `status_check.py` checks the record
-  (`replan-fixes`, `replan-escalation`). New skill `wave-auto`: one command runs triage (its questions asked once, at
-  the start), the plan of every part and every wave in autonomous flow inside one session, each step as a subagent that
-  returns one line (`layout.md`, "Coordinated runs"; navigator rules in `wave-auto/navigator.md`); git is its only
-  memory, so the same command in a new session continues; a claim ref `refs/wave-method/claims/auto/<name>` keeps one
-  coordinator per start. `wave-triage` gains the phases `ask`, `answers`, `cluster` and `finish`; a task-mode session
-  puts its report block into its last commit's body, does not redo a committed task and takes fix requests from the wave
-  file; `wave-run` stops `manual-flow` in a coordinated run of a manual plan. Installers and the plugin list the fifth
-  skill. Codex: the model tiers name GPT models with exact IDs (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`); a Codex
-  agent, which cannot name its model, takes it from the rollout of its thread for the tier gate (`layout.md`, "Vendors",
-  model lookup); `layout.md` "Vendors" says how each capability is reached in Claude Code and Codex, and every skill
-  launches at most the environment's parallel limit of subagents at once; README shows the Codex plugin install; a
-  rehearsal of `$wave-auto` in the Codex CLI up to the start of a wave. Codex permissions: a permission profile that
-  writes only the folder holding the repository (`layout.md`, "Vendors"; README "Codex permissions"); a git write the
-  sandbox refuses stops `git-read-only`; prompts to Codex subagents carry the model lookup right after the gate line.
-  Codex applies a project's profile only in a trusted project: README "Codex permissions" and `layout.md` ("Permissions
-  in Codex", "Trust") show the entry of `~/.codex/config.toml` that trusts it. README shows where to start an unattended
+- Unreleased — a second flow, `autonomous`, next to the default `manual` one (`layout.md`, "Flow"). A README line
+  `- Flow: autonomous · target: integration/<name> · manual review: <F-IDs>` lets `wave-run` approve a ready feature
+  itself when all its tasks are done, its check is green after merging the target, no open entry concerns it, its
+  commits pass the tier gate and it is not under manual review, and merge it into the integration branch
+  `integration/<name>` instead of the main branch, which autonomous flow never changes. Every question of `wave-run` has
+  a fixed answer (new `wave-run/autonomous.md`); the flow form
+  `/wave-run <plan folder> flow <manual|autonomous> [review <F-IDs>]` switches it between waves. `wave-triage` and
+  `wave-plan` take `flow autonomous` as their first words and record assumed readings instead of asking; the parts of an
+  index share one integration branch, a later part is planned against it, and a claim ref
+  `refs/wave-method/claims/integration/<name>` lets one run at a time write it. Reports and `wave-status` show the flow
+  and every merged feature with its review block until the integration branch is merged. `status_check.py` checks the
+  `Flow:` line (`flow-line`, `flow-review-unknown`); new example `examples/03-autonomous-night-run/`. Fixes from the
+  end-to-end runs: a task adds its own files by name and never commits generated files; `wave-run` finds out-of-scope
+  paths in every commit of a task, never cleans them up with a new commit, and auto-approval also needs a clean scope;
+  `status_check.py` reports a Merged hash on a feature that is not ✅ merged (`merged-fields`); a task keeps `Wave-Model`
+  in one trailer block with any other trailer, and the tier gate reads it with git; a `Merged` line of a wave file takes
+  its time from the merge commit, not from the clock; example 01's CI workflow needs no file of another feature; example
+  01's README session is part of its P2 solution. A plan without a `Flow:` line behaves as before. Re-plan escalation
+  (`layout.md`, "Re-plan escalation"): each README `Re-plans:` sub-item names the features it fixed from wave entries
+  (`fixes:`); a feature's second re-plan is escalated — its assumption verified by running code and recorded as
+  evidence, its new tasks `high`, and in autonomous flow its review manual — and a third is held until the user's
+  `/wave-plan <plan folder> override F<k>: <direction>` (stop `replan-limit`); `wave-run` and `wave-status` show each
+  feature's count, and `status_check.py` checks the record (`replan-fixes`, `replan-escalation`). New skill `wave-auto`:
+  one command runs triage (its questions asked once, at the start), the plan of every part and every wave in autonomous
+  flow inside one session, each step as a subagent that returns one line (`layout.md`, "Coordinated runs"; navigator
+  rules in `wave-auto/navigator.md`); git is its only memory, so the same command in a new session continues; a claim
+  ref `refs/wave-method/claims/auto/<name>` keeps one coordinator per start. `wave-triage` gains the phases `ask`,
+  `answers`, `cluster` and `finish`; a task-mode session puts its report block into its last commit's body, does not
+  redo a committed task and takes fix requests from the wave file; `wave-run` stops `manual-flow` in a coordinated run
+  of a manual plan. Installers and the plugin list the fifth skill. Codex: the model tiers name GPT models with exact
+  IDs (`gpt-6-luna`, `gpt-6.2-sol`, `gpt-6.2-astra`); a Codex agent, which cannot name its model, takes it from the
+  rollout of its thread for the tier gate (`layout.md`, "Vendors", model lookup); `layout.md` "Vendors" says how each
+  capability is reached in Claude Code and Codex, and every skill launches at most the environment's parallel limit of
+  subagents at once; README shows the Codex plugin install; a rehearsal of `$wave-auto` in the Codex CLI up to the start
+  of a wave. Codex permissions: a permission profile that writes only the folder holding the repository (`layout.md`,
+  "Vendors"; README "Codex permissions"); a git write the sandbox refuses stops `git-read-only`; prompts to Codex
+  subagents carry the model lookup right after the gate line. Codex applies a project's profile only in a trusted
+  project: README "Codex permissions" and `layout.md` ("Permissions in Codex", "Trust") show the entry of
+  `~/.codex/config.toml` that trusts it. README shows where to start an unattended
   run: the CLI or desktop app of Claude Code or Codex, interactive or from a script.
 - v2.12.0 (2026-11-16) — the `wave-run` final report has a fixed template in the new `wave-run/report.md`, which the
   coordinator reads right before every report (a finished wave, a stop, a task-mode wait, a merge). The wave report
