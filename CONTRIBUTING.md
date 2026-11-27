@@ -21,7 +21,6 @@ focused and explain the failure they fix.
 
    ```bash
    python skills/wave-plan/scripts/test_status_check.py
-   python -m unittest discover -s scripts/tests
    for plan in examples/*/; do python skills/wave-plan/scripts/status_check.py "${plan%/}"; done
    git diff --check
    ```

@@ -204,7 +204,7 @@ example `/wave-plan plans/<date>-<topic>/index.md part 1`. Parts without depende
   waves, a contract between them, design files with acceptance tests.
 - [`02-bugfix-batch`](examples/02-bugfix-batch/) — three small fixes in an existing app: one wave, three features.
 - [`03-autonomous-night-run`](examples/03-autonomous-night-run/) — a plan written in autonomous flow and run
-  overnight by the driver, with one feature under manual review and a wave that waits for an auto-merged feature.
+  overnight with `/wave-auto`, with one feature under manual review and a wave that waits for an auto-merged feature.
 
 ## Overnight runs (autonomous flow)
 
@@ -252,13 +252,13 @@ outside auto-approval solely because of condition 5 waits for your review. The
 [decision table](skills/wave-plan/layout.md#decision-table) gives the fixed answers for the other points where
 `wave-run` asks or waits.
 
-### One command in one session: wave-auto
+### Unattended runs: wave-auto
 
-`/wave-auto <list>` (Codex: `$wave-auto <list>`) runs the whole pipeline in the session you type it
-in — the CLI or the desktop app of Claude Code or Codex. It asks the triage questions once, at the start, then
-triages, plans every part and runs every wave in autonomous flow, each step as a subagent on a model of the
-step's tier, printing one line per step. It ends with the `wave-status` report: features merged into
-`integration/<topic>`, features waiting for your review, blocked features and what each waits for.
+`/wave-auto <list>` (Codex: `$wave-auto <list>`) runs the whole pipeline in the session you type it in. It asks the
+triage questions once, at the start, then triages, plans every part and runs every wave in autonomous flow, each step
+as a subagent on a model of the step's tier, printing one line per step. It ends with the `wave-status` report:
+features merged into `integration/<topic>`, features waiting for your review, blocked features and what each waits
+for.
 
 - Start from a list, an index (`/wave-auto plans/<date>-<topic>/index.md`) or a plan folder.
 - Bound it with `until 07:00` or `steps 40` before the start: `/wave-auto until 07:00 plans/<…>/index.md`.
@@ -267,34 +267,45 @@ step's tier, printing one line per step. It ends with the `wave-status` report: 
 - A step that cannot run as a subagent of its tier runs in a separate session where the app can start one;
   otherwise the run stops with the command to run by hand.
 
-### Running overnight with the driver
+#### Where to run it
 
-The Python 3.9+ driver uses only the standard library. It starts a fresh headless Claude Code session for each
-step: plan an unplanned index part, run the next wave, run a waiting task in task mode, or resume a wave.
+| Where | Start | The questions | Continue after a closed window or a limit |
+|---|---|---|---|
+| Claude Code CLI | `claude` in the project, an Opus-class model, permission mode `auto`; type `/wave-auto <list>` | answer in the same session | `/wave-auto plans/<date>-<topic>/index.md` in a new session |
+| Claude Code desktop app | a new session (Code tab) in the project folder, an Opus-class model, permission mode `auto`; type `/wave-auto <list>` | answer in the same session | the same, in a new session |
+| Codex CLI | `codex -m gpt-6.2-astra` in the project, with the permission profile of [Codex permissions](#codex-permissions); type `$wave-auto <list>` | answer in the same session | `$wave-auto plans/<date>-<topic>/index.md` in a new session |
+| Codex desktop app | a new thread in the project, GPT-6.2-Astra; type `$wave-auto <list>`. Not rehearsed, the profile of [Codex permissions](#codex-permissions) included | answer in the same thread | the same, in a new thread |
 
-Use `scripts/wave_driver.py` from a clone of this repository or from the plugin folder, for example
-`~/.claude/plugins/cache/wave-method/wave-method/<version>/`. The installers copy only the skills.
+The worktrees live next to the project (`../<repo>.worktrees/`), so the agent needs write access there. Claude Code's
+`auto` mode allows it. In Codex use the permission profile of [Codex permissions](#codex-permissions).
+
+To start a run from a script, with nobody at the keyboard, start from an index whose questions are answered (or answer
+them in a second call). In bash or zsh:
 
 ```bash
-python <wave-method>/scripts/wave_driver.py plans/<date>-<topic>/index.md --repo <project> --dry-run
-python <wave-method>/scripts/wave_driver.py plans/<date>-<topic>/index.md --repo <project>
+claude -p "/wave-auto plans/<date>-<topic>/index.md"
+codex exec -m gpt-6.2-astra "\$wave-auto plans/<date>-<topic>/index.md" < /dev/null
 ```
 
-For a single plan, pass the plan folder in place of the index path. For a plugin install, add
-`--skill-prefix wave-method: --add-dir <plugin folder>`. Use `--max-usd`, `--deadline`, or `--max-calls` to
-bound the run. The default permission mode is `auto`. Use `bypassPermissions` only in an isolated clone.
+In PowerShell:
 
-Exit codes are `0` for completion or a successful dry run, `1` for a run or usage limit, authentication error,
-guard violation, interrupt, or driver error, `2` for invalid arguments or setup, and `3` when another driver
-holds the lock. The driver never pushes and ends the run if `main`, a remote-tracking ref, or the main checkout
-changes. See the [driver options](docs/wave-driver.md) and
-[how print mode calls the skills](docs/claude-print-mode.md#prompt-form-for-the-driver).
+```powershell
+claude -p "/wave-auto plans/<date>-<topic>/index.md"
+$null | codex exec -m gpt-6.2-astra '$wave-auto plans/<date>-<topic>/index.md'
+```
+
+Git Bash on Windows rewrites an argument that starts with `/` into a Windows path: there, put
+`MSYS_NO_PATHCONV=1` before the `claude` command, or use PowerShell.
+
+A list start asks its questions first; answer with `claude -p --continue "<answers>"` or
+`codex exec resume --last "<answers>"`, run in the project folder; give Codex the same `< /dev/null` (bash, zsh) or
+`$null |` (PowerShell) as above. None of these script lines has been run as written yet.
 
 ### In the morning
 
-1. Open `report.md` in `<repo>.wave-driver/<YYYY-MM-DD-HHMM>/`. The driver prints `Report: <path>` on its last
-   line. The report lists merged features with review blocks, features waiting for review, blocked features
-   with problem entries, halts with next commands, and a table of calls with their costs.
+1. Read the final report of `/wave-auto`, or run `/wave-status`: features merged into the integration branch with
+   their review blocks, features waiting for your review, blocked features with their problem entries, and halted
+   units with their next commands.
 2. Review the night's changes with `git diff main...integration/<name>`.
 3. In the main checkout, merge the integration branch with `git merge --no-ff integration/<name>`.
 4. To approve a feature under manual review, run `/wave-run <plan folder> merge F3`. That merges the feature
@@ -354,9 +365,7 @@ What it adds compared with "agent, please do these ten things":
 | `wave-plan` | Designs the solutions and slices them into features, tasks and waves with ready-to-paste task prompts. Also re-plans open problems of an existing plan. | high (Opus-class) |
 | `wave-run` | Executes one wave: worktrees, subagents, merges, checks, statuses; offers each finished feature for review and merges the ones you approve into `main` (in autonomous flow it approves them under fixed conditions and merges them into an integration branch). Archives finished plans. | medium |
 | `wave-status` | Read-only report: status and task progress of every feature first, then running waves, blocked features and why, leftovers, the next command. | low |
-
-The separate overnight driver `scripts/wave_driver.py` chains `wave-plan` and `wave-run` calls in headless
-sessions (see [Overnight runs](#overnight-runs-autonomous-flow)).
+| `wave-auto` | Runs triage, plans and waves from one command in one session, each step as a subagent on a model of its tier; asks the triage questions once, at the start; autonomous flow. | high (Opus-class or GPT-6.2-Astra) |
 
 Key terms:
 
@@ -390,10 +399,8 @@ Finished plans move to `plans/archive/`.
 - **Claude Code** (plugin, or skills in `.claude/skills/`) and/or **OpenAI Codex** (skills discovered in `.agents/skills/`).
   Subagents with a choice of model work best; without them the skills degrade to "one task per fresh session"
   (task mode). `wave-auto` needs subagents with a choice of model: Claude Code or Codex, CLI or desktop app.
-- **Python 3.9+** for the overnight driver (standard library only). Python is optional for the status-check script
-  `wave-plan/scripts/status_check.py`. Without it, the check is done by reading.
-- **The Claude Code CLI** (`claude`, signed in) for the overnight driver. Autonomous flow itself also works in
-  Codex and in interactive sessions.
+- **Python 3.9+** is optional: only the status-check script `wave-plan/scripts/status_check.py` uses it. Without it,
+  the check is done by reading.
 - A **check command** for your project (build + tests). Every task prompt names it; merges depend on it.
 
 ## When to use it
@@ -434,8 +441,8 @@ The skills follow these rules on every run:
 - Every stop prints a stop code and the next command.
 - Autonomous flow approves a feature only under the five auto-approval conditions. Features under manual
   review always need your approval, and the tier gate always applies.
-- A claim ref allows one writer at a time on an integration branch. A lock file allows one driver per
-  repository. The driver stops if `main`, a remote-tracking ref, or the main checkout changes.
+- A claim ref allows one writer at a time on an integration branch, and another one `wave-auto` coordinator per
+  index or plan.
 
 ## Customising
 
@@ -447,7 +454,6 @@ The skills follow these rules on every run:
 | File templates | `wave-plan/templates.md` |
 | Language | the skills talk in the language you write in; everything written to the repository is English, always (a non-English doc a task changes is translated) |
 | Flow of a plan | the README `Flow:` line, written by `wave-plan` and changed with `/wave-run <plan folder> flow …` |
-| Driver models, caps and rails | options of `scripts/wave_driver.py` ([driver documentation](docs/wave-driver.md)) |
 | Rails of an in-session run | `until` and `steps` of `/wave-auto` (`wave-auto/SKILL.md`) |
 
 Your project's own rules (for example an `AGENTS.md` or `CLAUDE.md` with coding conventions) keep working: the
@@ -462,14 +468,13 @@ agents load them as usual, and the planner takes them into account when it write
 - **Cost.** Planning uses a high-tier model and reads code; it pays off for batches, not single edits.
 - **Checks are only as good as your tests.** Acceptance criteria in plans are concrete, but the gate is the check
   command you provide.
-- **Autonomous flow and the driver** were rehearsed with Claude Code on Windows ([rehearsals](docs/rehearsals/)).
-  The driver requires the Claude Code CLI and has no Codex counterpart.
+- **Autonomous flow** was rehearsed with Claude Code on Windows ([rehearsals](docs/rehearsals/)).
 - **wave-auto** was rehearsed in the Claude Code CLI and desktop app ([rehearsals](docs/rehearsals/)), and in the
   Codex CLI up to the start of a wave: triage, the questions, the plan and the launch of a wave's tasks passed,
   while the end of a wave in Codex (task commits, the merge into `integration/<topic>`, auto-approval) is not
   verified yet. The Codex desktop app is not rehearsed. Its rails (`until`, `steps`) are rules of the skill, not
   enforced limits.
-- **An overnight run consumes usage.** Set `--max-usd`, `--deadline`, or `--max-calls`. On a subscription, the
+- **An unattended run consumes usage.** Bound it with `until` or `steps` of `/wave-auto`. On a subscription, the
   run counts toward usage limits.
 
 ## Versioning and contributing

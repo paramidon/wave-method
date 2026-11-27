@@ -592,8 +592,8 @@ The run goes on with everything that does not depend on a feature left unmerged.
 
 ### Results of an autonomous run
 
-What the user is shown after an unattended run, by every reader (the `wave-run` report, `wave-status`, the `wave-auto`
-final report, a driver's summary): per plan in autonomous flow, from its README and briefs on the tracking branch:
+What the user is shown after an unattended run, by every reader (the `wave-run` report, `wave-status`, the
+`wave-auto` final report): per plan in autonomous flow, from its README and briefs on the tracking branch:
 
 | Feature | Shown as |
 |---|---|

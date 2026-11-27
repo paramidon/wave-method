@@ -69,19 +69,19 @@ to read myself before it lands; export the counts as CSV for spreadsheets
 - `Assumed (autonomous, not asked) · F1: do digits count as words? → yes: a word is a run of Unicode letters and digits with inner apostrophes; not chosen: letters only`
 - `Assumed (autonomous, not asked) · F2: what does --top default to? → 10; not chosen: every word`
 
-For the night run, preview the driver calls and then start the run with a $10 limit:
+For the night run, start the coordinator in a Claude Code or Codex session (Codex: `$wave-auto …`) and bound it by time:
 
-```bash
-python <wave-method>/scripts/wave_driver.py plans/2026-11-04-wordstat-cli --repo . --dry-run
-python <wave-method>/scripts/wave_driver.py plans/2026-11-04-wordstat-cli --repo . --max-usd 10
+```
+/wave-auto until 07:00 plans/2026-11-04-wordstat-cli
 ```
 
 Wave 1 runs A and C. `wave-run` auto-approves F1 and merges it into `integration/wordstat-cli`. F3 waits for your
 review. The F1 merge unlocks wave 2, which runs B and D and then auto-merges F2 and F4. `main` stays at its
 starting commit.
 
-In the morning, `report.md` shows review blocks for the merged F1, F2, and F4 and a merge command for F3. After
-reviewing F3, run its merge command, inspect the integration diff, and merge the branch from `main`:
+In the morning, the final report of `/wave-auto` (or `/wave-status`) shows review blocks for the merged F1, F2, and F4
+and a merge command for F3. After reviewing F3, run its merge command, inspect the integration diff, and merge the
+branch from `main`:
 
 ```
 /wave-run plans/2026-11-04-wordstat-cli merge F3
@@ -89,7 +89,7 @@ git diff main...integration/wordstat-cli
 git merge --no-ff integration/wordstat-cli
 ```
 
-To run without the driver, enter each command in a fresh session. The waves run without prompting for approval.
+To run without `wave-auto`, enter each command in a fresh session. The waves run without prompting for approval.
 
 ```
 /wave-run plans/2026-11-04-wordstat-cli 1
