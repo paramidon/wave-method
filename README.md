@@ -90,7 +90,8 @@ too (`codex -s danger-full-access`). The Codex desktop app is not rehearsed with
 On Windows the worktrees that Codex creates in its sandbox belong to the sandbox account (`CodexSandboxOffline`),
 and git in your own shell refuses them with `detected dubious ownership`. Review the branches from the main
 checkout (`git log <branch>`, `git diff main...<branch>`), or allow one worktree for a command with
-`git -c safe.directory='<worktree path>' …` (or for good with `git config --global --add safe.directory`).
+`git -c safe.directory='<worktree path>' …` (or for good with
+`git config --global --add safe.directory '<worktree path>'`).
 
 ### Installer (a copy inside the project)
 
