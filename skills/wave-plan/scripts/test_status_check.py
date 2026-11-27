@@ -72,6 +72,31 @@ class StatusCheckTest(unittest.TestCase):
         result = self.run_check(readme)
         self.assertEqual((0, ""), (result.returncode, result.stdout))
 
+    def test_flow_target_index_part(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n"
+                                "- Index: `plans/2026-11-27-test-plan/index.md` part 3\n"
+                                "- Flow: autonomous · target: integration/test-plan-p3\n")
+        self.assert_rule("flow-target", readme)
+
+    def test_flow_target_index_topic(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n"
+                                "- Index: `plans/2026-11-27-test-plan/index.md` part 3\n"
+                                "- Flow: autonomous · target: integration/test-plan\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_flow_target_index_default(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n"
+                                "- Index: `plans/2026-11-27-test-plan/index.md` part 3\n"
+                                "- Flow: autonomous\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
+    def test_flow_target_raw_plan(self):
+        readme = README.replace("# Test plan\n", "# Test plan\n\n- Flow: autonomous · target: integration/other-name\n")
+        result = self.run_check(readme)
+        self.assertEqual((0, ""), (result.returncode, result.stdout))
+
     def test_replans_escalated(self):
         readme = README.replace("# Test plan\n", "# Test plan\n\n- Re-plans:\n"
                                 "  - 2026-11-01 at abc1234, 10:00 – 10:10: old free text\n"
