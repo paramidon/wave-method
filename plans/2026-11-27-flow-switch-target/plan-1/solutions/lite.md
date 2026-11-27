@@ -164,3 +164,35 @@ Tests in `skills/wave-plan/scripts/test_status_check.py`, after `test_flow_auton
 `for plan in examples/*/; do python skills/wave-plan/scripts/status_check.py "${plan%/}"; done` → no output;
 `` git grep -n -e "else \`<plan>\`; run the checks" -e "without it the target is \`integration/<plan>\`" -e "else it is \`<plan>\`" -- skills README.md ``
 → no output (the three old sentences are gone); `git diff --check` → no output.
+
+## P4. The navigator's halt promise matches its reading order
+
+User problem: the manual-plans step of the navigator promises that "the next reading" prints a `halt` it held back,
+but a later reading prints it only when it reaches that row (open entry I4, re-plan 2026-11-27) · feature F2
+
+**Cause:** `skills/wave-auto/navigator.md:61` (Index start, step 3.1) says a `halt` of rule 1 is left out "(the next
+reading prints it)". Step 3.2 (`navigator.md:72`–`73`) ends the reading at the first row that yields a `next:` line and
+prints only the `halt` lines found before it, so a halted unit in a later row is printed only once every earlier row
+has nothing to run. The behaviour stays (it is the reading order of every index start, and the coordinator's `skip`
+list reaches the row later); only the promise is corrected. The wrong expectation of
+`solutions/P3-ask-all-manual-plans.md`, "Acceptance tests" 4, was corrected in that file by this re-plan.
+
+**Edit:** in `skills/wave-auto/navigator.md`, step 3.1 of "Index start", replace the line
+
+```
+      else: no `halt` line, not even one that rule 1 found (the next reading prints it). That ends the reading.
+```
+
+with the two lines
+
+```
+      else: no `halt` line, not even one that rule 1 found (a later reading that reaches its row prints it). That ends
+      the reading.
+```
+
+Change no other line of the file.
+
+**Check:** `git grep -n "a later reading that reaches its row prints it" -- skills/wave-auto/navigator.md` → one line;
+`git grep -n "the next reading prints it" -- skills README.md` → no output; walking
+`solutions/P3-ask-all-manual-plans.md`, "Acceptance tests" 4, through the new text gives its three expected outputs;
+`git diff --check` → no output.

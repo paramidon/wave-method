@@ -167,9 +167,17 @@ and 3 planned in manual flow with tracking branches, part 4 not planned, `Plan w
 3. Answer "no": the coordinator halts plan-2 and plan-3 `manual-flow`; `start <index> · skip plans/…/plan-2,
    plans/…/plan-3` → `next: wave plans/2026-11-22-cozy-cooking-slice/plan-1 1`; the final report's Halts lists both
    with `— next: /wave-run <plan folder> flow autonomous · $wave-run <plan folder> flow autonomous`.
-4. Part 2 has no tracking branch and an unmerged feature: step 3.1 lists only plan-3; the next reading (after plan-3
-   is switched) prints `halt plans/…/plan-2: tracking branch plan/cozy-cooking-slice-p2 is missing — next: …` before
-   its `next:` line.
+4. Part 2 has no tracking branch and an unmerged feature; plan-3's wave 1 is ⬜ with no `Depends on: F<k> merged`.
+   Corrected by the re-plan of 2026-11-27 (open entry I4, `solutions/lite.md` P4): a held-back `halt` is printed only
+   by a reading that reaches its row.
+   - `start <index> · skip none` → exactly
+     `next: ask-flow plans/2026-11-22-cozy-cooking-slice/plan-3 integration/cozy-cooking-slice`, with no `halt` line.
+   - After plan-3 is switched, `start <index> · skip none` → exactly
+     `next: wave plans/2026-11-22-cozy-cooking-slice/plan-1 1`, with no `halt` line: row 1 ends the reading before
+     row 2.
+   - After plan-3 is switched, `start <index> · skip plans/2026-11-22-cozy-cooking-slice/plan-1` → exactly two lines,
+     `halt plans/2026-11-22-cozy-cooking-slice/plan-2: tracking branch plan/cozy-cooking-slice-p2 is missing — next: /wave-status plans/2026-11-22-cozy-cooking-slice/plan-2 · $wave-status plans/2026-11-22-cozy-cooking-slice/plan-2`,
+     then `next: wave plans/2026-11-22-cozy-cooking-slice/plan-3 1`.
 5. Checks: `git grep -n "Manual plans first" -- skills/wave-auto/navigator.md` → one line;
    `git grep -n "manual-flow" -- skills/wave-auto/SKILL.md` → at least the start-phase line and the halts row;
    `git diff --check` → no output; `python skills/wave-plan/scripts/test_status_check.py` → OK.
