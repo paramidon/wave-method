@@ -8,4 +8,4 @@ Next ID: I5
   `next: wave …/plan-1 1`, because step 3.2 ends the reading at the first row that yields a `next:` line, so the halt
   appears only once part 1 has nothing to run (confirmed by the coordinator against the rule text); proposal: keep the
   behaviour and correct both texts: "(a later reading that reaches its row prints it)", and scenario 4 with plan-1 in
-  `skip`; status: open
+  `skip`; status: → task G (wave 3)
