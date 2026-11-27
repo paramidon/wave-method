@@ -21,3 +21,17 @@ The analysis in the same session found the problems below; the user then asked: 
    the user does with the integration branch afterwards.
 3. Only the first manual plan of an index is asked about at the start; every later manual plan halts
    `questions-late` and has to be run by hand.
+
+## Problems
+
+One cluster, `wave-auto-flow` (switching an existing manual plan to autonomous flow from `wave-auto`): P1, P2, P3.
+
+### P1. The flow form names an index part's integration branch after the plan slug, not the index topic
+**User's words:** item 1 of "Source" (found in the analysis; the user asked to plan it: "составляй план")
+
+### P2. The `ask-flow` question of `wave-auto` needs a fixed, plain template
+**User's words:** "почему система выдала именно такой ответ? гдето недочёт? почему автоматический режим не
+включился? … почему слив происходит в integration?"; item 2 of "Source"
+
+### P3. Every manual plan of an index should be asked about at the start, not only the first
+**User's words:** item 3 of "Source" (found in the analysis; the user asked to plan it: "составляй план")
