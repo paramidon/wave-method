@@ -2,7 +2,8 @@
 
 - Plan: `plans/2026-11-27-flow-switch-target/plan-1/` · slug: `flow-switch-target-p1` · tracking branch: `plan/flow-switch-target-p1` · created 2026-11-27 · base: 217a674 · planned 2026-11-27 23:37 – 2026-11-27 23:44
 - Index: `plans/2026-11-27-flow-switch-target/index.md` part 1
-- Re-plans: none
+- Re-plans:
+  - 2026-11-27 at 638bcc5, 23:55 – 23:58: I4 → P4; wave 2 dropped, rebuilt as wave 3 (F, G) · fixes: F2 (I4)
 
 ## Features
 A feature reaches the main branch only as a whole, when all its tasks are ✅ or ➖ and the user approved it after review.
@@ -10,7 +11,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | ✅ merged | | `feat/flow-switch-target-p1/F1-switch-target-topic` | c2fed10 |
-| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3 | C (1), D (2), E (2) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; checker tests OK; `git diff --check` clean | ⚠️ blocked (I4) | I4 | `feat/flow-switch-target-p1/F2-one-flow-question` | |
+| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3, P4 | C (1), D (2) ➖, E (2) ➖, F (3), G (3) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; `solutions/lite.md` P4 "Check" holds; checker tests OK; `git diff --check` clean | ⚠️ blocked (I4) | wave 3 | `feat/flow-switch-target-p1/F2-one-flow-question` | |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -19,7 +20,8 @@ Merged: short hash of the merge commit into the main branch.
 | Wave | File | Tasks | Status |
 |---|---|---|---|
 | 1 | `waves/w01.md` | A, B, C | ⚠️ I4 |
-| 2 | `waves/w02.md` | D, E (needs F1 merged) | ⬜ |
+| 2 | `waves/w02.md` | D, E (needs F1 merged) | ➖ dropped (tasks → wave 3) |
+| 3 | `waves/w03.md` | F, G (needs F1 merged) | ⬜ |
 
 ## Tasks
 
@@ -28,8 +30,10 @@ Merged: short hash of the merge commit into the main branch.
 | A | `index-part-target-rule` | F1 | 1 | low | ✅ |
 | B | `flow-target-check` | F1 | 1 | low | ✅ |
 | C | `navigator-manual-plans` | F2 | 1 | medium | ⚠️ I4 |
-| D | `coordinator-flow-question` | F2 | 2 | medium | ⬜ |
-| E | `flow-question-docs` | F2 | 2 | low | ⬜ |
+| D | `coordinator-flow-question` | F2 | 2 | medium | ➖ superseded by F |
+| E | `flow-question-docs` | F2 | 2 | low | ➖ superseded by G |
+| F | `coordinator-asks-once` | F2 | 3 | medium | ⬜ |
+| G | `flow-docs-halt-wording` | F2 | 3 | low | ⬜ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-switch-target-p1` and
@@ -42,6 +46,8 @@ reach the main branch with each feature merge.
 - P2 — the `ask-flow` question of `wave-auto` needs a fixed, plain template → F2 · `solutions/P2-flow-question-template.md`
 - P3 — every manual plan of an index should be asked about at the start, not only the first → F2 ·
   `solutions/P3-ask-all-manual-plans.md`
+- P4 — (re-plan, I4) the navigator promises that "the next reading" prints a held-back `halt`; only a reading that
+  reaches its row does → F2 · `solutions/lite.md` (low)
 
 ## How to try
 
@@ -60,6 +66,8 @@ reach the main branch with each feature merge.
 
 - none — `python skills/wave-plan/scripts/test_status_check.py` → 39 tests OK on `main` at 217a674; `status_check.py`
   on every `examples/*/` → no output.
+- none — F2's branch (`c74bf9c`) after `main` (`3ba0015`, with F1) is merged into it, the start of wave 3: 43 tests
+  OK, examples → no output, `git diff --check main...HEAD` → no output (probe merge, 2026-11-27).
 
 ## Assumptions
 
@@ -74,4 +82,7 @@ reach the main branch with each feature merge.
   plan manual (halt `manual-flow`), and the run goes on with the other units.
 - A plan planned by hand during a run still halts `questions-late`: the coordinator asks only in the start phase.
 - `docs/rehearsals/` records past runs and is not changed; no rehearsal with two manual plans is part of this plan.
+- I4: the navigator keeps its reading order (a `halt` of a later row is printed only by a reading that reaches the
+  row); only its promise and P3 acceptance test 4 are corrected. Not chosen: printing every `halt` before the `next:`
+  line, which would change the reading order of every index start.
 - Out of scope: `README.md` says "all five auto-approval conditions" while `skills/wave-plan/layout.md` lists six.
