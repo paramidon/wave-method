@@ -227,7 +227,9 @@ danger-full-access`). Every wave skill whose git write is refused stops `git-rea
 - `<main checkout>` — the checkout where those merges are made: the repository's main checkout in manual flow, the
   integration worktree in autonomous flow.
 - `<name>` — the name of the plan's integration branch after `integration/`: from `target:` of the README `Flow:`
-  line, else `<plan>` ("Flow"). Used in autonomous flow only.
+  line; else, for a plan of an index part (README header line `- Index: plans/<date>-<topic>/index.md part <K>`,
+  the path in backticks or not), the index `<topic>`, the index folder name without its `YYYY-MM-DD-` prefix; else
+  `<plan>` ("Flow"). Used in autonomous flow only.
 - `<plan>` — the plan slug from the README header (`slug: …`).
 - `<plan folder>` — the plan folder's path relative to the repository root (`plans/2026-11-02-hop-tuning`).
 - `<feature>` — `<feature-id>-<feature-slug>` from the "Features" table (e.g. `F1-cheap-interbody-omega`).
@@ -272,8 +274,9 @@ Every feature that is not `✅ merged` or ➖ has a `Waiting for` cell: `wave <N
 - **Status check** (run by `wave-run` in step 8 and before archiving, by `wave-plan` before committing): no ⚠️/❌
   item without an open entry or a re-run note, and no open entry whose items are all ✅ or ➖. It also checks the
   README `Flow:` line ("Flow"): `flow-line` for a malformed line, `flow-review-unknown` for a `manual review:`
-  ID that is not a feature. It also reports `merged-fields` for a feature that is ✅ merged without a `Merged`
-  hash or with a `Waiting for`, and for a feature that is not ✅ merged but has a `Merged` hash.
+  ID that is not a feature, `flow-target` for a plan of an index part whose `target:` is not `integration/<topic>`.
+  It also reports `merged-fields` for a feature that is ✅ merged without a `Merged` hash or with a `Waiting for`,
+  and for a feature that is not ✅ merged but has a `Merged` hash.
   It checks the README `Re-plans:` record ("Re-plan escalation"): `replan-fixes` for a malformed part or an unknown
   feature, `replan-escalation` for a round recorded without its escalation, override or manual review.
   History (what failed, how it was fixed) lives in the wave files and `history.md`, never in a red mark. Run it
@@ -455,9 +458,10 @@ The flow is a header field of the plan README:
 
 - A README without a `Flow:` line, or with `- Flow: manual`, is in manual flow and behaves exactly as if this section
   did not exist.
-- `target:` names the integration branch; without it the target is `integration/<plan>`. A plan of an index part in
-  autonomous flow names `integration/<topic>`: all parts of an index share one integration branch
-  ("Planning in autonomous flow").
+- `target:` names the integration branch; without it the target is `integration/<name>`, `<name>` as "Names" defines
+  it. A plan of an index part in autonomous flow names `integration/<topic>`, whether it was planned in autonomous
+  flow or switched later by the flow form: all parts of an index share one integration branch ("Planning in
+  autonomous flow"). The status check reports `flow-target` for an index part with another `target:`.
 - `manual review: <F-IDs>` is optional: these features are never auto-approved. Each stays `👀 review` with
   `Waiting for: review` until the user approves it ("Feature review"), and every wave whose `Depends on:` names it
   stops `feature-unmerged` until then.

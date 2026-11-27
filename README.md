@@ -225,8 +225,9 @@ A plan without a `Flow:` line is in manual flow and behaves exactly as before.
 - `/wave-plan flow autonomous <list>` plans a raw list. Use
   `/wave-plan flow autonomous plans/<date>-<topic>/index.md part 2` to select the flow for one index part.
 - Between waves, `/wave-run <plan folder> flow autonomous review F2` switches an existing plan and keeps F2
-  under manual review. Switch back with `/wave-run <plan folder> flow manual`. It stops with `target-unmerged`
-  while the integration branch has commits that `main` lacks.
+  under manual review. A plan of an index part then merges into the index's `integration/<topic>`, as the parts
+  planned in autonomous flow do. Switch back with `/wave-run <plan folder> flow manual`. It stops with
+  `target-unmerged` while the integration branch has commits that `main` lacks.
 
 In autonomous flow, `wave-triage` and `wave-plan` resolve ambiguous readings using fixed rules without asking
 you. Each choice is recorded as `Assumed (autonomous, not asked)` and appears under “Worth a look” in the
@@ -234,10 +235,10 @@ feature's review block.
 
 ### The integration branch
 
-All parts of an index share `integration/<name>`, where `<name>` is the index topic. A plan from a raw list uses
-its slug. The worktree is `../<repo>.worktrees/integration-<name>`. Autonomous flow never changes `main` or the
-main checkout. The claim ref `refs/wave-method/claims/integration/<name>` allows one writer at a time. A second
-run stops with `wave-running` and names the holder.
+All parts of an index share `integration/<name>`, where `<name>` is the index topic, also a part switched later with the
+flow form. A plan from a raw list uses its slug. The worktree is `../<repo>.worktrees/integration-<name>`. Autonomous
+flow never changes `main` or the main checkout. The claim ref `refs/wave-method/claims/integration/<name>` allows one
+writer at a time. A second run stops with `wave-running` and names the holder.
 
 Auto-approval requires all five conditions.
 
