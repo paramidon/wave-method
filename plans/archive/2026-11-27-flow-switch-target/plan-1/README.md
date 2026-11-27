@@ -11,7 +11,7 @@ A feature reaches the main branch only as a whole, when all its tasks are ✅ or
 | ID | Slug | Title | P | Tasks (wave) | Done when | Status | Waiting for | Branch | Merged |
 |---|---|---|---|---|---|---|---|---|---|
 | F1 | `switch-target-topic` | Switched index parts share the index's integration branch | P1 | A (1), B (1) | `solutions/lite.md` P1 "Check" green: 43 checker tests OK, examples clean, old default sentences gone | ✅ merged | | `feat/flow-switch-target-p1/F1-switch-target-topic` | c2fed10 |
-| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3, P4 | C (1), D (2) ➖, E (2) ➖, F (3), G (3) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; `solutions/lite.md` P4 "Check" holds; checker tests OK; `git diff --check` clean | ⚠️ blocked (I4) | wave 3 | `feat/flow-switch-target-p1/F2-one-flow-question` | |
+| F2 | `one-flow-question` | One plain flow question for all manual plans | P2, P3, P4 | C (1), D (2) ➖, E (2) ➖, F (3), G (3) | acceptance tests of `solutions/P2-flow-question-template.md` and `solutions/P3-ask-all-manual-plans.md` hold; `solutions/lite.md` P4 "Check" holds; checker tests OK; `git diff --check` clean | ✅ merged | | `feat/flow-switch-target-p1/F2-one-flow-question` | b54cb0a |
 
 Merged: short hash of the merge commit into the main branch.
 
@@ -19,9 +19,9 @@ Merged: short hash of the merge commit into the main branch.
 
 | Wave | File | Tasks | Status |
 |---|---|---|---|
-| 1 | `waves/w01.md` | A, B, C | ⚠️ I4 |
+| 1 | `waves/w01.md` | A, B, C | ✅ (fixed by G, wave 3) |
 | 2 | `waves/w02.md` | D, E (needs F1 merged) | ➖ dropped (tasks → wave 3) |
-| 3 | `waves/w03.md` | F, G (needs F1 merged) | ⬜ |
+| 3 | `waves/w03.md` | F, G (needs F1 merged) | ✅ |
 
 ## Tasks
 
@@ -29,11 +29,11 @@ Merged: short hash of the merge commit into the main branch.
 |---|---|---|---|---|---|
 | A | `index-part-target-rule` | F1 | 1 | low | ✅ |
 | B | `flow-target-check` | F1 | 1 | low | ✅ |
-| C | `navigator-manual-plans` | F2 | 1 | medium | ⚠️ I4 |
+| C | `navigator-manual-plans` | F2 | 1 | medium | ✅ (fixed by G, wave 3) |
 | D | `coordinator-flow-question` | F2 | 2 | medium | ➖ superseded by F |
 | E | `flow-question-docs` | F2 | 2 | low | ➖ superseded by G |
-| F | `coordinator-asks-once` | F2 | 3 | medium | ⬜ |
-| G | `flow-docs-halt-wording` | F2 | 3 | low | ⬜ |
+| F | `coordinator-asks-once` | F2 | 3 | medium | ✅ |
+| G | `flow-docs-halt-wording` | F2 | 3 | low | ✅ |
 
 Files, prompts and dependencies are in the wave files. Branch names, statuses and their rules:
 `wave-plan/layout.md` of the wave skills. Marks are committed on the tracking branch `plan/flow-switch-target-p1` and
